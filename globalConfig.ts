@@ -86,6 +86,6 @@ export default {
     jwtSecret: config.get('jwtSecret'),
     db: (db => ({
         ...db,
-        url: (admin: boolean = false) => `postgres://${admin ? db.adminUser.name : db.regularUser.name}:${admin ? db.adminUser.pass : db.regularUser.pass}@${db.host}:${db.port}/${db.name}`,
+        url: ({ admin = false }: { admin?: boolean}) => `postgres://${admin ? db.adminUser.name : db.regularUser.name}:${admin ? db.adminUser.pass : db.regularUser.pass}@${db.host}:${db.port}/${db.name}`,
     }))(config.get('db'))
 };

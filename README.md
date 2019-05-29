@@ -10,6 +10,7 @@ Plan:
     * Some will need to live on the database layer, as table constraints, rbac, row level security
     * Some will need to be shared with the UI (using a library like `yup`). Because of the sharing, the logic will need to exist as typescript and should probably be used on HTTP server before being sent to the graphql layer.
     * Some authorization will be too complex to exist on the database side. For example, they could depend on data provided by another remote data source, or require logic too complicated to express easily in sql / procedural postgres language. 
+    * Postgraphile's `makeWrapResolversPlugin` can be used to hook into the mutation calls to apply validation logic.
 5. File upload???
     * Apollo seems to have a way of doing this
     * Some plugins, like [postgraphile-plugin-upload-field](https://github.com/mattbretl/postgraphile-plugin-upload-field) exemplified in this [github repo](https://github.com/mattbretl/postgraphile-upload-example)

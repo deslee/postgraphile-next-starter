@@ -1,7 +1,7 @@
 import { PostGraphileOptions, createPostGraphileSchema, withPostGraphileContext, mixed } from 'postgraphile';
 import makeRemoteExecutableSchema, { FetcherOperation } from 'graphql-tools/dist/stitching/makeRemoteExecutableSchema';
 import PgSimplifyInflectorPlugin from '@graphile-contrib/pg-simplify-inflector';
-import config from '../globalConfig'
+import config from '../../globalConfig'
 import { GraphQLSchema, execute } from 'graphql';
 import { Pool } from 'pg';
 
@@ -24,7 +24,7 @@ let _schema: GraphQLSchema;
 export const getSchema = async () => {
     if (!_schema) {
         _schema = await createPostGraphileSchema(
-            config.db.url(),
+            config.db.url({ admin: true }),
             config.db.schema,
             postGraphileOptions
         );
@@ -34,7 +34,7 @@ export const getSchema = async () => {
 
 let pgPool: Pool | undefined = undefined;
 function initPgPool() {
-    pgPool = new Pool({ connectionString: config.db.url() });
+    pgPool = new Pool({ connectionString: config.db.url({ admin: true }) });
     return pgPool;
 }
 
@@ -46,6 +46,11 @@ const fetcher = async (operation: FetcherOperation) => {
     const postGraphileContextOptions = {
         ...postGraphileOptions,
         ...graphqlContext,
+        pgSettings: {
+            'role': config.db.regularUser,
+            'claims.role': config.db.regularUser,
+            ...graphqlContext.pgSettings
+        },
         pgPool: pgPool || initPgPool()
     };
     const postgraphileSchema = await getSchema();
