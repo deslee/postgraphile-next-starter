@@ -29,7 +29,7 @@ export class Authentication1559079169428 implements MigrationInterface {
         DECLARE publicUser app_public.user;
 
         BEGIN
-            IF user_id <> current_setting('claims.userId', false)::int THEN
+            IF user_id <> current_setting('claims.userId', true)::int THEN
             RAISE EXCEPTION 'unauthorized';
             end if;
 
@@ -46,11 +46,11 @@ export class Authentication1559079169428 implements MigrationInterface {
         CREATE FUNCTION app_private.create_session(
         email text,
         password text,
-        sessionData json
+        sessionData json,
+        expirationDate timestamp
         ) returns app_private.session as $$
         declare userPrivate app_private.private_user;
         declare "session" app_private.session;
-        declare expirationDate timestamp;
 
         BEGIN
 
@@ -64,8 +64,6 @@ export class Authentication1559079169428 implements MigrationInterface {
         if userPrivate is null then
             return null;
         end if;
-
-        expirationDate := (current_timestamp + INTERVAL '7' DAY);
 
         INSERT INTO app_private.session(token, user_id, invalid_after, "data") VALUES
         (uuid_generate_v4(), userPrivate.id, expirationDate, sessionData) RETURNING * into "session";

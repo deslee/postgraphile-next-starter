@@ -47,8 +47,8 @@ const fetcher = async (operation: FetcherOperation) => {
         ...postGraphileOptions,
         ...graphqlContext,
         pgSettings: {
-            'role': config.db.regularUser,
-            'claims.role': config.db.regularUser,
+            'role': config.db.regularUser.name,
+            'claims.role': config.db.regularUser.name,
             ...graphqlContext.pgSettings
         },
         pgPool: pgPool || initPgPool()

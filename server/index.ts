@@ -26,15 +26,15 @@ import { makeGraphileSchema } from './postgraphile';
             context: c => {
                 const { req: { user } } = c;
                 const pgSettings = {
-                    'role': config.db.regularUser,
-                    'claims.role': config.db.regularUser,
-                    'claims.userId': user ? user.userId : undefined,
+                    'role': config.db.regularUser.name,
+                    'claims.role': config.db.regularUser.name,
+                }
+                if (user && user.userId) {
+                    pgSettings['claims.userId'] = user.userId
                 }
                 return {
                     ...c,
-                    graphqlContext: {
-                        pgSettings
-                    }
+                    pgSettings
                 }
             }
         });
