@@ -2,10 +2,12 @@ import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import * as compression from 'compression';
 import * as cookieParser from 'cookie-parser';
+import * as passport from 'passport';
 import config from '../globalConfig'
 import * as nextApp from './nextApp';
 import { ApolloServer } from 'apollo-server-express';
 import { makeGraphileSchema } from './postgraphile';
+import { jwt, cookie } from './Authentication';
 
 (async () => {
     try {
@@ -17,8 +19,11 @@ import { makeGraphileSchema } from './postgraphile';
         nextApp.prepare();
         const schema = await makeGraphileSchema();
 
-        // passport
-        // TODO: add authentication middleware
+        // authentication
+        app.use(passport.initialize())
+        app.use(passport.session())
+        app.use(cookie); // cookie authentication
+        app.use(jwt); // jwt authentication
 
         // apollo
         var apolloServer = new ApolloServer({

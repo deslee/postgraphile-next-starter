@@ -2,7 +2,7 @@ import { makeExtendSchemaPlugin, gql } from 'graphile-utils';
 import config from '../../globalConfig';
 import { Client } from 'pg';
 import * as jwt from 'jsonwebtoken';
-import { AuthenticatedUser } from 'server/Authentication';
+import { AuthenticatedSession } from 'server/Authentication';
 
 export default makeExtendSchemaPlugin(build => {
     // Get any helpers we need from `build`
@@ -37,7 +37,7 @@ export default makeExtendSchemaPlugin(build => {
 
                         if (session.token && session.userId) {
                             await pgClient.query(`SELECT set_config('claims.userId', '${session.userId}', true)`);
-                            const rows = await resolveInfo.graphile.selectGraphQLResultFromTable(
+                            const [ row ] = await resolveInfo.graphile.selectGraphQLResultFromTable(
                                 sql.fragment`app_public."user"`,
                                 (tableAlias, queryBuilder) => {
                                     queryBuilder.where(
@@ -46,13 +46,11 @@ export default makeExtendSchemaPlugin(build => {
                                 }
                             )
 
-                            const row = rows[0]
-
                             if (!row) {
                                 throw "Unexpected: User not found!";
                             }
 
-                            const token = jwt.sign({ sessionId: session.token, userId: row.id } as AuthenticatedUser, config.jwtSecret)
+                            const token = jwt.sign({ sessionId: session.token, userId: session.userId } as AuthenticatedSession, config.jwtSecret)
                             result = {
                                 data: row,
                                 query: build.$$isQuery,

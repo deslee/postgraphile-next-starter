@@ -3,7 +3,7 @@ import makeRemoteExecutableSchema, { FetcherOperation } from 'graphql-tools/dist
 import PgSimplifyInflectorPlugin from '@graphile-contrib/pg-simplify-inflector';
 import config from '../../globalConfig'
 import { GraphQLSchema, execute } from 'graphql';
-import { Pool } from 'pg';
+import { getPool } from '../dbPool';
 import schemaExtendPlugin from './schemaExtendPlugin';
 
 export const postGraphileOptions: PostGraphileOptions = {
@@ -34,11 +34,6 @@ export const getSchema = async () => {
     return _schema;
 }
 
-let pgPool: Pool | undefined = undefined;
-function initPgPool() {
-    pgPool = new Pool({ connectionString: config.db.url({ admin: true }) });
-    return pgPool;
-}
 
 const fetcher = async (operation: FetcherOperation) => {
     const graphqlContext = operation.context
@@ -52,7 +47,7 @@ const fetcher = async (operation: FetcherOperation) => {
             'role': config.db.regularUser.name,
             ...graphqlContext.pgSettings
         },
-        pgPool: pgPool || initPgPool()
+        pgPool: getPool()
     };
     const postgraphileSchema = await getSchema();
     const result = withPostGraphileContext(postGraphileContextOptions, async (context) =>

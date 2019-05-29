@@ -83,7 +83,7 @@ export class Authentication1559079169428 implements MigrationInterface {
 
         await queryRunner.query(`CREATE FUNCTION app_public.me() RETURNS app_public."user" as $$
         SELECT * FROM app_public."user"
-        WHERE id = current_setting('claims.userId', true)::int
+        WHERE id::text = current_setting('claims.userId', true)::text
         $$ language sql stable;`)
 
         await queryRunner.query(`
