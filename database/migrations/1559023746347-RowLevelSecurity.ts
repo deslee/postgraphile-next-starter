@@ -4,7 +4,7 @@ const tables = ['user', 'site', 'post', 'asset', 'category']
 const user = "le3io_user";
 const userId = `current_setting('claims.userId', true)::text`
 
-export class Migration1559023746347 implements MigrationInterface {
+export class RowLevelSecurity1559023746347 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<any> {
         await this.enableRls(queryRunner, 'user', 'SELECT, INSERT');

@@ -1,11 +1,11 @@
-import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, Index, ManyToOne } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, Index, ManyToOne, PrimaryColumn } from "typeorm";
 import { User } from "./User";
 
 @Entity({
     schema: 'app_private'
 })
 export class Session {
-    @PrimaryGeneratedColumn()
+    @PrimaryColumn()
     token: string;
 
     @ManyToOne(_ => User, { nullable: false, eager: true })

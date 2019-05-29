@@ -3,7 +3,7 @@ import {MigrationInterface, QueryRunner} from "typeorm";
 const auditColumns = ['createdBy', 'updatedBy', 'createdAt', 'updatedAt']
 const tables = ['user', 'site', 'post', 'asset', 'category']
 
-export class Migration1559023739782 implements MigrationInterface {
+export class AuditColumnComments1559023739782 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<any> {
         for(const table of tables) {
             for (const column of auditColumns) {

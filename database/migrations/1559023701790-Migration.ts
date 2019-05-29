@@ -20,7 +20,7 @@ export class Migration1559023701790 implements MigrationInterface {
         await queryRunner.query(`CREATE UNIQUE INDEX "IDX_84ba6c4fcf05623316884391f1" ON "app_public"."site" ("name") `);
         await queryRunner.query(`CREATE TABLE "app_public"."asset" ("id" SERIAL NOT NULL, "state" character varying NOT NULL, "data" jsonb NOT NULL, "createdBy" character varying, "updatedBy" character varying, "createdAt" TIMESTAMP, "updatedAt" TIMESTAMP, "siteId" integer NOT NULL, CONSTRAINT "PK_94af4e5e193c19a6b58afc93187" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE INDEX "IDX_e4d91ee1aa4271b3aca6484f93" ON "app_public"."asset" ("siteId") `);
-        await queryRunner.query(`CREATE TABLE "app_private"."session" ("token" SERIAL NOT NULL, "invalidAfter" TIMESTAMP NOT NULL, "data" character varying NOT NULL, "userId" integer NOT NULL, CONSTRAINT "PK_b7be6b0b96d77b6b56977dc372b" PRIMARY KEY ("token"))`);
+        await queryRunner.query(`CREATE TABLE "app_private"."session" ("token" character varying NOT NULL, "invalidAfter" TIMESTAMP NOT NULL, "data" character varying NOT NULL, "userId" integer NOT NULL, CONSTRAINT "PK_b7be6b0b96d77b6b56977dc372b" PRIMARY KEY ("token"))`);
         await queryRunner.query(`CREATE INDEX "IDX_9844c9da57879f119027c87e5e" ON "app_private"."session" ("userId") `);
         await queryRunner.query(`CREATE INDEX "IDX_0c0b9abdc5fccbaa8be75603ca" ON "app_private"."session" ("invalidAfter") `);
         await queryRunner.query(`CREATE TABLE "app_public"."post_categories_category" ("postId" integer NOT NULL, "categoryId" integer NOT NULL, CONSTRAINT "PK_729f5fdc0c1d852ea97ff342269" PRIMARY KEY ("postId", "categoryId"))`);

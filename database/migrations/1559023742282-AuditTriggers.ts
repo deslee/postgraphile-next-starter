@@ -4,7 +4,7 @@ const tables = ['user', 'site', 'post', 'asset', 'category']
 const create_trigger = 'audit_fields_on_create';
 const update_trigger = 'audit_fields_on_update'
 
-export class Migration1559023742282 implements MigrationInterface {
+export class AuditTrigger1559023742282 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<any> {
         await queryRunner.query(`
