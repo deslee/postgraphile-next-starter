@@ -25,15 +25,15 @@ export class Authentication1559079169428 implements MigrationInterface {
         `);
 
         await queryRunner.query(`
-        CREATE FUNCTION app_public.update_password(user_id int, newPassword text) returns app_public.user AS $$
+        CREATE FUNCTION app_public.update_password(user_id int, new_password text) returns app_public.user AS $$
         DECLARE publicUser app_public.user;
 
         BEGIN
-            IF user_id <> current_setting('claims.userId', true)::int THEN
+            IF user_id::text <> current_setting('claims.userId', true)::text THEN
             RAISE EXCEPTION 'unauthorized';
             end if;
 
-            UPDATE app_private.private_user SET password=crypt(newPassword, gen_salt('bf')) WHERE id=user_id;
+            UPDATE app_private.private_user SET password=crypt(new_password, gen_salt('bf')) WHERE "userId"=user_id;
 
             SELECT * into publicUser FROM app_public.User WHERE id=user_id;
 
@@ -43,7 +43,7 @@ export class Authentication1559079169428 implements MigrationInterface {
         `);
 
         await queryRunner.query(`
-        CREATE FUNCTION app_private.create_session(
+        CREATE FUNCTION app_hidden.create_session(
         email text,
         password text,
         sessionData json,
@@ -56,7 +56,7 @@ export class Authentication1559079169428 implements MigrationInterface {
 
             SELECT PRIVATE.* INTO userPrivate
             FROM app_private.private_user as PRIVATE
-            INNER JOIN app_public.user "PUBLIC"
+            INNER JOIN app_public."user" "PUBLIC"
             ON PRIVATE.id = "PUBLIC".id
             WHERE "PUBLIC".email=create_session.email
             AND PRIVATE.password=crypt(create_session.password, PRIVATE.password);
@@ -65,12 +65,12 @@ export class Authentication1559079169428 implements MigrationInterface {
             return null;
         end if;
 
-        INSERT INTO app_private.session(token, user_id, invalid_after, "data") VALUES
-        (uuid_generate_v4(), userPrivate.id, expirationDate, sessionData) RETURNING * into "session";
+        INSERT INTO app_private.session(token, "userId", "invalidAfter", "data") VALUES
+        (uuid_generate_v4(), userPrivate."userId", expirationDate, sessionData) RETURNING * into "session";
 
         return "session";
         end;
-        $$ LANGUAGE plpgsql STRICT SECURITY INVOKER;
+        $$ LANGUAGE plpgsql STRICT SECURITY DEFINER;
         `);
         
         await queryRunner.query(`
@@ -100,8 +100,8 @@ export class Authentication1559079169428 implements MigrationInterface {
         await queryRunner.query(`DROP VIEW app_private.active_sessions`);
         await queryRunner.query(`DROP FUNCTION app_public.me()`);
         await queryRunner.query(`DROP FUNCTION app_private.clear_expired_sessions()`);
-        await queryRunner.query(`DROP FUNCTION app_private.create_session(email text, password text, sessionData json, expirationDate timestamp)`);
-        await queryRunner.query(`DROP FUNCTION app_public.update_password(user_id integer, newPassword text)`);
+        await queryRunner.query(`DROP FUNCTION app_hidden.create_session(email text, password text, sessionData json, expirationDate timestamp)`);
+        await queryRunner.query(`DROP FUNCTION app_public.update_password(user_id integer, new_password text)`);
         await queryRunner.query(`DROP FUNCTION app_public.register(email text, password text, data JSON)`);
         await queryRunner.query(`DROP EXTENSION "pgcrypto"`);
         await queryRunner.query(`DROP EXTENSION "uuid-ossp"`);

@@ -14,7 +14,7 @@ import { makeGraphileSchema } from './postgraphile';
         app.use(bodyParser.json());
         app.use(bodyParser.urlencoded({ extended: true }));
         app.use(cookieParser());
-        await nextApp.prepare();
+        nextApp.prepare();
         const schema = await makeGraphileSchema();
 
         // passport
@@ -26,8 +26,6 @@ import { makeGraphileSchema } from './postgraphile';
             context: c => {
                 const { req: { user } } = c;
                 const pgSettings = {
-                    'role': config.db.regularUser.name,
-                    'claims.role': config.db.regularUser.name,
                 }
                 if (user && user.userId) {
                     pgSettings['claims.userId'] = user.userId

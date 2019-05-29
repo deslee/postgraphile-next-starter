@@ -4,10 +4,12 @@ import PgSimplifyInflectorPlugin from '@graphile-contrib/pg-simplify-inflector';
 import config from '../../globalConfig'
 import { GraphQLSchema, execute } from 'graphql';
 import { Pool } from 'pg';
+import schemaExtendPlugin from './schemaExtendPlugin';
 
 export const postGraphileOptions: PostGraphileOptions = {
     appendPlugins: [
-        PgSimplifyInflectorPlugin // simplified field names
+        PgSimplifyInflectorPlugin, // simplified field names
+        schemaExtendPlugin
     ],
     dynamicJson: true,
     showErrorStack: config.env !== 'production',
@@ -48,7 +50,6 @@ const fetcher = async (operation: FetcherOperation) => {
         ...graphqlContext,
         pgSettings: {
             'role': config.db.regularUser.name,
-            'claims.role': config.db.regularUser.name,
             ...graphqlContext.pgSettings
         },
         pgPool: pgPool || initPgPool()

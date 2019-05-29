@@ -7,7 +7,7 @@
     "start": "npm-run-all server:runts",
     "debug": "npm-run-all server:debug",
     "server:runts": "node -r ts-node/register server/index.ts",
-    "server:debug": "node -r ts-node/register --inspect server/index.ts",
+    "server:debug": "cross-env DEBUG=\"postgraphile:graphql,postgraphile:request,postgraphile:postgres*\" node -r ts-node/register --inspect server/index.ts",
     "migration:create": "cross-env ts-node ./node_modules/typeorm/cli.js migration:create -n Migration -f database/typeOrmConfig.ts -d database/migrations/",
     "migration:generate": "cross-env ts-node ./node_modules/typeorm/cli.js migration:generate -n Migration -f database/typeOrmConfig.ts -d database/migrations/",
     "schema:sync": "cross-env ts-node ./node_modules/typeorm/cli.js schema:sync -f database/typeOrmConfig.ts",

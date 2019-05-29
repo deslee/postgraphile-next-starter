@@ -19,6 +19,11 @@ const config = convict({
         default: DEFAULT_JWT_SECRET,
         env: 'JWT_SECRET"'
     },
+    tokenExpirationSeconds: {
+        format: 'int',
+        default: 60 * 60 * 24 * 7,
+        env: 'SECURITY_TOKEN_EXPIRATION_SECONDS'
+    },
     db: {
         host: {
             format: 'ipaddress',
@@ -87,5 +92,6 @@ export default {
     db: (db => ({
         ...db,
         url: ({ admin = false }: { admin?: boolean}) => `postgres://${admin ? db.adminUser.name : db.regularUser.name}:${admin ? db.adminUser.pass : db.regularUser.pass}@${db.host}:${db.port}/${db.name}`,
-    }))(config.get('db'))
+    }))(config.get('db')),
+    tokenExpirationSeconds: config.get('tokenExpirationSeconds')
 };
