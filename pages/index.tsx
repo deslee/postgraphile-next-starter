@@ -1,10 +1,19 @@
 import * as React from 'react';
 import TextField from '@material-ui/core/TextField';
 import { Button } from '@material-ui/core';
-import { withApollo, Mutation } from 'react-apollo';
+import { withApollo, Mutation, Query } from 'react-apollo';
 import gql from 'graphql-tag'
 import * as cookie from 'cookie';
-import { LoginPayload, LoginInput } from 'server/embeddedGraphql/bindings';
+import { LoginPayload, LoginInput, User } from 'server/embeddedGraphql/bindings';
+
+const GET_SIGNED_IN_USER = gql`
+query GetUser {
+    me {
+        id
+        email
+    }
+}
+`
 
 const LOG_IN = gql`
 mutation Login($email: String!, $password: String!) {
@@ -20,32 +29,40 @@ mutation Login($email: String!, $password: String!) {
 export default withApollo(({ client }) => {
     let email: any, password: any;
 
-    return <Mutation<{ login: LoginPayload }, LoginInput>
-        mutation={LOG_IN}
-        onCompleted={({login}) => {
-            // Store the token in cookie
-            document.cookie = cookie.serialize('token', login.token, {
-                maxAge: 30 * 24 * 60 * 60 // 30 days
+    return <>
+        <Query<{me?: User}> query={GET_SIGNED_IN_USER}
+        >{({ data }) => <>
+            User Id: {data && data.me && data.me.id}
+        </>}</Query>
+        <Mutation<{ login: LoginPayload }, LoginInput>
+            mutation={LOG_IN}
+            onCompleted={({ login }) => {
+                // Store the token in cookie
+                if (login) {
+                    document.cookie = cookie.serialize('token', login.token, {
+                        maxAge: 30 * 24 * 60 * 60 // 30 days
+                    })
+                    console.log(login)
+                    // Force a reload of all the current queries now that the user is
+                    // logged in
+                    client.cache.reset().then(() => {
+                        //redirect({}, '/')
+                    })
+                }
+            }}
+        >{(login) => <form onSubmit={e => {
+            e.preventDefault();
+            e.stopPropagation();
+            login({
+                variables: {
+                    email: email.value,
+                    password: password.value
+                }
             })
-            console.log(login)
-            // Force a reload of all the current queries now that the user is
-            // logged in
-            client.cache.reset().then(() => {
-                //redirect({}, '/')
-            })
-        }}
-    >{(login) => <form onSubmit={e => { 
-        e.preventDefault(); 
-        e.stopPropagation(); 
-        login({
-            variables: {
-                email: email.value,
-                password: password.value
-            }
-        })
-    }}>
-        <TextField label="Email" inputRef={node => { email = node }} /><br />
-        <TextField label="Password" type="password" inputRef={node => { password = node }} /><br />
-        <Button type="submit">Login</Button>
-    </form>}</Mutation>
+        }}>
+            <TextField label="Email" inputRef={node => { email = node }} /><br />
+            <TextField label="Password" type="password" inputRef={node => { password = node }} /><br />
+            <Button type="submit">Login</Button>
+        </form>}</Mutation>
+    </>
 })

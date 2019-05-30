@@ -9,10 +9,7 @@ import { ApolloServer } from 'apollo-server-express';
 import { schemaFactory } from './embeddedGraphql';
 import { jwt, cookie } from './Authentication';
 import { getBinding } from './embeddedGraphql/bindings';
-import { ValidationError } from "yup";
-import { UserInputError } from "apollo-server-core";
 import contextConfig from './contextConfig';
-import SchemaLink from 'apollo-link-schema';
 
 (async () => {
     try {
@@ -39,12 +36,7 @@ import SchemaLink from 'apollo-link-schema';
         apolloServer.applyMiddleware({ app });
 
         // next
-        app.use(nextApp.middleware({
-            link: new SchemaLink({
-                schema,
-                context: contextConfig(binding)
-            })
-        }));
+        app.use(nextApp.middleware({ binding, schema }));
 
         app.listen(config.port, () => {
             console.log(`server listening on port ${config.port}`)

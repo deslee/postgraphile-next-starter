@@ -6,11 +6,11 @@ import { ValidationError } from 'yup';
 export default (binding: Binding) => {
     const validators = validatorFactory(binding);
     return (c: any) => {
-        const { req: { user } } = c;
+        const { req } = c;
         const pgSettings = {
         }
-        if (user && user.userId) {
-            pgSettings['claims.userId'] = user.userId
+        if (req && req.user && req.user.userId) {
+            pgSettings['claims.userId'] = req.user.userId
         }
         return {
             ...c,
