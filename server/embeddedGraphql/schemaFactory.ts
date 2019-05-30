@@ -1,26 +1,9 @@
-import { PostGraphileOptions, createPostGraphileSchema, withPostGraphileContext, mixed } from 'postgraphile';
+import { createPostGraphileSchema, withPostGraphileContext } from 'postgraphile';
 import makeRemoteExecutableSchema, { FetcherOperation } from 'graphql-tools/dist/stitching/makeRemoteExecutableSchema';
-import PgSimplifyInflectorPlugin from '@graphile-contrib/pg-simplify-inflector';
 import config from '../../globalConfig'
 import { GraphQLSchema, execute } from 'graphql';
-import { getPool } from '../dbPool';
-import schemaExtendPlugin from './schemaExtendPlugin';
-
-export const postGraphileOptions: PostGraphileOptions = {
-    appendPlugins: [
-        PgSimplifyInflectorPlugin, // simplified field names
-        schemaExtendPlugin
-    ],
-    dynamicJson: true,
-    showErrorStack: config.env !== 'production',
-    extendedErrors: config.env !== 'production' ? ['hint'] : [],
-    graphiql: false,
-    simpleCollections: 'only',
-    legacyRelations: 'omit',
-    graphileBuildOptions: {
-        pgOmitListSuffix: true
-    }
-}
+import { getPool } from './dbPool';
+import postGraphileOptions from './postGraphileOptions';
 
 let _schema: GraphQLSchema;
 export const getSchema = async () => {
@@ -33,7 +16,6 @@ export const getSchema = async () => {
     }
     return _schema;
 }
-
 
 const fetcher = async (operation: FetcherOperation) => {
     const graphqlContext = operation.context
@@ -56,7 +38,8 @@ const fetcher = async (operation: FetcherOperation) => {
             operation.query,
             null,
             {
-                ...context
+                ...context,
+                rootMutationWrapper: graphqlContext.rootMutationWrapper
             },
             operation.variables,
             operation.operationName
@@ -65,7 +48,7 @@ const fetcher = async (operation: FetcherOperation) => {
     return result;
 };
 
-export const makeGraphileSchema = async () => {
+export const schemaFactory = async () => {
     const schema = await getSchema();
     return makeRemoteExecutableSchema({ fetcher, schema });
 }

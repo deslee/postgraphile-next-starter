@@ -6,8 +6,10 @@ import * as passport from 'passport';
 import config from '../globalConfig'
 import * as nextApp from './nextApp';
 import { ApolloServer } from 'apollo-server-express';
-import { makeGraphileSchema } from './postgraphile';
+import { schemaFactory } from './embeddedGraphql';
 import { jwt, cookie } from './Authentication';
+import validators from '../validators';
+import { getBinding } from './embeddedGraphql/bindings';
 
 (async () => {
     try {
@@ -17,7 +19,6 @@ import { jwt, cookie } from './Authentication';
         app.use(bodyParser.urlencoded({ extended: true }));
         app.use(cookieParser());
         nextApp.prepare();
-        const schema = await makeGraphileSchema();
 
         // authentication
         app.use(passport.initialize())
@@ -25,7 +26,9 @@ import { jwt, cookie } from './Authentication';
         app.use(cookie); // cookie authentication
         app.use(jwt); // jwt authentication
 
+        const schema = await schemaFactory();
         // apollo
+        const binding = getBinding(schema);
         var apolloServer = new ApolloServer({
             schema,
             context: c => {
@@ -37,7 +40,10 @@ import { jwt, cookie } from './Authentication';
                 }
                 return {
                     ...c,
-                    pgSettings
+                    pgSettings,
+                    rootMutationWrapper: {
+                        ...validators(binding)
+                    }
                 }
             }
         });

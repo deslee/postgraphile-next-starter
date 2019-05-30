@@ -1,5 +1,5 @@
 import { Pool } from "pg";
-import config from '../globalConfig'
+import config from '../../globalConfig'
 
 let _pgPool: Pool | undefined = undefined;
 export function getPool() {

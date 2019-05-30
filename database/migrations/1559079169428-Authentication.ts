@@ -29,7 +29,7 @@ export class Authentication1559079169428 implements MigrationInterface {
         DECLARE publicUser app_public.user;
 
         BEGIN
-            IF user_id::text <> current_setting('claims.userId', true)::text THEN
+            IF user_id::text IS DISTINCT FROM current_setting('claims.userId', true)::text THEN
             RAISE EXCEPTION 'unauthorized';
             end if;
 
@@ -57,7 +57,7 @@ export class Authentication1559079169428 implements MigrationInterface {
             SELECT PRIVATE.* INTO userPrivate
             FROM app_private.private_user as PRIVATE
             INNER JOIN app_public."user" "PUBLIC"
-            ON PRIVATE.id = "PUBLIC".id
+            ON PRIVATE."userId" = "PUBLIC".id
             WHERE "PUBLIC".email=create_session.email
             AND PRIVATE.password=crypt(create_session.password, PRIVATE.password);
 

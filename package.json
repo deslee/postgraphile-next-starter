@@ -12,7 +12,9 @@
     "migration:generate": "cross-env ts-node ./node_modules/typeorm/cli.js migration:generate -n Migration -f database/typeOrmConfig.ts -d database/migrations/",
     "schema:sync": "cross-env ts-node ./node_modules/typeorm/cli.js schema:sync -f database/typeOrmConfig.ts",
     "migration:run": "cross-env ts-node ./node_modules/typeorm/cli.js migration:run -f database/typeOrmConfig.ts",
-    "migration:revert": "cross-env ts-node ./node_modules/typeorm/cli.js migration:revert -f database/typeOrmConfig.ts"
+    "migration:revert": "cross-env ts-node ./node_modules/typeorm/cli.js migration:revert -f database/typeOrmConfig.ts",
+    "embedded-schema:generate-typedef": "ts-node server/embeddedGraphql/generate-schema-script.ts",
+    "embedded-schema:generate-binding": "graphql-binding --language typescript --input server/embeddedGraphql/generated/typedef.graphql --outputBinding server/embeddedGraphql/bindings/generated.ts && ts-node server/embeddedGraphql/patch-binding.ts"
   },
   "author": "",
   "license": "ISC",
@@ -29,6 +31,7 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "graphile-utils": "^4.4.0",
+    "graphql-binding": "^2.5.1",
     "graphql-import": "^0.7.1",
     "graphql-tools": "^4.0.4",
     "jsonwebtoken": "^8.5.1",

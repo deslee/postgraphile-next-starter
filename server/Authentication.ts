@@ -1,8 +1,7 @@
 import * as passport from 'passport';
-import { Strategy as LocalStrategy } from 'passport-local';
 import * as passportJwt from 'passport-jwt';
 import config from '../globalConfig';
-import { getPool } from './dbPool';
+import { getPool } from './embeddedGraphql/dbPool';
 import { RequestHandler } from 'express';
 
 export interface AuthenticatedSession {

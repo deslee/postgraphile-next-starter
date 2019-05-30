@@ -2,9 +2,9 @@ import { makeExtendSchemaPlugin, gql } from 'graphile-utils';
 import config from '../../globalConfig';
 import { Client } from 'pg';
 import * as jwt from 'jsonwebtoken';
-import { AuthenticatedSession } from 'server/Authentication';
+import { AuthenticatedSession } from '../Authentication';
 
-export default makeExtendSchemaPlugin(build => {
+export const extendSchemaWithLogin = makeExtendSchemaPlugin(build => {
     // Get any helpers we need from `build`
     const { pgSql: sql, inflection } = build;
 
