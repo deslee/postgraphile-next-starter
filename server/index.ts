@@ -8,8 +8,10 @@ import * as nextApp from './nextApp';
 import { ApolloServer } from 'apollo-server-express';
 import { schemaFactory } from './embeddedGraphql';
 import { jwt, cookie } from './Authentication';
-import validators from './validators/serverSideValidators';
+import validatorFactory from './validators/serverSideValidators';
 import { getBinding } from './embeddedGraphql/bindings';
+import { ValidationError } from "yup";
+import { UserInputError } from "apollo-server-core";
 
 (async () => {
     try {
@@ -29,6 +31,7 @@ import { getBinding } from './embeddedGraphql/bindings';
         const schema = await schemaFactory();
         // apollo
         const binding = getBinding(schema);
+        const validators = validatorFactory(binding);
         var apolloServer = new ApolloServer({
             schema,
             context: c => {
@@ -42,7 +45,17 @@ import { getBinding } from './embeddedGraphql/bindings';
                     ...c,
                     pgSettings,
                     rootMutationWrapper: {
-                        ...validators(binding)
+                        ...Object.keys(validators).map(name => ({
+                            [name]: async (args: any) => {
+                                try {
+                                    await validators[name](args)
+                                } catch (err) {
+                                    if (err instanceof ValidationError) {
+                                        throw new UserInputError(err.errors.find(_ => true) || 'Validation Error');
+                                    }
+                                }
+                            }
+                        })).reduce(Object.assign)
                     }
                 }
             }
