@@ -13,6 +13,7 @@
     "schema:sync": "cross-env ts-node ./node_modules/typeorm/cli.js schema:sync -f database/typeOrmConfig.ts",
     "migration:run": "cross-env ts-node ./node_modules/typeorm/cli.js migration:run -f database/typeOrmConfig.ts",
     "migration:revert": "cross-env ts-node ./node_modules/typeorm/cli.js migration:revert -f database/typeOrmConfig.ts",
+    "embedded-schema:generate": "npm-run-all embedded-schema:generate-typedef embedded-schema:generate-binding",
     "embedded-schema:generate-typedef": "ts-node server/embeddedGraphql/generate-schema-script.ts",
     "embedded-schema:generate-binding": "graphql-binding --language typescript --input server/embeddedGraphql/generated/typedef.graphql --outputBinding server/embeddedGraphql/bindings/generated.ts && ts-node server/embeddedGraphql/patch-binding.ts"
   },

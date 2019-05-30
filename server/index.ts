@@ -45,6 +45,7 @@ import { UserInputError } from "apollo-server-core";
                     ...c,
                     pgSettings,
                     rootMutationWrapper: {
+                        // wrap each validator with a try catch block that transforms a ValidationError to a UserInputError
                         ...Object.keys(validators).map(name => ({
                             [name]: async (args: any) => {
                                 try {
@@ -52,6 +53,8 @@ import { UserInputError } from "apollo-server-core";
                                 } catch (err) {
                                     if (err instanceof ValidationError) {
                                         throw new UserInputError(err.errors.find(_ => true) || 'Validation Error');
+                                    } else {
+                                        throw err;
                                     }
                                 }
                             }
