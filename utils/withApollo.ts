@@ -85,7 +85,6 @@ const withApollo = (App: typeof CustomApp) => {
 
         constructor(props: any) {
             super(props)
-            console.log('constructor', props)
             // `getDataFromTree` renders the component first, the client is passed off as a property.
             // After that rendering is done using Next's normal rendering pipeline
             this.apolloClient = initApollo(props.apolloState, {

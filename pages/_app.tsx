@@ -23,6 +23,14 @@ export class CustomApp extends App<Props, State> {
         return { pageProps }
     }
 
+    componentDidMount() {
+        // Remove the server-side injected CSS.
+        const jssStyles = document.querySelector('#jss-server-side');
+        if (jssStyles) {
+            jssStyles.parentNode!.removeChild(jssStyles);
+        }
+    }
+
     render() {
         const { Component, pageProps, apolloClient } = this.props;
 
