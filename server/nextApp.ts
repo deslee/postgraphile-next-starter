@@ -1,18 +1,23 @@
 import * as next from 'next';
-import * as http from 'http';
 import config from '../globalConfig'
 import { parse } from 'url';
+import * as express from 'express'
+import { ApolloLink } from 'apollo-link';
 
 const dev = config.env === 'development'
 const nextApp = next({ dev });
 
 const nextHandler = nextApp.getRequestHandler();
 
-export const middleware: (req: http.IncomingMessage, res: http.ServerResponse) => Promise<void> = async (req, res) => {
+export interface MiddlewareOptions {
+    link: ApolloLink
+}
+export const middleware: (opts: MiddlewareOptions) => express.RequestHandler = ({ link }) => async (req, res) => {
     const parsedUrl = parse(req.url || '/', true);
     const { pathname, query } = parsedUrl;
 
-    
+    (req as any).link = link;
+
     if (pathname === '/a') {
         nextApp.render(req, res, '/b', query);
     } else if (pathname === '/b') {

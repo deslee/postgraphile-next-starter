@@ -1,15 +1,19 @@
 import * as React from 'react';
 import App, { NextAppContext, Container } from 'next/app';
+import { NormalizedCacheObject } from 'apollo-cache-inmemory';
+import ApolloClient from 'apollo-client';
+import withApollo from '../utils/withApollo';
+import { ApolloProvider } from 'react-apollo';
 
 interface Props {
-
+    apolloClient: ApolloClient<NormalizedCacheObject>
 }
 
 interface State {
 
 }
 
-export default class CustomApp extends App<Props, State> {
+export class CustomApp extends App<Props, State> {
     static async getInitialProps({ Component, ctx }: NextAppContext) {
         let pageProps: any = {};
         if (Component.getInitialProps) {
@@ -20,10 +24,15 @@ export default class CustomApp extends App<Props, State> {
     }
 
     render() {
-        const { Component, pageProps } = this.props;
+        const { Component, pageProps, apolloClient } = this.props;
 
         return <Container>
-            <Component {...pageProps} />
+            <ApolloProvider client={apolloClient}>
+                <Component {...pageProps} />
+            </ApolloProvider>
         </Container>
     }
 }
+
+
+export default withApollo(CustomApp);

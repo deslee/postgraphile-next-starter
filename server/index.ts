@@ -8,10 +8,11 @@ import * as nextApp from './nextApp';
 import { ApolloServer } from 'apollo-server-express';
 import { schemaFactory } from './embeddedGraphql';
 import { jwt, cookie } from './Authentication';
-import validatorFactory from './validators/serverSideValidators';
 import { getBinding } from './embeddedGraphql/bindings';
 import { ValidationError } from "yup";
 import { UserInputError } from "apollo-server-core";
+import contextConfig from './contextConfig';
+import SchemaLink from 'apollo-link-schema';
 
 (async () => {
     try {
@@ -31,42 +32,19 @@ import { UserInputError } from "apollo-server-core";
         const schema = await schemaFactory();
         // apollo
         const binding = getBinding(schema);
-        const validators = validatorFactory(binding);
         var apolloServer = new ApolloServer({
             schema,
-            context: c => {
-                const { req: { user } } = c;
-                const pgSettings = {
-                }
-                if (user && user.userId) {
-                    pgSettings['claims.userId'] = user.userId
-                }
-                return {
-                    ...c,
-                    pgSettings,
-                    rootMutationWrapper: {
-                        // wrap each validator with a try catch block that transforms a ValidationError to a UserInputError
-                        ...Object.keys(validators).map(name => ({
-                            [name]: async (args: any) => {
-                                try {
-                                    await validators[name](args)
-                                } catch (err) {
-                                    if (err instanceof ValidationError) {
-                                        throw new UserInputError(err.errors.find(_ => true) || 'Validation Error');
-                                    } else {
-                                        throw err;
-                                    }
-                                }
-                            }
-                        })).reduce(Object.assign)
-                    }
-                }
-            }
+            context: contextConfig(binding)
         });
         apolloServer.applyMiddleware({ app });
 
         // next
-        app.use(nextApp.middleware);
+        app.use(nextApp.middleware({
+            link: new SchemaLink({
+                schema,
+                context: contextConfig(binding)
+            })
+        }));
 
         app.listen(config.port, () => {
             console.log(`server listening on port ${config.port}`)
