@@ -6,7 +6,7 @@ import { AuthenticatedSession } from '../Authentication';
 
 export const extendSchemaWithLogin = makeExtendSchemaPlugin(build => {
     // Get any helpers we need from `build`
-    const { pgSql: sql, inflection } = build;
+    const { pgSql: sql } = build;
 
     return {
         typeDefs: gql`
