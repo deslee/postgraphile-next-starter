@@ -8,7 +8,7 @@ import * as nextApp from './nextApp';
 import { ApolloServer } from 'apollo-server-express';
 import { schemaFactory } from './embeddedGraphql';
 import { jwt, cookie } from './Authentication';
-import validators from '../validators';
+import validators from './validators/serverSideValidators';
 import { getBinding } from './embeddedGraphql/bindings';
 
 (async () => {
