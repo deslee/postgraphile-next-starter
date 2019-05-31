@@ -46,9 +46,7 @@ export default withApollo(({ client }) => {
                     console.log(login)
                     // Force a reload of all the current queries now that the user is
                     // logged in
-                    client.cache.reset().then(() => {
-                        //redirect({}, '/')
-                    })
+                    client.resetStore();
                 }
             }}
         >{(login) => <form onSubmit={e => {
