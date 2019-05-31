@@ -24,6 +24,11 @@ const config = convict({
         default: 60 * 60 * 24 * 7,
         env: 'SECURITY_TOKEN_EXPIRATION_SECONDS'
     },
+    sessionIdHeaderName: {
+        format: String,
+        default: 'X-XSRF-ID',
+        env: 'SESSION_ID_HEADER_NAME'
+    },
     db: {
         host: {
             format: 'ipaddress',
@@ -93,5 +98,6 @@ export default {
         ...db,
         url: (opt: { admin?: boolean } = { admin: false }) => `postgres://${opt.admin ? db.adminUser.name : db.regularUser.name}:${opt.admin ? db.adminUser.pass : db.regularUser.pass}@${db.host}:${db.port}/${db.name}`,
     }))(config.get('db')),
-    tokenExpirationSeconds: config.get('tokenExpirationSeconds')
+    tokenExpirationSeconds: config.get('tokenExpirationSeconds'),
+    sessionIdHeaderName: config.get('sessionIdHeaderName')
 };

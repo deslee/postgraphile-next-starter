@@ -13,12 +13,13 @@ if (!process.browser) {
 
 export interface InitApolloOptions {
     getToken: () => string | undefined;
+    getXsrfId: () => string | undefined;
     link?: ApolloLink
 }
 
 let apolloClient: ApolloClient<NormalizedCacheObject> | undefined = undefined;
 
-function create(initialState: NormalizedCacheObject, { getToken, link }: InitApolloOptions) {
+function create(initialState: NormalizedCacheObject, { getToken, link, getXsrfId }: InitApolloOptions) {
     // Check out https://github.com/zeit/next.js/pull/4611 if you want to use the AWSAppSyncClient
     return new ApolloClient({
         connectToDevTools: process.browser,
@@ -39,7 +40,8 @@ function create(initialState: NormalizedCacheObject, { getToken, link }: InitApo
                 return {
                     headers: {
                         ...headers,
-                        authorization: token ? `Bearer ${token}` : ''
+                        authorization: token ? `Bearer ${token}` : '',
+                        'X-XSRF-ID': getXsrfId()
                     }
                 }
             }),

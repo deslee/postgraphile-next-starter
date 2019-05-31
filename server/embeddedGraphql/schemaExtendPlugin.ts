@@ -1,6 +1,5 @@
 import { makeExtendSchemaPlugin, gql } from 'graphile-utils';
 import config from '../../globalConfig';
-import { Client } from 'pg';
 import * as jwt from 'jsonwebtoken';
 import { AuthenticatedSession } from '../Authentication';
 import CustomPostGraphileContext from './CustomPostGraphileContext';
@@ -52,13 +51,14 @@ export const extendSchemaWithLogin = makeExtendSchemaPlugin(build => {
                                 throw "Unexpected: User not found!";
                             }
 
-                            const token = jwt.sign({ sessionId: session.token, userId: session.userId } as AuthenticatedSession, config.jwtSecret)
+                            const jwtToken = jwt.sign({ sessionId: session.token, userId: session.userId } as AuthenticatedSession, config.jwtSecret)
                             result = {
                                 data: row,
                                 query: build.$$isQuery,
-                                token
+                                token: jwtToken
                             }
-                            context.res.cookie('token', token, { maxAge: config.tokenExpirationSeconds, httpOnly: true, sameSite: true, secure: config.env !== 'development' })
+                            context.res.cookie('token', jwtToken, { maxAge: config.tokenExpirationSeconds, httpOnly: true, sameSite: true, secure: config.env !== 'development' })
+                            context.res.cookie(config.sessionIdHeaderName, session.token, { maxAge: config.tokenExpirationSeconds, httpOnly: false, sameSite: true, secure: config.env !== 'development' })
                         } 
 
                         await pgClient.query("RELEASE SAVEPOINT graphql_mutation");

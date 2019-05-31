@@ -1,52 +1,34 @@
-import * as passport from 'passport';
-import * as passportJwt from 'passport-jwt';
-import config from '../globalConfig';
-import { getPool } from './embeddedGraphql/dbPool';
+import * as express from 'express';
 import { RequestHandler } from 'express';
 import * as jsonwebtoken from 'jsonwebtoken'
 import globalConfig from '../globalConfig';
+import { validateSession } from './embeddedGraphql/validateSession';
 
 export interface AuthenticatedSession {
     userId: string;
     sessionId: string;
 }
 
-passport.use(new passportJwt.Strategy({
-    jwtFromRequest: passportJwt.ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: config.jwtSecret
-}, async (jwtPayload, cb) => {
-    const claim = jwtPayload as Partial<AuthenticatedSession>;
-    if (claim.sessionId && claim.userId) {
-        try {
-            const { rows: [session] } = await getPool().query('SELECT * from app_private.active_sessions WHERE token=$1', [claim.sessionId])
-            if (session && session.userId && session.token) {
-                return cb(null, { userId: session.userId, sessionId: session.token })
-            } else {
-                return cb(null, null)
-            }
-        } catch(e) {
-            console.error(e);
-            return cb(null, null);
-        }
-    } else {
-        return cb(null, null)
-    }
-}))
-
-export const cookie: RequestHandler = (req, res, next) => {
-    const token = (req.cookies && req.cookies.token)
+const validateAgainstToken = (token?: string): RequestHandler => async (req, res, next) => {
     if (token) {
         try {
-            const user = jsonwebtoken.verify(token, globalConfig.jwtSecret)
-            if (user) {
-                return req.login(user, { session: false }, err => {
-                    if (err) {
-                        return res.status(500).json({ err: err.message })
-                    }
+            const claim = jsonwebtoken.verify(token, globalConfig.jwtSecret) as Partial<AuthenticatedSession>;
+            if (claim && claim.userId && claim.sessionId) {
+                const session = await validateSession(claim.sessionId, claim.userId);
+                if (session) {
+                    return req.login(claim, { session: false }, err => {
+                        if (err) {
+                            return res.status(500).json({ err: err.message })
+                        }
+                        return next();
+                    })
+                } else {
                     return next();
-                })
+                }
+            } else {
+                return next();
             }
-        } catch(e) {
+        } catch (e) {
             console.error(e);
             return next();
         }
@@ -55,17 +37,26 @@ export const cookie: RequestHandler = (req, res, next) => {
     }
 }
 
-export const jwt: RequestHandler = (req, res, next) => {
-    passport.authenticate('jwt', { session: false }, (err, user, info) => {
-        if (err) { return next(err); }
-        if (!user) {
-            return next();
+export const cookie: RequestHandler = async (req, res, next) => {
+    const token = (req.cookies && req.cookies.token)
+    await validateAgainstToken(token)(req, res, next);
+}
+
+const getTokenFromReqAsBearerToken: (req: express.Request) => string | undefined = (req) => {
+    const authorizationHeadervalue = req.headers["authorization"];
+    const re = /(\S+)\s+(\S+)/;
+    if (authorizationHeadervalue && typeof authorizationHeadervalue === 'string' && authorizationHeadervalue.match(re)) {
+        const matches = authorizationHeadervalue.match(re);
+        const scheme = matches[1];
+        if (scheme.toLowerCase() === 'bearer') {
+            const token = matches[2];
+            return token
         }
-        req.login(user, { session: false }, err => {
-            if (err) {
-                return res.status(500).json({ err: err.message })
-            }
-            return next();
-        })
-    })(req, res, next)
+    }
+    return undefined;
+}
+
+export const jwt: RequestHandler = async (req, res, next) => {
+    const token = getTokenFromReqAsBearerToken(req);
+    await validateAgainstToken(token)(req, res, next);
 }
