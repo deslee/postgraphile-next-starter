@@ -24,6 +24,7 @@ export const extendSchemaWithLogin = makeExtendSchemaPlugin(build => {
             }
         `,
         resolvers: {
+            // Login needs to be implemented outside of SQL, because we are generating the tokens in code. This is also a good example of how to use schemaExtendPlugin
             Mutation: {
                 login: async (_query, { input: { email, password } }, context, resolveInfo) => {
                     const pgClient: Client = context.pgClient;

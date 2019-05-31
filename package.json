@@ -14,7 +14,7 @@
     "migration:revert": "cross-env ts-node ./node_modules/typeorm/cli.js migration:revert -f database/typeOrmConfig.ts",
     "embedded-schema:generate": "npm-run-all embedded-schema:generate-typedef embedded-schema:generate-binding",
     "embedded-schema:generate-typedef": "ts-node server/embeddedGraphql/generate-schema-script.ts",
-    "embedded-schema:generate-binding": "graphql-binding --language typescript --input server/embeddedGraphql/generated/typedef.graphql --outputBinding server/embeddedGraphql/bindings/generated.ts && ts-node server/embeddedGraphql/patch-binding.ts"
+    "embedded-schema:generate-binding": "graphql-binding --language typescript --input server/embeddedGraphql/generated/typedef.graphql --outputBinding server/embeddedGraphql/bindings/generated.ts && ts-node server/embeddedGraphql/bindings/patch-binding.ts"
   },
   "author": "",
   "license": "ISC",

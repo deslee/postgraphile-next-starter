@@ -24,10 +24,9 @@ const fetcher = async (operation: FetcherOperation) => {
 
     const postGraphileContextOptions = {
         ...postGraphileOptions,
-        ...graphqlContext,
         pgSettings: {
             'role': config.db.regularUser.name,
-            ...graphqlContext.pgSettings
+            ...graphqlContext.pgSettings // allow caller to override the pgSettings through their own context.
         },
         pgPool: getPool()
     };
@@ -39,7 +38,7 @@ const fetcher = async (operation: FetcherOperation) => {
             null,
             {
                 ...context,
-                rootMutationWrapper: graphqlContext.rootMutationWrapper
+                rootMutationWrapper: graphqlContext.rootMutationWrapper // pass-through the rootMutationWrapper
             },
             operation.variables,
             operation.operationName
@@ -48,6 +47,7 @@ const fetcher = async (operation: FetcherOperation) => {
     return result;
 };
 
+// create a remote schema that uses executes our postgraphile schema with the required context injected in the fetcher method
 export const schemaFactory = async () => {
     const schema = await getSchema();
     return makeRemoteExecutableSchema({ fetcher, schema });

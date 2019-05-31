@@ -9,7 +9,7 @@ import { ApolloServer } from 'apollo-server-express';
 import { schemaFactory } from './embeddedGraphql';
 import { jwt, cookie } from './Authentication';
 import { getBinding } from './embeddedGraphql/bindings';
-import contextConfig from './contextConfig';
+import contextFactory from './contextFactory';
 
 (async () => {
     try {
@@ -31,7 +31,7 @@ import contextConfig from './contextConfig';
         const binding = getBinding(schema);
         var apolloServer = new ApolloServer({
             schema,
-            context: contextConfig(binding)
+            context: c => contextFactory(binding, c.req && c.req.user)
         });
         apolloServer.applyMiddleware({ app });
 
