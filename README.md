@@ -17,4 +17,4 @@ Plan:
 6. Think about use cases where I would want to use [Schema Delegation](https://www.prisma.io/blog/graphql-schema-stitching-explained-schema-delegation-4c6caf468405)
 
 
-![Architecture](https://i.imgur.com/hMZtZDP.png)
+![Architecture](https://i.imgur.com/WybqsCJ.png)
