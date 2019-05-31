@@ -23,18 +23,17 @@ import { CustomRequest, CustomResponse } from './CustomRequestResponse';
 
         // authentication
         app.use(passport.initialize())
-        app.use(passport.session())
         app.use(cookie); // cookie authentication
         app.use(jwt); // jwt authentication
 
-        // set custom request
+        // initialize custom request 
         app.use((req, res, next) => {
             (req as CustomRequest).binding = binding;
             next();
         })
 
+        // graphql
         const schema = await schemaFactory();
-        // apollo
         const binding = getBinding(schema);
         var apolloServer = new ApolloServer({
             schema,

@@ -42,7 +42,7 @@ const Login: React.FC<Props> = ({ mutate: login, client }) => {
             <Button type="submit">Login</Button>
         </form>
         <Button type="button" onClick={() => {
-            document.cookie = cookie.serialize('token', '', {
+            document.cookie = cookie.serialize('X-XSRF-ID', '', {
                 maxAge: Date.now(),
                 expires: new Date()
             });
