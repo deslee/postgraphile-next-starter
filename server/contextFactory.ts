@@ -1,16 +1,17 @@
 import validatorFactory from './validators/serverSideValidators';
-import { Binding } from './embeddedGraphql/bindings'
 import { UserInputError } from 'apollo-server-core';
 import { ValidationError } from 'yup';
-import { AuthenticatedSession } from './Authentication';
+import { CustomRequest, CustomResponse } from './CustomRequestResponse';
+import { CustomContext } from './CustomContext';
 
-export default (binding: Binding, user?: AuthenticatedSession) => {
-    const validators = validatorFactory(binding);
+export default (req: CustomRequest, res: CustomResponse): CustomContext => {
+    const validators = validatorFactory(req.binding);
     const pgSettings = {}
-    if (user && user.userId) {
-        pgSettings['claims.userId'] = user.userId;
+    if (req.user) {
+        pgSettings['claims.userId'] = req.user.userId;
     }
     return {
+        req, res,
         pgSettings,
         rootMutationWrapper: {
             // wrap each validator with a try catch block that transforms a ValidationError to a UserInputError

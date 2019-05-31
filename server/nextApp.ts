@@ -6,6 +6,7 @@ import * as express from 'express'
 import { Binding } from './embeddedGraphql/bindings';
 import { GraphQLSchema } from 'graphql';
 import contextFactory from './contextFactory';
+import { CustomRequest, CustomResponse } from './CustomRequestResponse';
 
 const dev = config.env === 'development'
 const nextServer = next({ dev });
@@ -23,7 +24,7 @@ export const middleware: (opts: MiddlewareOptions) => express.RequestHandler = (
     // set the SchemaLink on the request object
     (req as any).link = new SchemaLink({
         schema,
-        context: _ => contextFactory(binding, req && req.user)
+        context: _ => contextFactory(req as CustomRequest, res as CustomResponse)
     });
 
     nextHandler(req, res, parsedUrl);

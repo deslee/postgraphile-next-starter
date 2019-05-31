@@ -3,6 +3,7 @@ import config from '../../globalConfig';
 import { Client } from 'pg';
 import * as jwt from 'jsonwebtoken';
 import { AuthenticatedSession } from '../Authentication';
+import CustomPostGraphileContext from './CustomPostGraphileContext';
 
 export const extendSchemaWithLogin = makeExtendSchemaPlugin(build => {
     // Get any helpers we need from `build`
@@ -26,8 +27,8 @@ export const extendSchemaWithLogin = makeExtendSchemaPlugin(build => {
         resolvers: {
             // Login needs to be implemented outside of SQL, because we are generating the tokens in code. This is also a good example of how to use schemaExtendPlugin
             Mutation: {
-                login: async (_query, { input: { email, password } }, context, resolveInfo) => {
-                    const pgClient: Client = context.pgClient;
+                login: async (_query, { input: { email, password } }, context: CustomPostGraphileContext, resolveInfo) => {
+                    const pgClient = context.pgClient;
                     await pgClient.query("SAVEPOINT graphql_mutation");
                     try {
                         const { rows: [ session ] } = await pgClient.query(`SELECT * FROM app_hidden.create_session($1, $2, $3, (now() + INTERVAL '${config.tokenExpirationSeconds}' SECOND)::timestamp)`, [
@@ -57,6 +58,7 @@ export const extendSchemaWithLogin = makeExtendSchemaPlugin(build => {
                                 query: build.$$isQuery,
                                 token
                             }
+                            context.res.cookie('token', token, { maxAge: config.tokenExpirationSeconds, httpOnly: true, sameSite: true, secure: config.env !== 'development' })
                         } 
 
                         await pgClient.query("RELEASE SAVEPOINT graphql_mutation");

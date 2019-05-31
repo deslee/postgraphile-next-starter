@@ -10,6 +10,7 @@ import { schemaFactory } from './embeddedGraphql';
 import { jwt, cookie } from './Authentication';
 import { getBinding } from './embeddedGraphql/bindings';
 import contextFactory from './contextFactory';
+import { CustomRequest, CustomResponse } from './CustomRequestResponse';
 
 (async () => {
     try {
@@ -26,12 +27,18 @@ import contextFactory from './contextFactory';
         app.use(cookie); // cookie authentication
         app.use(jwt); // jwt authentication
 
+        // set custom request
+        app.use((req, res, next) => {
+            (req as CustomRequest).binding = binding;
+            next();
+        })
+
         const schema = await schemaFactory();
         // apollo
         const binding = getBinding(schema);
         var apolloServer = new ApolloServer({
             schema,
-            context: c => contextFactory(binding, c.req && c.req.user)
+            context: c => contextFactory(c.req as CustomRequest, c.res as CustomResponse)
         });
         apolloServer.applyMiddleware({ app });
 

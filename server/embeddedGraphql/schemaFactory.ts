@@ -1,9 +1,11 @@
-import { createPostGraphileSchema, withPostGraphileContext } from 'postgraphile';
+import { createPostGraphileSchema, withPostGraphileContext, WithPostGraphileContextOptions } from 'postgraphile';
 import makeRemoteExecutableSchema, { FetcherOperation } from 'graphql-tools/dist/stitching/makeRemoteExecutableSchema';
 import config from '../../globalConfig'
 import { GraphQLSchema, execute } from 'graphql';
 import { getPool } from './dbPool';
 import postGraphileOptions from './postGraphileOptions';
+import { ApolloError } from 'apollo-server-core';
+import { CustomContext } from '../CustomContext';
 
 let _schema: GraphQLSchema;
 export const getSchema = async () => {
@@ -18,9 +20,10 @@ export const getSchema = async () => {
 }
 
 const fetcher = async (operation: FetcherOperation) => {
-    const graphqlContext = operation.context
-        ? operation.context.graphqlContext
-        : {};
+    if (!operation.context.graphqlContext) {
+        throw new ApolloError("Operation context not set!");
+    }
+    const graphqlContext: CustomContext = operation.context.graphqlContext;
 
     const postGraphileContextOptions = {
         ...postGraphileOptions,
@@ -29,7 +32,7 @@ const fetcher = async (operation: FetcherOperation) => {
             ...graphqlContext.pgSettings // allow caller to override the pgSettings through their own context.
         },
         pgPool: getPool()
-    };
+    } as WithPostGraphileContextOptions;
     const postgraphileSchema = await getSchema();
     const result = withPostGraphileContext(postGraphileContextOptions, async (context) =>
         await execute(
@@ -37,8 +40,8 @@ const fetcher = async (operation: FetcherOperation) => {
             operation.query,
             null,
             {
-                ...context,
-                rootMutationWrapper: graphqlContext.rootMutationWrapper // pass-through the rootMutationWrapper
+                ...graphqlContext,
+                ...context
             },
             operation.variables,
             operation.operationName

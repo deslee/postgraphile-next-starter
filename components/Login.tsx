@@ -8,12 +8,11 @@ import gql from "graphql-tag";
 import { LoginPayload } from 'server/embeddedGraphql/bindings';
 
 interface ComponentProps {
-
 }
-interface Props extends MutateProps<LoginResult> {
+interface Props extends WithApolloClient<ComponentProps>, MutateProps<LoginResult> {
 }
 
-const Login: React.FC<Props> = ({ mutate: login, client }: WithApolloClient<Props>) => {
+const Login: React.FC<Props> = ({ mutate: login, client }) => {
     const emailEl = React.useRef<HTMLInputElement>(null);
     const passwordEl = React.useRef<HTMLInputElement>(null);
 
@@ -30,9 +29,9 @@ const Login: React.FC<Props> = ({ mutate: login, client }: WithApolloClient<Prop
             console.log(loginResult);
             if (loginResult && loginResult.data.login) {
                 // Store the token in cookie
-                document.cookie = cookie.serialize('token', loginResult.data.login.token, {
-                    maxAge: 30 * 24 * 60 * 60 // 30 days
-                })
+                // document.cookie = cookie.serialize('token', loginResult.data.login.token, {
+                //     maxAge: 30 * 24 * 60 * 60 // 30 days
+                // })
                 // Force a reload of all the current queries now that the user is
                 // logged in
                 client.resetStore();
@@ -55,7 +54,7 @@ const Login: React.FC<Props> = ({ mutate: login, client }: WithApolloClient<Prop
 export interface LoginResult {
     login: LoginPayload
 }
-export default withApollo(graphql<ComponentProps, LoginResult>(gql`
+export default withApollo(graphql<WithApolloClient<ComponentProps>, LoginResult>(gql`
 mutation Login($email: String!, $password: String!) {
     login(input: {email: $email, password: $password}) {
         token
