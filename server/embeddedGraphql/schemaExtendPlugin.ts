@@ -57,8 +57,8 @@ export const extendSchemaWithLogin = makeExtendSchemaPlugin(build => {
                                 query: build.$$isQuery,
                                 token: jwtToken
                             }
-                            context.res.cookie('token', jwtToken, { maxAge: config.tokenExpirationSeconds, httpOnly: true, sameSite: true, secure: config.env !== 'development' })
-                            context.res.cookie(config.sessionIdHeaderName, session.token, { maxAge: config.tokenExpirationSeconds, httpOnly: false, sameSite: true, secure: config.env !== 'development' })
+                            context.res.cookie('token', jwtToken, { maxAge: config.tokenExpirationSeconds * 1000, httpOnly: true, sameSite: true, secure: config.env !== 'development' })
+                            context.res.cookie(config.sessionIdHeaderName, session.token, { maxAge: config.tokenExpirationSeconds * 1000, httpOnly: false, sameSite: true, secure: config.env !== 'development' })
                         } 
 
                         await pgClient.query("RELEASE SAVEPOINT graphql_mutation");
