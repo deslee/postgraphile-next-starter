@@ -36,18 +36,23 @@ passport.use(new passportJwt.Strategy({
 export const cookie: RequestHandler = (req, res, next) => {
     const token = (req.cookies && req.cookies.token)
     if (token) {
-        const user = jsonwebtoken.verify(token, globalConfig.jwtSecret)
-        if (user) {
-            return req.login(user, {session:false}, err => {
-                if (err) {
-                    return res.status(500).json({ err: err.message })
-                }
-                return next();
-            })
+        try {
+            const user = jsonwebtoken.verify(token, globalConfig.jwtSecret)
+            if (user) {
+                return req.login(user, { session: false }, err => {
+                    if (err) {
+                        return res.status(500).json({ err: err.message })
+                    }
+                    return next();
+                })
+            }
+        } catch(e) {
+            console.error(e);
+            return next();
         }
+    } else {
+        return next();
     }
-    
-    return next();
 }
 
 export const jwt: RequestHandler = (req, res, next) => {
