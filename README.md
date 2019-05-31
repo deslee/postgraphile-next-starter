@@ -15,3 +15,6 @@ Plan:
     * Apollo seems to have a way of doing this
     * Some plugins, like [postgraphile-plugin-upload-field](https://github.com/mattbretl/postgraphile-plugin-upload-field) exemplified in this [github repo](https://github.com/mattbretl/postgraphile-upload-example)
 6. Think about use cases where I would want to use [Schema Delegation](https://www.prisma.io/blog/graphql-schema-stitching-explained-schema-delegation-4c6caf468405)
+
+
+![Architecture](https://i.imgur.com/hMZtZDP.png)
