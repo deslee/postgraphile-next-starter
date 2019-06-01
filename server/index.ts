@@ -29,6 +29,7 @@ import { CustomRequest, CustomResponse } from './CustomRequestResponse';
         // initialize custom request 
         app.use((req, res, next) => {
             (req as CustomRequest).binding = binding;
+            (req as CustomRequest).config = globalConfig;
             next();
         })
 

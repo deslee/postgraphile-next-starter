@@ -3,7 +3,8 @@ import { MutateProps, withApollo, graphql } from 'react-apollo';
 import { Asset, CreateAssetPayload, AssetInput, CreateAssetInput } from 'server/embeddedGraphql/bindings/generated';
 import gql from 'graphql-tag';
 import { Input, Button, Typography } from '@material-ui/core';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
+import { AppContext } from '../utils/AppContext';
 
 interface ComponentProps {
 
@@ -17,6 +18,8 @@ const UploadComponent: React.FC<Props> = (props: Props) => {
     const { mutate } = props;
     const [filename, setFilename] = useState<string>("Select file");
     const [loading, setLoading] = useState<boolean>(false);
+    const [uri, setUri] = useState<string>('');
+    const appContext = useContext(AppContext)
 
     return <div>
         <form
@@ -36,11 +39,14 @@ const UploadComponent: React.FC<Props> = (props: Props) => {
                     }
                 }
 
-                await mutate({
+                const response = await mutate({
                     variables: {
                         input
                     }
                 })
+                if (response) {
+                    setUri(response.data.createAsset.asset.uri)
+                }
             }}
         >
             {filename}<br />
@@ -49,8 +55,9 @@ const UploadComponent: React.FC<Props> = (props: Props) => {
                 const fileName =
                     e.target.files.length > 0 ? e.target.files[0].name : "";
             }} />
+            <Button type="submit">Submit</Button><br />
+            {uri && <Typography>Uploaded:: <a target="_blank" href={`${appContext.s3Url}/${uri}`}>{`${appContext.s3Url}/${uri}`}</a></Typography>}
 
-            <Button type="submit">Submit</Button>
         </form>
         {loading && <Typography>Loading...</Typography>}
     </div>
@@ -66,6 +73,7 @@ mutation createAsset($input: CreateAssetInput!) {
         asset {
             id
             siteId
+            uri
         }
     }
 }

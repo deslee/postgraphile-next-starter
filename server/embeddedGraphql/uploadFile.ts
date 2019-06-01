@@ -25,7 +25,7 @@ function saveRemote(stream: fs.ReadStream, mimetype: string): Promise<string> {
   const key = `${uuid()}.${extension}`;
   var s3Obj = new S3({ credentials: awsCredentials })
   return new Promise((resolve, reject) =>
-    s3Obj.upload({ Body: stream, Bucket: globalConfig.awsS3UploadBucket, Key: key }, (err, data) => {
+    s3Obj.upload({ Body: stream, Bucket: globalConfig.awsS3UploadBucket, Key: key, ContentType: mimetype }, (err, data) => {
       if (err) {
         reject(err);
       } else {

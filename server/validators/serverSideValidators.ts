@@ -1,7 +1,7 @@
-import { Binding, RegisterInput, UpdatePasswordInput } from "server/embeddedGraphql/bindings";
+import { Binding, RegisterInput, UpdatePasswordInput, LoginInput } from "../embeddedGraphql/bindings";
 import globalConfig from "../../globalConfig";
 import { UserInputError } from "apollo-server-core";
-import { RegisterInputShape, UpdatePasswordInputShape } from "./validators";
+import { RegisterInputShape, UpdatePasswordInputShape, LoginInputShape } from "./validators";
 
 // server side validation
 export default (binding: Binding) => ({
@@ -17,5 +17,8 @@ export default (binding: Binding) => ({
         if (input.newPassword.length < 6) {
             throw new UserInputError('Password too short');
         }
+    },
+    'login': async ({ input }: { input: LoginInput }) => {
+        await LoginInputShape.validate(input)
     }
 })

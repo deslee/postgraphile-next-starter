@@ -1,11 +1,12 @@
 import * as React from 'react';
-import TextField from '@material-ui/core/TextField';
 import { Button } from '@material-ui/core';
+import { Formik, Form, Field } from 'formik';
 import { graphql, MutateProps, withApollo, WithApolloClient } from 'react-apollo';
-
+import { TextField } from 'formik-material-ui';
 import gql from "graphql-tag";
-import { LoginPayload } from 'server/embeddedGraphql/bindings';
+import { LoginPayload, LoginInput } from 'server/embeddedGraphql/bindings';
 import Logout from './Logout';
+import { LoginInputShape } from '../server/validators/validators';
 
 interface ComponentProps {
 }
@@ -13,34 +14,37 @@ interface Props extends WithApolloClient<ComponentProps>, MutateProps<LoginResul
 }
 
 const Login: React.FC<Props> = ({ mutate: login, client }) => {
-    const emailEl = React.useRef<HTMLInputElement>(null);
-    const passwordEl = React.useRef<HTMLInputElement>(null);
-
     return <>
-        <form onSubmit={async e => {
-            e.preventDefault();
-            e.stopPropagation();
-            const loginResult = await login({
-                variables: {
-                    email: emailEl.current.value,
-                    password: passwordEl.current.value
+        <Formik<LoginInput>
+            initialValues={{ email: '', password: '' }}
+            validationSchema={LoginInputShape}
+            onSubmit={async (values, actions) => {
+                try {
+                    const loginResult = await login({
+                        variables: {
+                            input: {
+                                email: values.email,
+                                password: values.password
+                            } as LoginInput
+                        }
+                    })
+                    if (loginResult && loginResult.data.login) {
+                        // Force a reload of all the current queries now that the user is
+                        // logged in
+                        client.resetStore();
+                    }
                 }
-            })
-            console.log(loginResult);
-            if (loginResult && loginResult.data.login) {
-                // Store the token in cookie
-                // document.cookie = cookie.serialize('token', loginResult.data.login.token, {
-                //     maxAge: 30 * 24 * 60 * 60 // 30 days
-                // })
-                // Force a reload of all the current queries now that the user is
-                // logged in
-                client.resetStore();
-            }
-        }}>
-            <TextField label="Email" inputRef={emailEl} /><br />
-            <TextField label="Password" type="password" inputRef={passwordEl} /><br />
+                finally {
+                    actions.setSubmitting(false);
+                }
+            }}
+        >{({ errors, touched }) => <Form>
+            <Field name="email" component={TextField} type="text" label="Email" /><br />
+            {errors.email && touched.email && <div>{errors.email}</div>}
+            <Field name="password" component={TextField} type="password" label="Password" /><br />
+            {errors.password && touched.password && <div>{errors.password}</div>}
             <Button type="submit">Login</Button>
-        </form>
+        </Form>}</Formik>
         <Logout />
     </>
 }
@@ -49,8 +53,8 @@ export interface LoginResult {
     login: LoginPayload
 }
 export default withApollo(graphql<WithApolloClient<ComponentProps>, LoginResult>(gql`
-mutation Login($email: String!, $password: String!) {
-    login(input: {email: $email, password: $password}) {
+mutation Login($input: LoginInput!) {
+    login(input: $input) {
         token
         user {
             id

@@ -4,9 +4,12 @@ import { NormalizedCacheObject } from 'apollo-cache-inmemory';
 import ApolloClient from 'apollo-client';
 import withApollo from '../utils/withApollo';
 import { ApolloProvider } from 'react-apollo';
+import { AppContext } from '../utils/AppContext';
+import { CustomRequest } from '../server/CustomRequestResponse';
 
 interface Props {
     apolloClient: ApolloClient<NormalizedCacheObject>
+    appContext: AppContext;
 }
 
 interface State {
@@ -32,12 +35,14 @@ export class CustomApp extends App<Props, State> {
     }
 
     render() {
-        const { Component, pageProps, apolloClient } = this.props;
+        const { Component, pageProps, apolloClient, appContext } = this.props;
 
         return <Container>
-            <ApolloProvider client={apolloClient}>
-                <Component {...pageProps} />
-            </ApolloProvider>
+            <AppContext.Provider value={appContext}>
+                <ApolloProvider client={apolloClient}>
+                    <Component {...pageProps} />
+                </ApolloProvider>
+            </AppContext.Provider>
         </Container>
     }
 }

@@ -9,6 +9,8 @@ import { IncomingMessage } from 'http';
 import { CustomApp } from '../pages/_app';
 import { NormalizedCacheObject } from 'apollo-cache-inmemory';
 import ApolloClient from 'apollo-client';
+import { CustomRequest } from '../server/CustomRequestResponse';
+import { AppContext } from './AppContext';
 
 function parseCookies(req?: IncomingMessage, options = {}) {
     return cookie.parse(req ? req.headers.cookie || '' : document.cookie, options)
@@ -17,6 +19,7 @@ function parseCookies(req?: IncomingMessage, options = {}) {
 const withApollo = (App: typeof CustomApp) => {
     return class WithData extends React.Component<AppProps & DefaultAppIProps> {
         apolloClient: ApolloClient<NormalizedCacheObject>;
+        appContext: AppContext;
         static async getInitialProps(ctx: NextAppContext) {
             const {
                 Component,
@@ -47,7 +50,13 @@ const withApollo = (App: typeof CustomApp) => {
                 return {}
             }
 
+            let appContext: AppContext;
             if (!process.browser) {
+                const config = (req as CustomRequest).config
+                appContext = {
+                    s3Url: `https://${config.awsS3UploadBucket}.s3.amazonaws.com`
+                }
+
                 // Run all graphql queries in the component tree
                 // and extract the resulting data
                 try {
@@ -60,6 +69,7 @@ const withApollo = (App: typeof CustomApp) => {
                                 Component,
                                 router,
                                 apolloClient: apollo,
+                                appContext
                             }
                         )
                     )
@@ -80,7 +90,8 @@ const withApollo = (App: typeof CustomApp) => {
 
             return {
                 ...appProps,
-                apolloState
+                apolloState,
+                appContext
             }
         }
 
@@ -92,12 +103,14 @@ const withApollo = (App: typeof CustomApp) => {
                 getToken: () => parseCookies().token,
                 getXsrfId: () => parseCookies()['X-XSRF-ID'],
             })
+            this.appContext = props.appContext;
         }
 
         render() {
             return React.createElement(App, {
                 ...this.props,
-                apolloClient: this.apolloClient
+                apolloClient: this.apolloClient,
+                appContext: this.appContext
             });
     }
     }

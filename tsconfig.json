@@ -9,7 +9,6 @@
     "strict": false,
     "allowJs": true,
     "noEmit": true,
-    "allowSyntheticDefaultImports": true,
     "esModuleInterop": false,
     "skipLibCheck": true,
     "isolatedModules": true,
