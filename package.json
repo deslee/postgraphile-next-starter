@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon",
     "build": "next build && tsc --project tsconfig.server.json",
-    "start": "cross-env NODE_ENV=production node dist/index.js",
+    "start": "cross-env NODE_ENV=production node dist/server/index.js",
     "migration:create": "cross-env TS_NODE_PROJECT=tsconfig.typeorm.json ts-node ./node_modules/typeorm/cli.js migration:create -n Migration -f database/typeOrmConfig.ts -d database/migrations/",
     "migration:generate": "cross-env TS_NODE_PROJECT=tsconfig.typeorm.json ts-node ./node_modules/typeorm/cli.js migration:generate -n Migration -f database/typeOrmConfig.ts -d database/migrations/",
     "schema:sync": "cross-env TS_NODE_PROJECT=tsconfig.typeorm.json ts-node ./node_modules/typeorm/cli.js schema:sync -f database/typeOrmConfig.ts",

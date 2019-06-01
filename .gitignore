@@ -2,4 +2,4 @@ node_modules
 .next/
 dist/
 
-config.development.json
+config.*.json

@@ -29,7 +29,6 @@ function saveRemote(stream: fs.ReadStream, mimetype: string): Promise<string> {
       if (err) {
         reject(err);
       } else {
-        console.log("uploaded")
         resolve(key);
       }
     })
