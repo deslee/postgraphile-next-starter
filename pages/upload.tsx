@@ -25,6 +25,7 @@ const UploadComponent: React.FC<Props> = (props: Props) => {
         <form
             onSubmit={async event => {
                 event.preventDefault();
+                setLoading(true);
                 const target = event.target;
                 const fd = new FormData(event.target as any);
                 const name = fd.get("name")
@@ -39,13 +40,18 @@ const UploadComponent: React.FC<Props> = (props: Props) => {
                     }
                 }
 
-                const response = await mutate({
-                    variables: {
-                        input
+                try {
+                    const response = await mutate({
+                        variables: {
+                            input
+                        }
+                    })
+                    if (response) {
+                        setUri(response.data.createAsset.asset.uri)
                     }
-                })
-                if (response) {
-                    setUri(response.data.createAsset.asset.uri)
+                }
+                finally {
+                    setLoading(false);
                 }
             }}
         >
