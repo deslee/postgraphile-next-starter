@@ -1,5 +1,5 @@
 import { Binding, RegisterInput, UpdatePasswordInput } from "server/embeddedGraphql/bindings";
-import config from "../../globalConfig";
+import globalConfig from "../../globalConfig";
 import { UserInputError } from "apollo-server-core";
 import { RegisterInputShape, UpdatePasswordInputShape } from "./validators";
 
@@ -7,7 +7,7 @@ import { RegisterInputShape, UpdatePasswordInputShape } from "./validators";
 export default (binding: Binding) => ({
     'register': async ({ input }: { input: RegisterInput }) => {
         await RegisterInputShape.validate(input)
-        const user = await binding.query.userByEmail({ email: input.email }, undefined, { context: { pgSettings: { role: config.db.adminUser.name } } });
+        const user = await binding.query.userByEmail({ email: input.email }, undefined, { context: { pgSettings: { role: globalConfig.db.adminUser.name } } });
         if (user) {
             throw new UserInputError("Email already exists");
         }

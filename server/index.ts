@@ -3,7 +3,7 @@ import * as bodyParser from 'body-parser';
 import * as compression from 'compression';
 import * as cookieParser from 'cookie-parser';
 import * as passport from 'passport';
-import config from '../globalConfig'
+import globalConfig from '../globalConfig'
 import * as nextApp from './nextApp';
 import { ApolloServer } from 'apollo-server-express';
 import { schemaFactory } from './embeddedGraphql';
@@ -44,8 +44,8 @@ import { CustomRequest, CustomResponse } from './CustomRequestResponse';
         // next
         app.use(nextApp.middleware({ binding, schema }));
 
-        app.listen(config.port, () => {
-            console.log(`server listening on port ${config.port}`)
+        app.listen(globalConfig.port, () => {
+            console.log(`server listening on port ${globalConfig.port}`)
         });
     }
     catch (err) {

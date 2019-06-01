@@ -1,14 +1,14 @@
-import config from '../globalConfig'
+import globalConfig from "../globalConfig";
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 
 const ormconfig: PostgresConnectionOptions = {
     type: 'postgres',
-    host: config.db.host,
-    port: config.db.port,
-    username: config.db.adminUser.name,
-    password: config.db.adminUser.pass,
-    database: config.db.name,
-    schema: config.db.typeOrmSchema,
+    host: globalConfig.db.host,
+    port: globalConfig.db.port,
+    username: globalConfig.db.adminUser.name,
+    password: globalConfig.db.adminUser.pass,
+    database: globalConfig.db.name,
+    schema: globalConfig.db.typeOrmSchema,
     logging: true,
     migrationsRun: false,
     entities: [

@@ -1,6 +1,6 @@
 import { createPostGraphileSchema, withPostGraphileContext, WithPostGraphileContextOptions } from 'postgraphile';
 import makeRemoteExecutableSchema, { FetcherOperation } from 'graphql-tools/dist/stitching/makeRemoteExecutableSchema';
-import config from '../../globalConfig'
+import globalConfig from '../../globalConfig'
 import { GraphQLSchema, execute } from 'graphql';
 import { getPool } from './dbPool';
 import postGraphileOptions from './postGraphileOptions';
@@ -11,8 +11,8 @@ let _schema: GraphQLSchema;
 export const getSchema = async () => {
     if (!_schema) {
         _schema = await createPostGraphileSchema(
-            config.db.url({ admin: true }),
-            config.db.schema,
+            globalConfig.db.url({ admin: true }),
+            globalConfig.db.schema,
             postGraphileOptions
         );
     }
@@ -28,7 +28,7 @@ const fetcher = async (operation: FetcherOperation) => {
     const postGraphileContextOptions = {
         ...postGraphileOptions,
         pgSettings: {
-            'role': config.db.regularUser.name,
+            'role': globalConfig.db.regularUser.name,
             ...graphqlContext.pgSettings // allow caller to override the pgSettings through their own context.
         },
         pgPool: getPool()

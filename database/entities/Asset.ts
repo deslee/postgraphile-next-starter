@@ -1,11 +1,11 @@
 import { Entity, Unique, Column, PrimaryGeneratedColumn, ManyToOne, Index, JoinColumn, ManyToMany } from "typeorm";
-import config from "../../globalConfig";
+import globalConfig from "../../globalConfig";
 import { Auditable } from "./Auditable";
 import { Site } from "./Site";
 import { Post } from "./Post";
 
 @Entity({
-    schema: config.db.schema
+    schema: globalConfig.db.schema
 })
 export class Asset implements Auditable {
     @PrimaryGeneratedColumn()

@@ -1,6 +1,6 @@
 import * as next from 'next';
 import SchemaLink from 'apollo-link-schema';
-import config from '../globalConfig'
+import globalConfig from '../globalConfig'
 import { parse } from 'url';
 import * as express from 'express'
 import { Binding } from './embeddedGraphql/bindings';
@@ -8,7 +8,7 @@ import { GraphQLSchema } from 'graphql';
 import contextFactory from './contextFactory';
 import { CustomRequest, CustomResponse } from './CustomRequestResponse';
 
-const dev = config.env === 'development'
+const dev = globalConfig.env === 'development'
 const nextServer = next({ dev });
 
 const nextHandler = nextServer.getRequestHandler();

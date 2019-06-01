@@ -1,12 +1,12 @@
 import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, ManyToOne, Index, Unique, ManyToMany, JoinTable } from "typeorm";
-import config from "../../globalConfig";
+import globalConfig from "../../globalConfig";
 import { Auditable } from "./Auditable";
 import { Site } from "./Site";
 import { Category } from "./Category";
 import { Asset } from "./Asset";
 
 @Entity({
-    schema: config.db.schema
+    schema: globalConfig.db.schema
 })
 @Unique(['site', 'name'])
 @Index(['id', 'site'], { unique: true })

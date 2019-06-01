@@ -1,5 +1,5 @@
 import { makeExtendSchemaPlugin, gql } from 'graphile-utils';
-import config from '../../globalConfig';
+import globalConfig from '../../globalConfig';
 import * as jwt from 'jsonwebtoken';
 import { AuthenticatedSession } from '../Authentication';
 import CustomPostGraphileContext from './CustomPostGraphileContext';
@@ -31,7 +31,7 @@ export const extendSchemaWithLogin = makeExtendSchemaPlugin(build => {
                     const pgClient = context.pgClient;
                     await pgClient.query("SAVEPOINT graphql_mutation");
                     try {
-                        const { rows: [ session ] } = await pgClient.query(`SELECT * FROM app_hidden.create_session($1, $2, $3, (now() + INTERVAL '${config.tokenExpirationSeconds}' SECOND)::timestamp)`, [
+                        const { rows: [ session ] } = await pgClient.query(`SELECT * FROM app_hidden.create_session($1, $2, $3, (now() + INTERVAL '${globalConfig.tokenExpirationSeconds}' SECOND)::timestamp)`, [
                             email, password, {}
                         ]);
 
@@ -52,14 +52,14 @@ export const extendSchemaWithLogin = makeExtendSchemaPlugin(build => {
                                 throw "Unexpected: User not found!";
                             }
 
-                            const jwtToken = jwt.sign({ sessionId: session.token, userId: session.userId } as AuthenticatedSession, config.jwtSecret)
+                            const jwtToken = jwt.sign({ sessionId: session.token, userId: session.userId } as AuthenticatedSession, globalConfig.jwtSecret)
                             result = {
                                 data: row,
                                 query: build.$$isQuery,
                                 token: jwtToken
                             }
-                            context.res.cookie('token', jwtToken, { maxAge: config.tokenExpirationSeconds * 1000, httpOnly: true, sameSite: true, secure: config.env !== 'development' })
-                            context.res.cookie(config.sessionIdHeaderName, session.token, { maxAge: config.tokenExpirationSeconds * 1000, httpOnly: false, sameSite: true, secure: config.env !== 'development' })
+                            context.res.cookie('token', jwtToken, { maxAge: globalConfig.tokenExpirationSeconds * 1000, httpOnly: true, sameSite: true, secure: globalConfig.env !== 'development' })
+                            context.res.cookie(globalConfig.sessionIdHeaderName, session.token, { maxAge: globalConfig.tokenExpirationSeconds * 1000, httpOnly: false, sameSite: true, secure: globalConfig.env !== 'development' })
                         } 
 
                         await pgClient.query("RELEASE SAVEPOINT graphql_mutation");
@@ -73,8 +73,8 @@ export const extendSchemaWithLogin = makeExtendSchemaPlugin(build => {
                     const pgClient = context.pgClient;
                     await pgClient.query("SAVEPOINT graphql_mutation");
                     try {
-                        context.res.cookie('token', '', { maxAge: 0, httpOnly: true, sameSite: true, secure: config.env !== 'development' })
-                        context.res.cookie(config.sessionIdHeaderName, '', { maxAge: 0, httpOnly: false, sameSite: true, secure: config.env !== 'development' })
+                        context.res.cookie('token', '', { maxAge: 0, httpOnly: true, sameSite: true, secure: globalConfig.env !== 'development' })
+                        context.res.cookie(globalConfig.sessionIdHeaderName, '', { maxAge: 0, httpOnly: false, sameSite: true, secure: globalConfig.env !== 'development' })
                         
                         if (context.req.user) {
                             await pgClient.query(`SELECT app_hidden.logout()`);

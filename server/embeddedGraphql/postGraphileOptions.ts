@@ -2,7 +2,7 @@ import { PostGraphileOptions } from 'postgraphile';
 import * as path from 'path';
 import * as fs from 'fs'
 import PgSimplifyInflectorPlugin from '@graphile-contrib/pg-simplify-inflector';
-import config from '../../globalConfig'
+import globalConfig from '../../globalConfig'
 import { extendSchemaWithLogin } from './schemaExtendPlugin';
 import { wrapRootMutationsPlugin } from './wrapResolversPlugin';
 const PostGraphileUploadFieldPlugin = require("postgraphile-plugin-upload-field");
@@ -15,8 +15,8 @@ export default {
         PostGraphileUploadFieldPlugin
     ],
     dynamicJson: true,
-    showErrorStack: config.env !== 'production',
-    extendedErrors: config.env !== 'production' ? ['hint'] : [],
+    showErrorStack: globalConfig.env !== 'production',
+    extendedErrors: globalConfig.env !== 'production' ? ['hint'] : [],
     graphiql: false,
     simpleCollections: 'only',
     legacyRelations: 'omit',

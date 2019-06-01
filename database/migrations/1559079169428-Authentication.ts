@@ -1,5 +1,5 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
-import config from "../../globalConfig";
+import globalConfig from "../../globalConfig";
 
 export class Authentication1559079169428 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<any> {
@@ -92,8 +92,8 @@ export class Authentication1559079169428 implements MigrationInterface {
         WHERE S."invalidAfter" > NOW();
         `)
 
-        await queryRunner.query(`GRANT EXECUTE ON FUNCTION app_public.register(text, text, json) TO ${config.db.regularUser.name}`)
-        await queryRunner.query(`GRANT EXECUTE ON FUNCTION app_public.update_password(int, text) TO ${config.db.regularUser.name}`)
+        await queryRunner.query(`GRANT EXECUTE ON FUNCTION app_public.register(text, text, json) TO ${globalConfig.db.regularUser.name}`)
+        await queryRunner.query(`GRANT EXECUTE ON FUNCTION app_public.update_password(int, text) TO ${globalConfig.db.regularUser.name}`)
     }
 
     public async down(queryRunner: QueryRunner): Promise<any> {
