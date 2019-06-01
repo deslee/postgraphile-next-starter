@@ -141,6 +141,8 @@ export type AssetsOrderBy =   'NATURAL' |
   'UPDATED_AT_DESC' |
   'SITE_ID_ASC' |
   'SITE_ID_DESC' |
+  'URI_ASC' |
+  'URI_DESC' |
   'PRIMARY_KEY_ASC' |
   'PRIMARY_KEY_DESC'
 
@@ -291,6 +293,7 @@ export interface AssetCondition {
   createdAt?: Datetime | null
   updatedAt?: Datetime | null
   siteId?: Int | null
+  uri?: String | null
 }
 
 /*
@@ -302,6 +305,7 @@ export interface AssetInput {
   state: String
   data: JSON
   siteId: Int
+  uri?: Upload | null
 }
 
 /*
@@ -313,6 +317,7 @@ export interface AssetPatch {
   state?: String | null
   data?: JSON | null
   siteId?: Int | null
+  uri?: Upload | null
 }
 
 /*
@@ -1057,6 +1062,7 @@ export interface Asset extends Node {
   createdAt?: Datetime | null
   updatedAt?: Datetime | null
   siteId: Int
+  uri?: String | null
   site?: Site | null
   postAssetsAssets: Array<PostAssetsAsset>
 }
@@ -1476,3 +1482,8 @@ export type JSON = string
 The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
 */
 export type String = string
+
+/*
+The `Upload` scalar type represents a file upload.
+*/
+export type Upload = string

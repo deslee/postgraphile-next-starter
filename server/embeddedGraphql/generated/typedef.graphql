@@ -11,6 +11,7 @@ type Asset implements Node {
   createdAt: Datetime
   updatedAt: Datetime
   siteId: Int!
+  uri: String
 
   """Reads a single `Site` that is related to this `Asset`."""
   site: Site
@@ -60,6 +61,9 @@ input AssetCondition {
 
   """Checks for equality with the object’s `siteId` field."""
   siteId: Int
+
+  """Checks for equality with the object’s `uri` field."""
+  uri: String
 }
 
 """An input for mutations affecting `Asset`"""
@@ -68,6 +72,7 @@ input AssetInput {
   state: String!
   data: JSON!
   siteId: Int!
+  uri: Upload
 }
 
 """
@@ -78,6 +83,7 @@ input AssetPatch {
   state: String
   data: JSON
   siteId: Int
+  uri: Upload
 }
 
 """Methods to use when ordering `Asset`."""
@@ -99,6 +105,8 @@ enum AssetsOrderBy {
   UPDATED_AT_DESC
   SITE_ID_ASC
   SITE_ID_DESC
+  URI_ASC
+  URI_DESC
   PRIMARY_KEY_ASC
   PRIMARY_KEY_DESC
 }
@@ -2564,6 +2572,9 @@ type UpdateUserPayload {
   """
   query: Query
 }
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
 
 type User implements Node {
   """

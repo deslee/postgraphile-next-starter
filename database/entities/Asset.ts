@@ -28,6 +28,9 @@ export class Asset implements Auditable {
     posts: Post[];
 
     @Column({nullable: true})
+    uri: string;
+
+    @Column({nullable: true})
     createdBy: string;
 
     @Column({nullable: true})
