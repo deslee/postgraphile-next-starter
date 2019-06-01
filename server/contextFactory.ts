@@ -9,6 +9,7 @@ export default (req: CustomRequest, res: CustomResponse): CustomContext => {
     const pgSettings = {}
     if (req.user) {
         pgSettings['claims.userId'] = req.user.userId;
+        pgSettings['claims.sessionId'] = req.user.sessionId;
     }
     return {
         req, res,

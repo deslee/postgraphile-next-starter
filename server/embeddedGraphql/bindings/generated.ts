@@ -90,7 +90,8 @@ export interface Mutation {
     deleteUserByEmail: <T = DeleteUserPayload | null>(args: { input: DeleteUserByEmailInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     register: <T = RegisterPayload | null>(args: { input: RegisterInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updatePassword: <T = UpdatePasswordPayload | null>(args: { input: UpdatePasswordInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    login: <T = LoginPayload | null>(args: { input: LoginInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> 
+    login: <T = LoginPayload | null>(args: { input: LoginInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    logout: <T = Boolean>(args?: {}, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> 
   }
 
 export interface Subscription {}

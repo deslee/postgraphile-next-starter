@@ -78,7 +78,7 @@ export class Authentication1559079169428 implements MigrationInterface {
         BEGIN
             DELETE FROM app_private.session S WHERE S."invalidAfter" < NOW();
         end;
-        $$ LANGUAGE plpgsql STRICT SECURITY INVOKER;
+        $$ LANGUAGE plpgsql STRICT SECURITY DEFINER;
         `);
 
         await queryRunner.query(`CREATE FUNCTION app_public.me() RETURNS app_public."user" as $$

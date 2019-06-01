@@ -1323,6 +1323,7 @@ type Mutation {
     """
     input: LoginInput!
   ): LoginPayload
+  logout: Boolean!
 }
 
 """An object with a globally unique `ID`."""

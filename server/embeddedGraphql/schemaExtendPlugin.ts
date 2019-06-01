@@ -20,7 +20,8 @@ export const extendSchemaWithLogin = makeExtendSchemaPlugin(build => {
                 token: String!
             }
             extend type Mutation {
-                login(input: LoginInput!): LoginPayload
+                login(input: LoginInput!): LoginPayload,
+                logout: Boolean!
             }
         `,
         resolvers: {
@@ -63,6 +64,23 @@ export const extendSchemaWithLogin = makeExtendSchemaPlugin(build => {
 
                         await pgClient.query("RELEASE SAVEPOINT graphql_mutation");
                         return result;
+                    } catch (e) {
+                        await pgClient.query("ROLLBACK TO SAVEPOINT graphql_mutation");
+                        throw e;
+                    }
+                },
+                logout: async (_query, _, context: CustomPostGraphileContext, resolveInfo) => {
+                    const pgClient = context.pgClient;
+                    await pgClient.query("SAVEPOINT graphql_mutation");
+                    try {
+                        context.res.cookie('token', '', { maxAge: 0, httpOnly: true, sameSite: true, secure: config.env !== 'development' })
+                        context.res.cookie(config.sessionIdHeaderName, '', { maxAge: 0, httpOnly: false, sameSite: true, secure: config.env !== 'development' })
+                        
+                        if (context.req.user) {
+                            await pgClient.query(`SELECT app_hidden.logout()`);
+                        }
+
+                        return true;
                     } catch (e) {
                         await pgClient.query("ROLLBACK TO SAVEPOINT graphql_mutation");
                         throw e;

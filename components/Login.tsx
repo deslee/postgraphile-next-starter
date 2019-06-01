@@ -2,10 +2,10 @@ import * as React from 'react';
 import TextField from '@material-ui/core/TextField';
 import { Button } from '@material-ui/core';
 import { graphql, MutateProps, withApollo, WithApolloClient } from 'react-apollo';
-import * as cookie from 'cookie';
 
 import gql from "graphql-tag";
 import { LoginPayload } from 'server/embeddedGraphql/bindings';
+import Logout from './Logout';
 
 interface ComponentProps {
 }
@@ -41,13 +41,7 @@ const Login: React.FC<Props> = ({ mutate: login, client }) => {
             <TextField label="Password" type="password" inputRef={passwordEl} /><br />
             <Button type="submit">Login</Button>
         </form>
-        <Button type="button" onClick={() => {
-            document.cookie = cookie.serialize('X-XSRF-ID', '', {
-                maxAge: Date.now(),
-                expires: new Date()
-            });
-            client.resetStore()
-        }}>Logout</Button>
+        <Logout />
     </>
 }
 

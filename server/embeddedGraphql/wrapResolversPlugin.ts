@@ -4,7 +4,7 @@ import globalConfig from "../../globalConfig";
 import { validateSession } from "./validateSession";
 import { AuthenticationError } from "apollo-server-core";
 
-const WHITELIST = ['login']
+const WHITELIST = ['login', 'logout']
 
 export const wrapRootMutationsPlugin = makeWrapResolversPlugin(context => {
     if (context.scope.isRootMutation) {
