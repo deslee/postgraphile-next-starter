@@ -29,6 +29,21 @@ const config = convict({
         default: 'X-XSRF-ID',
         env: 'SESSION_ID_HEADER_NAME'
     },
+    awsAccessKey: {
+        format: String,
+        default: '',
+        env: 'AWS_ACCESS_KEY_ID'
+    },
+    awsSecretAccessKey: {
+        format: String,
+        default: '',
+        env: 'AWS_SECRET_ACCESS_KEY'
+    },
+    awsS3UploadBucket: {
+        format: String,
+        default: '',
+        env: 'S3_UPLOAD_BUCKET'
+    },
     db: {
         host: {
             format: 'ipaddress',
@@ -84,7 +99,13 @@ const config = convict({
 
 const env = (config.get('env') as Environment);
 config.loadFile(`./config.${env}.json`)
+console.log(`Loaded ./config.${env}.json`)
 config.validate({ allowed: 'strict' })
+
+if (!config.get('awsAccessKey') || !config.get('awsSecretAccessKey')) {
+    throw new Error("No aws credentials!");
+}
+
 
 if (config.get('jwtSecret') === DEFAULT_JWT_SECRET && env === 'production') {
     throw new Error("Please define a JWT.");
@@ -99,5 +120,8 @@ export default {
         url: (opt: { admin?: boolean } = { admin: false }) => `postgres://${opt.admin ? db.adminUser.name : db.regularUser.name}:${opt.admin ? db.adminUser.pass : db.regularUser.pass}@${db.host}:${db.port}/${db.name}`,
     }))(config.get('db')),
     tokenExpirationSeconds: config.get('tokenExpirationSeconds'),
-    sessionIdHeaderName: config.get('sessionIdHeaderName')
+    sessionIdHeaderName: config.get('sessionIdHeaderName'),
+    awsAccessKey: config.get('awsAccessKey'),
+    awsSecretAccessKey: config.get('awsSecretAccessKey'),
+    awsS3UploadBucket: config.get('awsS3UploadBucket')
 };

@@ -1,4 +1,4 @@
 {
   "watch": ["server", "static"],
-  "exec": "cross-env DEBUG=\"postgraphile:graphql,postgraphile:request,postgraphile:postgres*\" TS_NODE_PROJECT=tsconfig.server.json node -r ts-node/register --inspect server/index.ts"
+  "exec": "cross-env DEBUG=\"postgraphile:graphql,postgraphile:request,postgraphile:postgres*\" NODE_ENV=development TS_NODE_PROJECT=tsconfig.server.json node -r ts-node/register --inspect server/index.ts"
 }
