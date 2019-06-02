@@ -4,6 +4,9 @@ import { NormalizedCacheObject } from 'apollo-cache-inmemory';
 import ApolloClient from 'apollo-client';
 import withApollo from '../utils/withApollo';
 import { ApolloProvider } from 'react-apollo';
+import { createMuiTheme } from '@material-ui/core/styles';
+import blue from '@material-ui/core/colors/blue';
+import { ThemeProvider } from '@material-ui/styles';
 
 interface Props {
     apolloClient: ApolloClient<NormalizedCacheObject>
@@ -12,6 +15,13 @@ interface Props {
 interface State {
 
 }
+
+
+const theme = createMuiTheme({
+  palette: {
+    primary: blue,
+  },
+});
 
 export class CustomApp extends App<Props, State> {
     static async getInitialProps({ Component, ctx }: NextAppContext) {
@@ -35,8 +45,16 @@ export class CustomApp extends App<Props, State> {
         const { Component, pageProps, apolloClient } = this.props;
 
         return <Container>
+            <style jsx global>{`
+                body {
+                    padding: 0;
+                    margin: 0;
+                }
+            `}</style>
             <ApolloProvider client={apolloClient}>
-                <Component {...pageProps} />
+                <ThemeProvider theme={theme}>
+                    <Component {...pageProps} />
+                </ThemeProvider>
             </ApolloProvider>
         </Container>
     }

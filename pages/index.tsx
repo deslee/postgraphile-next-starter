@@ -8,6 +8,7 @@ import gql from "graphql-tag";
 import UserInfo from '../components/UserInfo';
 import Register from '../components/Register';
 import UploadAsset from '../components/UploadAsset';
+import Layout from '../components/Layout';
 
 interface ComponentProps {
 
@@ -26,26 +27,28 @@ const useStyles = makeStyles(theme => ({
 const Index: React.FC<Props> = (props: Props) => {
     const classes = useStyles();
 
-    return <Container>
-        <UserInfo />
-        <Grid container>
-            <Grid item xs>
-                <Paper className={classes.sheet}>
-                    <Register />
-                </Paper>
+    return <Layout>
+        <Container>
+            <UserInfo />
+            <Grid container>
+                <Grid item xs>
+                    <Paper className={classes.sheet}>
+                        <Register />
+                    </Paper>
+                </Grid>
+                <Grid item xs>
+                    <Paper className={classes.sheet}>
+                        <Login />
+                    </Paper>
+                </Grid>
             </Grid>
             <Grid item xs>
                 <Paper className={classes.sheet}>
-                    <Login />
+                    <UploadAsset />
                 </Paper>
             </Grid>
-        </Grid>
-        <Grid item xs>
-            <Paper className={classes.sheet}>
-                <UploadAsset />
-            </Paper>
-        </Grid>
-    </Container>
+        </Container>
+    </Layout>
 }
 
 export default Index
