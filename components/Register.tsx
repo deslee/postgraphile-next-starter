@@ -30,17 +30,22 @@ const Register: React.FC<Props> = ({ client, mutate }: Props) => <>
         initialValues={{ email: '', password: '', name: '' }}
         validationSchema={RegisterFormShape}
         onSubmit={async (values, actions) => {
-            await mutate({
-                variables: {
-                    input: {
-                        email: values.email,
-                        password: values.password,
-                        data: JSON.stringify({
-                            name: values.name
-                        })
+            try {
+                await mutate({
+                    variables: {
+                        input: {
+                            email: values.email,
+                            password: values.password,
+                            data: JSON.stringify({
+                                name: values.name
+                            })
+                        }
                     }
-                }
-            });
+                });
+            }
+            finally {
+                actions.setSubmitting(false);
+            }
         }}
     >{({ errors, touched }) => <Form>
         <Field name="name" component={TextField} type="text" label="Name" /><br />
