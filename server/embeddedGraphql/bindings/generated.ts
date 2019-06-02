@@ -45,7 +45,10 @@ export interface Mutation {
     register: <T = RegisterPayload | null>(args: { input: RegisterInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updatePassword: <T = UpdatePasswordPayload | null>(args: { input: UpdatePasswordInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     login: <T = LoginPayload | null>(args: { input: LoginInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    logout: <T = Boolean>(args?: {}, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> 
+    logout: <T = Boolean>(args?: {}, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertAsset: <T = UpsertAssetPayload | null>(args: { input: UpsertAssetInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    upsertPost: <T = UpsertPostPayload | null>(args: { input: UpsertPostInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    upsertUser: <T = UpsertUserPayload | null>(args: { input: UpsertUserInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> 
   }
 
 export interface Subscription {}
@@ -169,7 +172,7 @@ export interface AssetInput {
   id?: Int | null
   state: String
   data: JSON
-  uri?: String | null
+  uri?: Upload | null
 }
 
 /*
@@ -180,7 +183,7 @@ export interface AssetPatch {
   id?: Int | null
   state?: String | null
   data?: JSON | null
-  uri?: String | null
+  uri?: Upload | null
 }
 
 /*
@@ -429,6 +432,33 @@ export interface UpdateUserInput {
 }
 
 /*
+ * All input for the upsert `Asset` mutation.
+
+ */
+export interface UpsertAssetInput {
+  clientMutationId?: String | null
+  asset: AssetInput
+}
+
+/*
+ * All input for the upsert `Post` mutation.
+
+ */
+export interface UpsertPostInput {
+  clientMutationId?: String | null
+  post: PostInput
+}
+
+/*
+ * All input for the upsert `User` mutation.
+
+ */
+export interface UpsertUserInput {
+  clientMutationId?: String | null
+  user: UserInput
+}
+
+/*
  * A condition to be used against `User` object types. All fields are tested for equality and combined with a logical ‘and.’
 
  */
@@ -614,6 +644,36 @@ export interface UpdateUserPayload {
   query?: Query | null
 }
 
+/*
+ * The output of our upsert `Asset` mutation.
+
+ */
+export interface UpsertAssetPayload {
+  clientMutationId?: String | null
+  asset?: Asset | null
+  query?: Query | null
+}
+
+/*
+ * The output of our upsert `Post` mutation.
+
+ */
+export interface UpsertPostPayload {
+  clientMutationId?: String | null
+  post?: Post | null
+  query?: Query | null
+}
+
+/*
+ * The output of our upsert `User` mutation.
+
+ */
+export interface UpsertUserPayload {
+  clientMutationId?: String | null
+  user?: User | null
+  query?: Query | null
+}
+
 export interface User extends Node {
   nodeId: ID_Output
   id: Int
@@ -656,3 +716,8 @@ export type JSON = string
 The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
 */
 export type String = string
+
+/*
+The `Upload` scalar type represents a file upload.
+*/
+export type Upload = string

@@ -5,6 +5,8 @@ import ApolloClient from 'apollo-client';
 import withApollo from '../utils/withApollo';
 import { ApolloProvider } from 'react-apollo';
 import { ThemeProvider } from '@material-ui/styles';
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import DayJsUtils from '@date-io/dayjs';
 import theme from '../theme';
 
 interface Props {
@@ -47,9 +49,11 @@ export class CustomApp extends App<Props, State> {
                 }
             `}</style>
             <ApolloProvider client={apolloClient}>
-                <ThemeProvider theme={theme}>
-                    <Component {...pageProps} />
-                </ThemeProvider>
+                <MuiPickersUtilsProvider utils={DayJsUtils}>
+                    <ThemeProvider theme={theme}>
+                        <Component {...pageProps} />
+                    </ThemeProvider>
+                </MuiPickersUtilsProvider>
             </ApolloProvider>
         </Container>
     }

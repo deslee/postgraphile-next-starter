@@ -4,6 +4,7 @@ import globalConfig from '../../globalConfig'
 import { extendSchemaWithLogin } from './schemaExtendPlugin';
 import { wrapRootMutationsPlugin } from './wrapResolversPlugin';
 import { resolveUpload } from './uploadFile';
+import { PgMutationUpsertPlugin } from 'postgraphile-upsert-plugin';
 const PostGraphileUploadFieldPlugin = require("postgraphile-plugin-upload-field");
 
 
@@ -12,7 +13,8 @@ export default {
     PgSimplifyInflectorPlugin, // simplified field names
     extendSchemaWithLogin,
     wrapRootMutationsPlugin,
-    PostGraphileUploadFieldPlugin
+    PostGraphileUploadFieldPlugin,
+    PgMutationUpsertPlugin
   ],
   dynamicJson: true,
   showErrorStack: globalConfig.env !== 'production',

@@ -47,7 +47,7 @@ input AssetInput {
   id: Int
   state: String!
   data: JSON!
-  uri: String
+  uri: Upload
 }
 
 """
@@ -57,7 +57,7 @@ input AssetPatch {
   id: Int
   state: String
   data: JSON
-  uri: String
+  uri: Upload
 }
 
 """Methods to use when ordering `Asset`."""
@@ -512,6 +512,30 @@ type Mutation {
     input: LoginInput!
   ): LoginPayload
   logout: Boolean!
+
+  """Upserts a single `Asset`."""
+  upsertAsset(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpsertAssetInput!
+  ): UpsertAssetPayload
+
+  """Upserts a single `Post`."""
+  upsertPost(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpsertPostInput!
+  ): UpsertPostPayload
+
+  """Upserts a single `User`."""
+  upsertUser(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpsertUserInput!
+  ): UpsertUserPayload
 }
 
 """An object with a globally unique `ID`."""
@@ -936,6 +960,96 @@ type UpdateUserPayload {
   clientMutationId: String
 
   """The `User` that was updated by this mutation."""
+  user: User
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
+
+"""All input for the upsert `Asset` mutation."""
+input UpsertAssetInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `Asset` to be upserted by this mutation."""
+  asset: AssetInput!
+}
+
+"""The output of our upsert `Asset` mutation."""
+type UpsertAssetPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Asset` that was upserted by this mutation."""
+  asset: Asset
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+}
+
+"""All input for the upsert `Post` mutation."""
+input UpsertPostInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `Post` to be upserted by this mutation."""
+  post: PostInput!
+}
+
+"""The output of our upsert `Post` mutation."""
+type UpsertPostPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Post` that was upserted by this mutation."""
+  post: Post
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+}
+
+"""All input for the upsert `User` mutation."""
+input UpsertUserInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `User` to be upserted by this mutation."""
+  user: UserInput!
+}
+
+"""The output of our upsert `User` mutation."""
+type UpsertUserPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `User` that was upserted by this mutation."""
   user: User
 
   """
