@@ -2,13 +2,15 @@ import * as React from 'react';
 import { MutateProps, withApollo, graphql } from 'react-apollo';
 import { Asset, CreateAssetPayload, AssetInput, CreateAssetInput } from 'server/embeddedGraphql/bindings/generated';
 import gql from 'graphql-tag';
-import { Input, Button, Typography, TextField } from '@material-ui/core';
+import { Input, Button, Typography } from '@material-ui/core';
+import { TextField } from 'formik-material-ui';
 import { useState, useContext } from 'react';
+import { Formik, Form, Field } from 'formik';
 
 interface ComponentProps {
 
 }
-interface Props extends ComponentProps, MutateProps<CreateAssetResponse> {
+interface Props extends ComponentProps, MutateProps<CreateAssetResponse, CreateAssetVariables> {
 
 }
 
@@ -19,20 +21,19 @@ const UploadAssetComponent: React.FC<Props> = (props: Props) => {
     const [loading, setLoading] = useState<boolean>(false);
     const [uri, setUri] = useState<string>('');
 
-    return <div>
-        <form
-            onSubmit={async event => {
-                event.preventDefault();
+    return <>
+        <Typography variant="h2">Upload Asset</Typography>
+        <Formik<any>
+            initialValues={{}}
+            onSubmit={async (values, action) => {
                 setLoading(true);
-                const target = event.target;
                 const fd = new FormData(event.target as any);
-                const name = fd.get("name")
                 const file = fd.get("file");
 
                 const input: CreateAssetInput = {
                     asset: {
                         state: 'CREATED',
-                        data: JSON.stringify({ name }),
+                        data: JSON.stringify({ name: values.name }),
                         uri: file as any
                     }
                 }
@@ -49,29 +50,32 @@ const UploadAssetComponent: React.FC<Props> = (props: Props) => {
                 }
                 finally {
                     setLoading(false);
+                    action.setSubmitting(false);
                 }
             }}
         >
-            {filename ? filename : 'Select file'}<br />
-            <TextField type="text" name="name" required label="Name" />
-            <input type="file" name="file" required onChange={e => {
+        {({errors, touched}) => <Form>
+            <Field name="name" component={TextField} type="text" label="Name" required/><br />
+            {errors.name && touched.name && <div>{errors.name}</div>}
+            <Field name="file" component="input" type="file" label="file" onChange={e => {
                 const fileName =
                     e.target.files.length > 0 ? e.target.files[0].name : "";
                 setFilename(fileName);
-            }} />
+            }} />            
             <Button type="submit">Submit</Button><br />
             {uri && <Typography>Uploaded:: <a target="_blank" href={`${process.env.s3bucketUrl}/${uri}`}>{`${process.env.s3bucketUrl}/${uri}`}</a></Typography>}
-
-        </form>
-        {loading && <Typography>Loading...</Typography>}
-    </div>
-
+            {loading && <Typography>Loading...</Typography>}
+        </Form>}</Formik>
+    </>
 }
 
+interface CreateAssetVariables {
+    input: CreateAssetInput
+}
 interface CreateAssetResponse {
     createAsset: CreateAssetPayload
 }
-export default graphql<ComponentProps, CreateAssetResponse>(gql`
+export default graphql<ComponentProps, CreateAssetResponse, CreateAssetVariables>(gql`
 mutation createAsset($input: CreateAssetInput!) {
     createAsset(input: $input) {
         asset {

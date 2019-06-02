@@ -10,7 +10,7 @@ import { LoginInputShape } from '../server/validators/validators';
 
 interface ComponentProps {
 }
-interface Props extends WithApolloClient<ComponentProps>, MutateProps<LoginResult> {
+interface Props extends WithApolloClient<ComponentProps>, MutateProps<LoginResult, LoginVariables> {
 }
 
 const Login: React.FC<Props> = ({ mutate: login, client }) => {
@@ -49,11 +49,13 @@ const Login: React.FC<Props> = ({ mutate: login, client }) => {
         <Logout />
     </>
 }
-
+interface LoginVariables {
+    input: LoginInput
+}
 export interface LoginResult {
     login: LoginPayload
 }
-export default withApollo(graphql<WithApolloClient<ComponentProps>, LoginResult>(gql`
+export default withApollo(graphql<WithApolloClient<ComponentProps>, LoginResult, LoginVariables>(gql`
 mutation Login($input: LoginInput!) {
     login(input: $input) {
         token

@@ -24,15 +24,12 @@ interface RegisterForm {
     password: string;
 }
 
-console.log(RegisterFormShape)
-
 const Register: React.FC<Props> = ({ client, mutate }: Props) => <>
     <Typography variant="h2">Register</Typography>
     <Formik<RegisterForm>
         initialValues={{ email: '', password: '', name: '' }}
         validationSchema={RegisterFormShape}
         onSubmit={async (values, actions) => {
-            console.log(values);
             await mutate({
                 variables: {
                     input: {
