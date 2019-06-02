@@ -1,12 +1,19 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 
-const tables = ['user', 'site', 'post', 'asset', 'category']
+const auditColumns = ['createdBy', 'updatedBy', 'createdAt', 'updatedAt']
+const tables = ['user', 'post', 'asset']
 const create_trigger = 'audit_fields_on_create';
 const update_trigger = 'audit_fields_on_update'
 
-export class AuditTrigger1559023742282 implements MigrationInterface {
+export class AuditColumns1559445742113 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<any> {
+        for(const table of tables) {
+            for (const column of auditColumns) {
+                await queryRunner.query(`comment on column "app_public"."${table}"."${column}" is E'@omit create,update'`)
+            }
+        }
+        
         await queryRunner.query(`
         CREATE OR REPLACE FUNCTION app_public.trigger_set_audit_update_fields()
         RETURNS TRIGGER AS $$
@@ -44,10 +51,13 @@ export class AuditTrigger1559023742282 implements MigrationInterface {
 
     public async down(queryRunner: QueryRunner): Promise<any> {
         for(const table of tables) {
+            for (const column of auditColumns) {
+                await queryRunner.query(`comment on column "app_public"."${table}"."${column}" is NULL`)
+            }
             await queryRunner.query(`DROP TRIGGER ${update_trigger} ON "app_public"."${table}"`);
-
             await queryRunner.query(`DROP TRIGGER ${create_trigger} ON "app_public"."${table}"`);
         }
+
         await queryRunner.query(`
         DROP FUNCTION "app_public".trigger_set_audit_create_fields;
         `)

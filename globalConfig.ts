@@ -70,7 +70,7 @@ const config = convict({
         regularUser: {
             name: {
                 format: String,
-                default: 'le3io_user',
+                default: 'postgraphile_next_starter_user',
                 env: 'DB_USER_NAME'
             },
             pass: {
@@ -81,18 +81,8 @@ const config = convict({
         },
         name: {
             format: String,
-            default: 'le3io',
+            default: 'postgraphile_next_starter',
             env: 'DB_NAME'
-        },
-        schema: {
-            format: String,
-            default: 'app_public',
-            env: 'DB_SCHEMA'
-        },
-        typeOrmSchema: {
-            format: String,
-            default: 'typeorm',
-            env: "TYPEORM_SCHEMA"
         }
     }
 })

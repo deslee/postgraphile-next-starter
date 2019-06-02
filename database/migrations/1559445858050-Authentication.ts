@@ -1,7 +1,9 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 import globalConfig from "../../globalConfig";
 
-export class Authentication1559079169428 implements MigrationInterface {
+const tables = ['user', 'post', 'asset']
+
+export class Authentication1559445858050 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<any> {
         await queryRunner.query(`CREATE EXTENSION "uuid-ossp"`);
         await queryRunner.query(`CREATE EXTENSION "pgcrypto"`);
@@ -94,9 +96,31 @@ export class Authentication1559079169428 implements MigrationInterface {
 
         await queryRunner.query(`GRANT EXECUTE ON FUNCTION app_public.register(text, text, json) TO ${globalConfig.db.regularUser.name}`)
         await queryRunner.query(`GRANT EXECUTE ON FUNCTION app_public.update_password(int, text) TO ${globalConfig.db.regularUser.name}`)
+        
+        await queryRunner.query(`
+        CREATE FUNCTION app_hidden.logout() RETURNS VOID AS $$
+          BEGIN
+          DELETE FROM app_private.session WHERE token=current_setting('claims.sessionId', true)::text AND "userId"::text=current_setting('claims.userId', true)::text;
+          END
+        $$ language plpgsql STRICT SECURITY DEFINER`)
+        
+                await queryRunner.query(`
+        CREATE FUNCTION app_hidden.logout_all() RETURNS VOID AS $$
+          BEGIN
+          DELETE FROM app_private.session WHERE "userId"::text=current_setting('claims.userId', true)::text;
+          END
+        $$ language plpgsql STRICT SECURITY DEFINER
+        `);
+
+        for(const table of tables) {
+            await queryRunner.query(`GRANT SELECT, INSERT ON TABLE "app_public"."${table}" TO ${globalConfig.db.regularUser.name}`);
+        }
     }
 
     public async down(queryRunner: QueryRunner): Promise<any> {
+        for(const table of tables) {
+            await queryRunner.query(`REVOKE SELECT, INSERT ON TABLE "app_public"."${table}" FROM ${globalConfig.db.regularUser.name}`);
+        }
         await queryRunner.query(`DROP VIEW app_private.active_sessions`);
         await queryRunner.query(`DROP FUNCTION app_public.me()`);
         await queryRunner.query(`DROP FUNCTION app_private.clear_expired_sessions()`);
@@ -105,5 +129,7 @@ export class Authentication1559079169428 implements MigrationInterface {
         await queryRunner.query(`DROP FUNCTION app_public.register(email text, password text, data JSON)`);
         await queryRunner.query(`DROP EXTENSION "pgcrypto"`);
         await queryRunner.query(`DROP EXTENSION "uuid-ossp"`);
+        await queryRunner.query(`DROP FUNCTION app_hidden.logout()`)
+        await queryRunner.query(`DROP FUNCTION app_hidden.logout_all()`)
     }
 }

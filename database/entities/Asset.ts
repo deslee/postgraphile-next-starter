@@ -1,31 +1,23 @@
 import { Entity, Unique, Column, PrimaryGeneratedColumn, ManyToOne, Index, JoinColumn, ManyToMany } from "typeorm";
 import globalConfig from "../../globalConfig";
 import { Auditable } from "./Auditable";
-import { Site } from "./Site";
 import { Post } from "./Post";
 
 @Entity({
-    schema: globalConfig.db.schema
+    schema: "app_public"
 })
 export class Asset implements Auditable {
     @PrimaryGeneratedColumn()
     id: string;
 
-    @ManyToOne(_ => Site, site => site.assets, { nullable: false })
-    @Index()
-    @JoinColumn({ name: 'siteId' })
-    site: Site;
-
     @Column()
+    @Index()
     state: string;
 
     @Column({
         type: 'jsonb'
     })
     data: string;
-
-    @ManyToMany(_ => Post, post => post.assets)
-    posts: Post[];
 
     @Column({nullable: true})
     uri: string;

@@ -1,28 +1,21 @@
 import { Auditable } from "./Auditable";
 import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn, Index, ManyToMany } from "typeorm";
 import globalConfig from "../../globalConfig";
-import { Site } from "./Site";
 
 @Entity({
-    schema: globalConfig.db.schema
+    schema: "app_public"
 })
 export class User implements Auditable {
     @PrimaryGeneratedColumn()
     id: string;
 
-    @Column({
-        unique: true
-    })
-    @Index({ unique: true })
+    @Column({ unique: true })
     email: string;
 
     @Column({
         type: 'jsonb'
     })
     data: string;
-
-    @ManyToMany(_ => Site, site => site.users)
-    sites: Site[];
 
     @Column({ nullable: true })
     createdBy: string;

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button } from '@material-ui/core';
+import { Button, Typography } from '@material-ui/core';
 import { Formik, Form, Field } from 'formik';
 import { graphql, MutateProps, withApollo, WithApolloClient } from 'react-apollo';
 import { TextField } from 'formik-material-ui';
@@ -15,6 +15,7 @@ interface Props extends WithApolloClient<ComponentProps>, MutateProps<LoginResul
 
 const Login: React.FC<Props> = ({ mutate: login, client }) => {
     return <>
+        <Typography variant="h2">Login</Typography>
         <Formik<LoginInput>
             initialValues={{ email: '', password: '' }}
             validationSchema={LoginInputShape}
@@ -59,6 +60,7 @@ mutation Login($input: LoginInput!) {
         user {
             id
             email
+            data
         }
     }
 }

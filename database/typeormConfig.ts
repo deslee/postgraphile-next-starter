@@ -8,7 +8,7 @@ const ormconfig: PostgresConnectionOptions = {
     username: globalConfig.db.adminUser.name,
     password: globalConfig.db.adminUser.pass,
     database: globalConfig.db.name,
-    schema: globalConfig.db.typeOrmSchema,
+    schema: "typeorm",
     logging: true,
     migrationsRun: false,
     entities: [

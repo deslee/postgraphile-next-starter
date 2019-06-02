@@ -12,7 +12,7 @@ export const getSchema = async () => {
     if (!_schema) {
         _schema = await createPostGraphileSchema(
             globalConfig.db.url({ admin: true }),
-            globalConfig.db.schema,
+            "app_public",
             postGraphileOptions
         );
     }

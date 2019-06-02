@@ -1,41 +1,18 @@
-import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, ManyToOne, Index, Unique, ManyToMany, JoinTable } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, Index } from "typeorm";
 import globalConfig from "../../globalConfig";
 import { Auditable } from "./Auditable";
-import { Site } from "./Site";
-import { Category } from "./Category";
-import { Asset } from "./Asset";
 
 @Entity({
-    schema: globalConfig.db.schema
+    schema: "app_public"
 })
-@Unique(['site', 'name'])
-@Index(['id', 'site'], { unique: true })
-@Index(['site', 'name'], { unique: true })
 export class Post implements Auditable {
     @PrimaryGeneratedColumn()
     id: string;
 
-    @ManyToOne(_ => Site, site => site.posts, { nullable: false })
-    @Index()
-    @JoinColumn({ name: 'siteId' })
-    site: Site;
-
     @Column()
     name: string;
 
-    @ManyToMany(_ => Category, category => category.posts)
-    @JoinTable()
-    categories: Category[]
-
-    @ManyToMany(_ => Asset, asset => asset.posts)
-    @JoinTable()
-    assets: Asset[];
-
-    @Column({nullable: true})
-    password: string;
-
-    @Column({nullable: true})
-    @Index()
+    @Column({nullable: true, unique: true})
     type: string;
 
     @Column({nullable: true})

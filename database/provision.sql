@@ -1,10 +1,9 @@
-CREATE DATABASE le3io;
-\c le3io
+CREATE DATABASE postgraphile_next_starter;
+\c postgraphile_next_starter
 CREATE SCHEMA app_public;
 CREATE SCHEMA app_hidden;
 CREATE SCHEMA typeorm;
 CREATE SCHEMA app_private;
-CREATE USER le3io_user WITH PASSWORD 'password';
-CREATE USER le3io_server WITH PASSWORD 'password';
-GRANT USAGE ON SCHEMA app_public, app_hidden to le3io_user;
-GRANT USAGE ON SCHEMA app_public, app_private, app_hidden to le3io_server;
+CREATE USER postgraphile_next_starter_user WITH PASSWORD 'password';
+GRANT USAGE ON SCHEMA app_public, app_hidden to postgraphile_next_starter_user;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA app_public TO postgraphile_next_starter_user;

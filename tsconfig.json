@@ -12,6 +12,8 @@
     "esModuleInterop": false,
     "skipLibCheck": true,
     "isolatedModules": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "removeComments": false,
     "preserveConstEnums": true,
     "sourceMap": true

@@ -4,7 +4,7 @@ import postGraphileOptions from './postGraphileOptions';
 
 postgraphile(
     globalConfig.db.url({admin: true}),
-    globalConfig.db.schema,
+    "app_public",
     {
         ...postGraphileOptions,
         exportGqlSchemaPath: './server/embeddedGraphql/generated/typedef.graphql'

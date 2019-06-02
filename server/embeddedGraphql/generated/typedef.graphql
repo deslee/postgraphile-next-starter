@@ -6,32 +6,11 @@ type Asset implements Node {
   id: Int!
   state: String!
   data: JSON!
+  uri: String
   createdBy: String
   updatedBy: String
   createdAt: Datetime
   updatedAt: Datetime
-  siteId: Int!
-  uri: String
-
-  """Reads a single `Site` that is related to this `Asset`."""
-  site: Site
-
-  """Reads and enables pagination through a set of `PostAssetsAsset`."""
-  postAssetsAssets(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Skip the first `n` values."""
-    offset: Int
-
-    """The method to use when ordering `PostAssetsAsset`."""
-    orderBy: [PostAssetsAssetsOrderBy!]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: PostAssetsAssetCondition
-  ): [PostAssetsAsset!]!
 }
 
 """
@@ -47,6 +26,9 @@ input AssetCondition {
   """Checks for equality with the object’s `data` field."""
   data: JSON
 
+  """Checks for equality with the object’s `uri` field."""
+  uri: String
+
   """Checks for equality with the object’s `createdBy` field."""
   createdBy: String
 
@@ -58,12 +40,6 @@ input AssetCondition {
 
   """Checks for equality with the object’s `updatedAt` field."""
   updatedAt: Datetime
-
-  """Checks for equality with the object’s `siteId` field."""
-  siteId: Int
-
-  """Checks for equality with the object’s `uri` field."""
-  uri: String
 }
 
 """An input for mutations affecting `Asset`"""
@@ -71,8 +47,7 @@ input AssetInput {
   id: Int
   state: String!
   data: JSON!
-  siteId: Int!
-  uri: Upload
+  uri: String
 }
 
 """
@@ -82,8 +57,7 @@ input AssetPatch {
   id: Int
   state: String
   data: JSON
-  siteId: Int
-  uri: Upload
+  uri: String
 }
 
 """Methods to use when ordering `Asset`."""
@@ -95,31 +69,8 @@ enum AssetsOrderBy {
   STATE_DESC
   DATA_ASC
   DATA_DESC
-  CREATED_BY_ASC
-  CREATED_BY_DESC
-  UPDATED_BY_ASC
-  UPDATED_BY_DESC
-  CREATED_AT_ASC
-  CREATED_AT_DESC
-  UPDATED_AT_ASC
-  UPDATED_AT_DESC
-  SITE_ID_ASC
-  SITE_ID_DESC
   URI_ASC
   URI_DESC
-  PRIMARY_KEY_ASC
-  PRIMARY_KEY_DESC
-}
-
-"""Methods to use when ordering `Category`."""
-enum CategoriesOrderBy {
-  NATURAL
-  ID_ASC
-  ID_DESC
-  DATA_ASC
-  DATA_DESC
-  NAME_ASC
-  NAME_DESC
   CREATED_BY_ASC
   CREATED_BY_DESC
   UPDATED_BY_ASC
@@ -128,95 +79,8 @@ enum CategoriesOrderBy {
   CREATED_AT_DESC
   UPDATED_AT_ASC
   UPDATED_AT_DESC
-  SITE_ID_ASC
-  SITE_ID_DESC
   PRIMARY_KEY_ASC
   PRIMARY_KEY_DESC
-}
-
-type Category implements Node {
-  """
-  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
-  """
-  nodeId: ID!
-  id: Int!
-  data: JSON!
-  name: String!
-  createdBy: String
-  updatedBy: String
-  createdAt: Datetime
-  updatedAt: Datetime
-  siteId: Int!
-
-  """Reads a single `Site` that is related to this `Category`."""
-  site: Site
-
-  """
-  Reads and enables pagination through a set of `PostCategoriesCategory`.
-  """
-  postCategoriesCategories(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Skip the first `n` values."""
-    offset: Int
-
-    """The method to use when ordering `PostCategoriesCategory`."""
-    orderBy: [PostCategoriesCategoriesOrderBy!]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: PostCategoriesCategoryCondition
-  ): [PostCategoriesCategory!]!
-}
-
-"""
-A condition to be used against `Category` object types. All fields are tested
-for equality and combined with a logical ‘and.’
-"""
-input CategoryCondition {
-  """Checks for equality with the object’s `id` field."""
-  id: Int
-
-  """Checks for equality with the object’s `data` field."""
-  data: JSON
-
-  """Checks for equality with the object’s `name` field."""
-  name: String
-
-  """Checks for equality with the object’s `createdBy` field."""
-  createdBy: String
-
-  """Checks for equality with the object’s `updatedBy` field."""
-  updatedBy: String
-
-  """Checks for equality with the object’s `createdAt` field."""
-  createdAt: Datetime
-
-  """Checks for equality with the object’s `updatedAt` field."""
-  updatedAt: Datetime
-
-  """Checks for equality with the object’s `siteId` field."""
-  siteId: Int
-}
-
-"""An input for mutations affecting `Category`"""
-input CategoryInput {
-  id: Int
-  data: JSON!
-  name: String!
-  siteId: Int!
-}
-
-"""
-Represents an update to a `Category`. Fields that are set will be updated.
-"""
-input CategoryPatch {
-  id: Int
-  data: JSON
-  name: String
-  siteId: Int
 }
 
 """All input for the create `Asset` mutation."""
@@ -246,115 +110,6 @@ type CreateAssetPayload {
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
-
-  """Reads a single `Site` that is related to this `Asset`."""
-  site: Site
-}
-
-"""All input for the create `Category` mutation."""
-input CreateCategoryInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """The `Category` to be created by this mutation."""
-  category: CategoryInput!
-}
-
-"""The output of our create `Category` mutation."""
-type CreateCategoryPayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """The `Category` that was created by this mutation."""
-  category: Category
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-
-  """Reads a single `Site` that is related to this `Category`."""
-  site: Site
-}
-
-"""All input for the create `PostAssetsAsset` mutation."""
-input CreatePostAssetsAssetInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """The `PostAssetsAsset` to be created by this mutation."""
-  postAssetsAsset: PostAssetsAssetInput!
-}
-
-"""The output of our create `PostAssetsAsset` mutation."""
-type CreatePostAssetsAssetPayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """The `PostAssetsAsset` that was created by this mutation."""
-  postAssetsAsset: PostAssetsAsset
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-
-  """Reads a single `Post` that is related to this `PostAssetsAsset`."""
-  post: Post
-
-  """Reads a single `Asset` that is related to this `PostAssetsAsset`."""
-  asset: Asset
-}
-
-"""All input for the create `PostCategoriesCategory` mutation."""
-input CreatePostCategoriesCategoryInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """The `PostCategoriesCategory` to be created by this mutation."""
-  postCategoriesCategory: PostCategoriesCategoryInput!
-}
-
-"""The output of our create `PostCategoriesCategory` mutation."""
-type CreatePostCategoriesCategoryPayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """The `PostCategoriesCategory` that was created by this mutation."""
-  postCategoriesCategory: PostCategoriesCategory
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-
-  """
-  Reads a single `Post` that is related to this `PostCategoriesCategory`.
-  """
-  post: Post
-
-  """
-  Reads a single `Category` that is related to this `PostCategoriesCategory`.
-  """
-  category: Category
 }
 
 """All input for the create `Post` mutation."""
@@ -384,73 +139,6 @@ type CreatePostPayload {
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
-
-  """Reads a single `Site` that is related to this `Post`."""
-  site: Site
-}
-
-"""All input for the create `Site` mutation."""
-input CreateSiteInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """The `Site` to be created by this mutation."""
-  site: SiteInput!
-}
-
-"""The output of our create `Site` mutation."""
-type CreateSitePayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """The `Site` that was created by this mutation."""
-  site: Site
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-}
-
-"""All input for the create `SiteUsersUser` mutation."""
-input CreateSiteUsersUserInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """The `SiteUsersUser` to be created by this mutation."""
-  siteUsersUser: SiteUsersUserInput!
-}
-
-"""The output of our create `SiteUsersUser` mutation."""
-type CreateSiteUsersUserPayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """The `SiteUsersUser` that was created by this mutation."""
-  siteUsersUser: SiteUsersUser
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-
-  """Reads a single `Site` that is related to this `SiteUsersUser`."""
-  site: Site
-
-  """Reads a single `User` that is related to this `SiteUsersUser`."""
-  user: User
 }
 
 """All input for the create `User` mutation."""
@@ -528,114 +216,6 @@ type DeleteAssetPayload {
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
-
-  """Reads a single `Site` that is related to this `Asset`."""
-  site: Site
-}
-
-"""All input for the `deleteCategoryByNodeId` mutation."""
-input DeleteCategoryByNodeIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `Category` to be deleted.
-  """
-  nodeId: ID!
-}
-
-"""All input for the `deleteCategoryBySiteIdAndName` mutation."""
-input DeleteCategoryBySiteIdAndNameInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  siteId: Int!
-  name: String!
-}
-
-"""All input for the `deleteCategory` mutation."""
-input DeleteCategoryInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  id: Int!
-}
-
-"""The output of our delete `Category` mutation."""
-type DeleteCategoryPayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """The `Category` that was deleted by this mutation."""
-  category: Category
-  deletedCategoryNodeId: ID
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-
-  """Reads a single `Site` that is related to this `Category`."""
-  site: Site
-}
-
-"""All input for the `deletePostAssetsAssetByNodeId` mutation."""
-input DeletePostAssetsAssetByNodeIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `PostAssetsAsset` to be deleted.
-  """
-  nodeId: ID!
-}
-
-"""All input for the `deletePostAssetsAsset` mutation."""
-input DeletePostAssetsAssetInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  postId: Int!
-  assetId: Int!
-}
-
-"""The output of our delete `PostAssetsAsset` mutation."""
-type DeletePostAssetsAssetPayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """The `PostAssetsAsset` that was deleted by this mutation."""
-  postAssetsAsset: PostAssetsAsset
-  deletedPostAssetsAssetNodeId: ID
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-
-  """Reads a single `Post` that is related to this `PostAssetsAsset`."""
-  post: Post
-
-  """Reads a single `Asset` that is related to this `PostAssetsAsset`."""
-  asset: Asset
 }
 
 """All input for the `deletePostByNodeId` mutation."""
@@ -652,68 +232,14 @@ input DeletePostByNodeIdInput {
   nodeId: ID!
 }
 
-"""All input for the `deletePostBySiteIdAndName` mutation."""
-input DeletePostBySiteIdAndNameInput {
+"""All input for the `deletePostByType` mutation."""
+input DeletePostByTypeInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
   """
   clientMutationId: String
-  siteId: Int!
-  name: String!
-}
-
-"""All input for the `deletePostCategoriesCategoryByNodeId` mutation."""
-input DeletePostCategoriesCategoryByNodeIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `PostCategoriesCategory` to be deleted.
-  """
-  nodeId: ID!
-}
-
-"""All input for the `deletePostCategoriesCategory` mutation."""
-input DeletePostCategoriesCategoryInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  postId: Int!
-  categoryId: Int!
-}
-
-"""The output of our delete `PostCategoriesCategory` mutation."""
-type DeletePostCategoriesCategoryPayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """The `PostCategoriesCategory` that was deleted by this mutation."""
-  postCategoriesCategory: PostCategoriesCategory
-  deletedPostCategoriesCategoryNodeId: ID
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-
-  """
-  Reads a single `Post` that is related to this `PostCategoriesCategory`.
-  """
-  post: Post
-
-  """
-  Reads a single `Category` that is related to this `PostCategoriesCategory`.
-  """
-  category: Category
+  type: String!
 }
 
 """All input for the `deletePost` mutation."""
@@ -742,110 +268,6 @@ type DeletePostPayload {
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
-
-  """Reads a single `Site` that is related to this `Post`."""
-  site: Site
-}
-
-"""All input for the `deleteSiteByName` mutation."""
-input DeleteSiteByNameInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  name: String!
-}
-
-"""All input for the `deleteSiteByNodeId` mutation."""
-input DeleteSiteByNodeIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `Site` to be deleted.
-  """
-  nodeId: ID!
-}
-
-"""All input for the `deleteSite` mutation."""
-input DeleteSiteInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  id: Int!
-}
-
-"""The output of our delete `Site` mutation."""
-type DeleteSitePayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """The `Site` that was deleted by this mutation."""
-  site: Site
-  deletedSiteNodeId: ID
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-}
-
-"""All input for the `deleteSiteUsersUserByNodeId` mutation."""
-input DeleteSiteUsersUserByNodeIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `SiteUsersUser` to be deleted.
-  """
-  nodeId: ID!
-}
-
-"""All input for the `deleteSiteUsersUser` mutation."""
-input DeleteSiteUsersUserInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  siteId: Int!
-  userId: Int!
-}
-
-"""The output of our delete `SiteUsersUser` mutation."""
-type DeleteSiteUsersUserPayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """The `SiteUsersUser` that was deleted by this mutation."""
-  siteUsersUser: SiteUsersUser
-  deletedSiteUsersUserNodeId: ID
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-
-  """Reads a single `Site` that is related to this `SiteUsersUser`."""
-  site: Site
-
-  """Reads a single `User` that is related to this `SiteUsersUser`."""
-  user: User
 }
 
 """All input for the `deleteUserByEmail` mutation."""
@@ -928,14 +350,6 @@ type Mutation {
     input: CreateAssetInput!
   ): CreateAssetPayload
 
-  """Creates a single `Category`."""
-  createCategory(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: CreateCategoryInput!
-  ): CreateCategoryPayload
-
   """Creates a single `Post`."""
   createPost(
     """
@@ -943,38 +357,6 @@ type Mutation {
     """
     input: CreatePostInput!
   ): CreatePostPayload
-
-  """Creates a single `PostAssetsAsset`."""
-  createPostAssetsAsset(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: CreatePostAssetsAssetInput!
-  ): CreatePostAssetsAssetPayload
-
-  """Creates a single `PostCategoriesCategory`."""
-  createPostCategoriesCategory(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: CreatePostCategoriesCategoryInput!
-  ): CreatePostCategoriesCategoryPayload
-
-  """Creates a single `Site`."""
-  createSite(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: CreateSiteInput!
-  ): CreateSitePayload
-
-  """Creates a single `SiteUsersUser`."""
-  createSiteUsersUser(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: CreateSiteUsersUserInput!
-  ): CreateSiteUsersUserPayload
 
   """Creates a single `User`."""
   createUser(
@@ -1000,30 +382,6 @@ type Mutation {
     input: UpdateAssetInput!
   ): UpdateAssetPayload
 
-  """Updates a single `Category` using its globally unique id and a patch."""
-  updateCategoryByNodeId(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateCategoryByNodeIdInput!
-  ): UpdateCategoryPayload
-
-  """Updates a single `Category` using a unique key and a patch."""
-  updateCategory(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateCategoryInput!
-  ): UpdateCategoryPayload
-
-  """Updates a single `Category` using a unique key and a patch."""
-  updateCategoryBySiteIdAndName(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateCategoryBySiteIdAndNameInput!
-  ): UpdateCategoryPayload
-
   """Updates a single `Post` using its globally unique id and a patch."""
   updatePostByNodeId(
     """
@@ -1041,92 +399,12 @@ type Mutation {
   ): UpdatePostPayload
 
   """Updates a single `Post` using a unique key and a patch."""
-  updatePostBySiteIdAndName(
+  updatePostByType(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: UpdatePostBySiteIdAndNameInput!
+    input: UpdatePostByTypeInput!
   ): UpdatePostPayload
-
-  """
-  Updates a single `PostAssetsAsset` using its globally unique id and a patch.
-  """
-  updatePostAssetsAssetByNodeId(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdatePostAssetsAssetByNodeIdInput!
-  ): UpdatePostAssetsAssetPayload
-
-  """Updates a single `PostAssetsAsset` using a unique key and a patch."""
-  updatePostAssetsAsset(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdatePostAssetsAssetInput!
-  ): UpdatePostAssetsAssetPayload
-
-  """
-  Updates a single `PostCategoriesCategory` using its globally unique id and a patch.
-  """
-  updatePostCategoriesCategoryByNodeId(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdatePostCategoriesCategoryByNodeIdInput!
-  ): UpdatePostCategoriesCategoryPayload
-
-  """
-  Updates a single `PostCategoriesCategory` using a unique key and a patch.
-  """
-  updatePostCategoriesCategory(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdatePostCategoriesCategoryInput!
-  ): UpdatePostCategoriesCategoryPayload
-
-  """Updates a single `Site` using its globally unique id and a patch."""
-  updateSiteByNodeId(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateSiteByNodeIdInput!
-  ): UpdateSitePayload
-
-  """Updates a single `Site` using a unique key and a patch."""
-  updateSite(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateSiteInput!
-  ): UpdateSitePayload
-
-  """Updates a single `Site` using a unique key and a patch."""
-  updateSiteByName(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateSiteByNameInput!
-  ): UpdateSitePayload
-
-  """
-  Updates a single `SiteUsersUser` using its globally unique id and a patch.
-  """
-  updateSiteUsersUserByNodeId(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateSiteUsersUserByNodeIdInput!
-  ): UpdateSiteUsersUserPayload
-
-  """Updates a single `SiteUsersUser` using a unique key and a patch."""
-  updateSiteUsersUser(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateSiteUsersUserInput!
-  ): UpdateSiteUsersUserPayload
 
   """Updates a single `User` using its globally unique id and a patch."""
   updateUserByNodeId(
@@ -1168,30 +446,6 @@ type Mutation {
     input: DeleteAssetInput!
   ): DeleteAssetPayload
 
-  """Deletes a single `Category` using its globally unique id."""
-  deleteCategoryByNodeId(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteCategoryByNodeIdInput!
-  ): DeleteCategoryPayload
-
-  """Deletes a single `Category` using a unique key."""
-  deleteCategory(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteCategoryInput!
-  ): DeleteCategoryPayload
-
-  """Deletes a single `Category` using a unique key."""
-  deleteCategoryBySiteIdAndName(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteCategoryBySiteIdAndNameInput!
-  ): DeleteCategoryPayload
-
   """Deletes a single `Post` using its globally unique id."""
   deletePostByNodeId(
     """
@@ -1209,86 +463,12 @@ type Mutation {
   ): DeletePostPayload
 
   """Deletes a single `Post` using a unique key."""
-  deletePostBySiteIdAndName(
+  deletePostByType(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: DeletePostBySiteIdAndNameInput!
+    input: DeletePostByTypeInput!
   ): DeletePostPayload
-
-  """Deletes a single `PostAssetsAsset` using its globally unique id."""
-  deletePostAssetsAssetByNodeId(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeletePostAssetsAssetByNodeIdInput!
-  ): DeletePostAssetsAssetPayload
-
-  """Deletes a single `PostAssetsAsset` using a unique key."""
-  deletePostAssetsAsset(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeletePostAssetsAssetInput!
-  ): DeletePostAssetsAssetPayload
-
-  """
-  Deletes a single `PostCategoriesCategory` using its globally unique id.
-  """
-  deletePostCategoriesCategoryByNodeId(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeletePostCategoriesCategoryByNodeIdInput!
-  ): DeletePostCategoriesCategoryPayload
-
-  """Deletes a single `PostCategoriesCategory` using a unique key."""
-  deletePostCategoriesCategory(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeletePostCategoriesCategoryInput!
-  ): DeletePostCategoriesCategoryPayload
-
-  """Deletes a single `Site` using its globally unique id."""
-  deleteSiteByNodeId(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteSiteByNodeIdInput!
-  ): DeleteSitePayload
-
-  """Deletes a single `Site` using a unique key."""
-  deleteSite(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteSiteInput!
-  ): DeleteSitePayload
-
-  """Deletes a single `Site` using a unique key."""
-  deleteSiteByName(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteSiteByNameInput!
-  ): DeleteSitePayload
-
-  """Deletes a single `SiteUsersUser` using its globally unique id."""
-  deleteSiteUsersUserByNodeId(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteSiteUsersUserByNodeIdInput!
-  ): DeleteSiteUsersUserPayload
-
-  """Deletes a single `SiteUsersUser` using a unique key."""
-  deleteSiteUsersUser(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteSiteUsersUserInput!
-  ): DeleteSiteUsersUserPayload
 
   """Deletes a single `User` using its globally unique id."""
   deleteUserByNodeId(
@@ -1349,7 +529,6 @@ type Post implements Node {
   nodeId: ID!
   id: Int!
   name: String!
-  password: String
   type: String
   date: Datetime
   data: JSON!
@@ -1357,154 +536,6 @@ type Post implements Node {
   updatedBy: String
   createdAt: Datetime
   updatedAt: Datetime
-  siteId: Int!
-
-  """Reads a single `Site` that is related to this `Post`."""
-  site: Site
-
-  """
-  Reads and enables pagination through a set of `PostCategoriesCategory`.
-  """
-  postCategoriesCategories(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Skip the first `n` values."""
-    offset: Int
-
-    """The method to use when ordering `PostCategoriesCategory`."""
-    orderBy: [PostCategoriesCategoriesOrderBy!]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: PostCategoriesCategoryCondition
-  ): [PostCategoriesCategory!]!
-
-  """Reads and enables pagination through a set of `PostAssetsAsset`."""
-  postAssetsAssets(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Skip the first `n` values."""
-    offset: Int
-
-    """The method to use when ordering `PostAssetsAsset`."""
-    orderBy: [PostAssetsAssetsOrderBy!]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: PostAssetsAssetCondition
-  ): [PostAssetsAsset!]!
-}
-
-type PostAssetsAsset implements Node {
-  """
-  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
-  """
-  nodeId: ID!
-  postId: Int!
-  assetId: Int!
-
-  """Reads a single `Post` that is related to this `PostAssetsAsset`."""
-  post: Post
-
-  """Reads a single `Asset` that is related to this `PostAssetsAsset`."""
-  asset: Asset
-}
-
-"""
-A condition to be used against `PostAssetsAsset` object types. All fields are
-tested for equality and combined with a logical ‘and.’
-"""
-input PostAssetsAssetCondition {
-  """Checks for equality with the object’s `postId` field."""
-  postId: Int
-
-  """Checks for equality with the object’s `assetId` field."""
-  assetId: Int
-}
-
-"""An input for mutations affecting `PostAssetsAsset`"""
-input PostAssetsAssetInput {
-  postId: Int!
-  assetId: Int!
-}
-
-"""
-Represents an update to a `PostAssetsAsset`. Fields that are set will be updated.
-"""
-input PostAssetsAssetPatch {
-  postId: Int
-  assetId: Int
-}
-
-"""Methods to use when ordering `PostAssetsAsset`."""
-enum PostAssetsAssetsOrderBy {
-  NATURAL
-  POST_ID_ASC
-  POST_ID_DESC
-  ASSET_ID_ASC
-  ASSET_ID_DESC
-  PRIMARY_KEY_ASC
-  PRIMARY_KEY_DESC
-}
-
-"""Methods to use when ordering `PostCategoriesCategory`."""
-enum PostCategoriesCategoriesOrderBy {
-  NATURAL
-  POST_ID_ASC
-  POST_ID_DESC
-  CATEGORY_ID_ASC
-  CATEGORY_ID_DESC
-  PRIMARY_KEY_ASC
-  PRIMARY_KEY_DESC
-}
-
-type PostCategoriesCategory implements Node {
-  """
-  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
-  """
-  nodeId: ID!
-  postId: Int!
-  categoryId: Int!
-
-  """
-  Reads a single `Post` that is related to this `PostCategoriesCategory`.
-  """
-  post: Post
-
-  """
-  Reads a single `Category` that is related to this `PostCategoriesCategory`.
-  """
-  category: Category
-}
-
-"""
-A condition to be used against `PostCategoriesCategory` object types. All fields
-are tested for equality and combined with a logical ‘and.’
-"""
-input PostCategoriesCategoryCondition {
-  """Checks for equality with the object’s `postId` field."""
-  postId: Int
-
-  """Checks for equality with the object’s `categoryId` field."""
-  categoryId: Int
-}
-
-"""An input for mutations affecting `PostCategoriesCategory`"""
-input PostCategoriesCategoryInput {
-  postId: Int!
-  categoryId: Int!
-}
-
-"""
-Represents an update to a `PostCategoriesCategory`. Fields that are set will be updated.
-"""
-input PostCategoriesCategoryPatch {
-  postId: Int
-  categoryId: Int
 }
 
 """
@@ -1516,9 +547,6 @@ input PostCondition {
 
   """Checks for equality with the object’s `name` field."""
   name: String
-
-  """Checks for equality with the object’s `password` field."""
-  password: String
 
   """Checks for equality with the object’s `type` field."""
   type: String
@@ -1540,31 +568,24 @@ input PostCondition {
 
   """Checks for equality with the object’s `updatedAt` field."""
   updatedAt: Datetime
-
-  """Checks for equality with the object’s `siteId` field."""
-  siteId: Int
 }
 
 """An input for mutations affecting `Post`"""
 input PostInput {
   id: Int
   name: String!
-  password: String
   type: String
   date: Datetime
   data: JSON!
-  siteId: Int!
 }
 
 """Represents an update to a `Post`. Fields that are set will be updated."""
 input PostPatch {
   id: Int
   name: String
-  password: String
   type: String
   date: Datetime
   data: JSON
-  siteId: Int
 }
 
 """Methods to use when ordering `Post`."""
@@ -1574,8 +595,6 @@ enum PostsOrderBy {
   ID_DESC
   NAME_ASC
   NAME_DESC
-  PASSWORD_ASC
-  PASSWORD_DESC
   TYPE_ASC
   TYPE_DESC
   DATE_ASC
@@ -1590,8 +609,6 @@ enum PostsOrderBy {
   CREATED_AT_DESC
   UPDATED_AT_ASC
   UPDATED_AT_DESC
-  SITE_ID_ASC
-  SITE_ID_DESC
   PRIMARY_KEY_ASC
   PRIMARY_KEY_DESC
 }
@@ -1632,23 +649,6 @@ type Query implements Node {
     condition: AssetCondition
   ): [Asset!]
 
-  """Reads a set of `Category`."""
-  categories(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Skip the first `n` values."""
-    offset: Int
-
-    """The method to use when ordering `Category`."""
-    orderBy: [CategoriesOrderBy!]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: CategoryCondition
-  ): [Category!]
-
   """Reads a set of `Post`."""
   posts(
     """Only read the first `n` values of the set."""
@@ -1665,74 +665,6 @@ type Query implements Node {
     """
     condition: PostCondition
   ): [Post!]
-
-  """Reads a set of `PostAssetsAsset`."""
-  postAssetsAssets(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Skip the first `n` values."""
-    offset: Int
-
-    """The method to use when ordering `PostAssetsAsset`."""
-    orderBy: [PostAssetsAssetsOrderBy!]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: PostAssetsAssetCondition
-  ): [PostAssetsAsset!]
-
-  """Reads a set of `PostCategoriesCategory`."""
-  postCategoriesCategories(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Skip the first `n` values."""
-    offset: Int
-
-    """The method to use when ordering `PostCategoriesCategory`."""
-    orderBy: [PostCategoriesCategoriesOrderBy!]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: PostCategoriesCategoryCondition
-  ): [PostCategoriesCategory!]
-
-  """Reads a set of `Site`."""
-  sites(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Skip the first `n` values."""
-    offset: Int
-
-    """The method to use when ordering `Site`."""
-    orderBy: [SitesOrderBy!]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: SiteCondition
-  ): [Site!]
-
-  """Reads a set of `SiteUsersUser`."""
-  siteUsersUsers(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Skip the first `n` values."""
-    offset: Int
-
-    """The method to use when ordering `SiteUsersUser`."""
-    orderBy: [SiteUsersUsersOrderBy!]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: SiteUsersUserCondition
-  ): [SiteUsersUser!]
 
   """Reads a set of `User`."""
   users(
@@ -1751,15 +683,8 @@ type Query implements Node {
     condition: UserCondition
   ): [User!]
   asset(id: Int!): Asset
-  category(id: Int!): Category
-  categoryBySiteIdAndName(siteId: Int!, name: String!): Category
   post(id: Int!): Post
-  postBySiteIdAndName(siteId: Int!, name: String!): Post
-  postAssetsAsset(postId: Int!, assetId: Int!): PostAssetsAsset
-  postCategoriesCategory(postId: Int!, categoryId: Int!): PostCategoriesCategory
-  site(id: Int!): Site
-  siteByName(name: String!): Site
-  siteUsersUser(siteId: Int!, userId: Int!): SiteUsersUser
+  postByType(type: String!): Post
   user(id: Int!): User
   userByEmail(email: String!): User
   me: User
@@ -1770,49 +695,11 @@ type Query implements Node {
     nodeId: ID!
   ): Asset
 
-  """Reads a single `Category` using its globally unique `ID`."""
-  categoryByNodeId(
-    """The globally unique `ID` to be used in selecting a single `Category`."""
-    nodeId: ID!
-  ): Category
-
   """Reads a single `Post` using its globally unique `ID`."""
   postByNodeId(
     """The globally unique `ID` to be used in selecting a single `Post`."""
     nodeId: ID!
   ): Post
-
-  """Reads a single `PostAssetsAsset` using its globally unique `ID`."""
-  postAssetsAssetByNodeId(
-    """
-    The globally unique `ID` to be used in selecting a single `PostAssetsAsset`.
-    """
-    nodeId: ID!
-  ): PostAssetsAsset
-
-  """
-  Reads a single `PostCategoriesCategory` using its globally unique `ID`.
-  """
-  postCategoriesCategoryByNodeId(
-    """
-    The globally unique `ID` to be used in selecting a single `PostCategoriesCategory`.
-    """
-    nodeId: ID!
-  ): PostCategoriesCategory
-
-  """Reads a single `Site` using its globally unique `ID`."""
-  siteByNodeId(
-    """The globally unique `ID` to be used in selecting a single `Site`."""
-    nodeId: ID!
-  ): Site
-
-  """Reads a single `SiteUsersUser` using its globally unique `ID`."""
-  siteUsersUserByNodeId(
-    """
-    The globally unique `ID` to be used in selecting a single `SiteUsersUser`.
-    """
-    nodeId: ID!
-  ): SiteUsersUser
 
   """Reads a single `User` using its globally unique `ID`."""
   userByNodeId(
@@ -1846,201 +733,6 @@ type RegisterPayload {
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
-}
-
-type Site implements Node {
-  """
-  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
-  """
-  nodeId: ID!
-  id: Int!
-  name: String!
-  data: JSON!
-  createdBy: String
-  updatedBy: String
-  createdAt: Datetime
-  updatedAt: Datetime
-
-  """Reads and enables pagination through a set of `Category`."""
-  categories(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Skip the first `n` values."""
-    offset: Int
-
-    """The method to use when ordering `Category`."""
-    orderBy: [CategoriesOrderBy!]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: CategoryCondition
-  ): [Category!]!
-
-  """Reads and enables pagination through a set of `Post`."""
-  posts(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Skip the first `n` values."""
-    offset: Int
-
-    """The method to use when ordering `Post`."""
-    orderBy: [PostsOrderBy!]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: PostCondition
-  ): [Post!]!
-
-  """Reads and enables pagination through a set of `Asset`."""
-  assets(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Skip the first `n` values."""
-    offset: Int
-
-    """The method to use when ordering `Asset`."""
-    orderBy: [AssetsOrderBy!]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: AssetCondition
-  ): [Asset!]!
-
-  """Reads and enables pagination through a set of `SiteUsersUser`."""
-  siteUsersUsers(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Skip the first `n` values."""
-    offset: Int
-
-    """The method to use when ordering `SiteUsersUser`."""
-    orderBy: [SiteUsersUsersOrderBy!]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: SiteUsersUserCondition
-  ): [SiteUsersUser!]!
-}
-
-"""
-A condition to be used against `Site` object types. All fields are tested for equality and combined with a logical ‘and.’
-"""
-input SiteCondition {
-  """Checks for equality with the object’s `id` field."""
-  id: Int
-
-  """Checks for equality with the object’s `name` field."""
-  name: String
-
-  """Checks for equality with the object’s `data` field."""
-  data: JSON
-
-  """Checks for equality with the object’s `createdBy` field."""
-  createdBy: String
-
-  """Checks for equality with the object’s `updatedBy` field."""
-  updatedBy: String
-
-  """Checks for equality with the object’s `createdAt` field."""
-  createdAt: Datetime
-
-  """Checks for equality with the object’s `updatedAt` field."""
-  updatedAt: Datetime
-}
-
-"""An input for mutations affecting `Site`"""
-input SiteInput {
-  id: Int
-  name: String!
-  data: JSON!
-}
-
-"""Represents an update to a `Site`. Fields that are set will be updated."""
-input SitePatch {
-  id: Int
-  name: String
-  data: JSON
-}
-
-"""Methods to use when ordering `Site`."""
-enum SitesOrderBy {
-  NATURAL
-  ID_ASC
-  ID_DESC
-  NAME_ASC
-  NAME_DESC
-  DATA_ASC
-  DATA_DESC
-  CREATED_BY_ASC
-  CREATED_BY_DESC
-  UPDATED_BY_ASC
-  UPDATED_BY_DESC
-  CREATED_AT_ASC
-  CREATED_AT_DESC
-  UPDATED_AT_ASC
-  UPDATED_AT_DESC
-  PRIMARY_KEY_ASC
-  PRIMARY_KEY_DESC
-}
-
-type SiteUsersUser implements Node {
-  """
-  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
-  """
-  nodeId: ID!
-  siteId: Int!
-  userId: Int!
-
-  """Reads a single `Site` that is related to this `SiteUsersUser`."""
-  site: Site
-
-  """Reads a single `User` that is related to this `SiteUsersUser`."""
-  user: User
-}
-
-"""
-A condition to be used against `SiteUsersUser` object types. All fields are
-tested for equality and combined with a logical ‘and.’
-"""
-input SiteUsersUserCondition {
-  """Checks for equality with the object’s `siteId` field."""
-  siteId: Int
-
-  """Checks for equality with the object’s `userId` field."""
-  userId: Int
-}
-
-"""An input for mutations affecting `SiteUsersUser`"""
-input SiteUsersUserInput {
-  siteId: Int!
-  userId: Int!
-}
-
-"""
-Represents an update to a `SiteUsersUser`. Fields that are set will be updated.
-"""
-input SiteUsersUserPatch {
-  siteId: Int
-  userId: Int
-}
-
-"""Methods to use when ordering `SiteUsersUser`."""
-enum SiteUsersUsersOrderBy {
-  NATURAL
-  SITE_ID_ASC
-  SITE_ID_DESC
-  USER_ID_ASC
-  USER_ID_DESC
-  PRIMARY_KEY_ASC
-  PRIMARY_KEY_DESC
 }
 
 """All input for the `updateAssetByNodeId` mutation."""
@@ -2092,79 +784,6 @@ type UpdateAssetPayload {
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
-
-  """Reads a single `Site` that is related to this `Asset`."""
-  site: Site
-}
-
-"""All input for the `updateCategoryByNodeId` mutation."""
-input UpdateCategoryByNodeIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `Category` to be updated.
-  """
-  nodeId: ID!
-
-  """
-  An object where the defined keys will be set on the `Category` being updated.
-  """
-  patch: CategoryPatch!
-}
-
-"""All input for the `updateCategoryBySiteIdAndName` mutation."""
-input UpdateCategoryBySiteIdAndNameInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  An object where the defined keys will be set on the `Category` being updated.
-  """
-  patch: CategoryPatch!
-  siteId: Int!
-  name: String!
-}
-
-"""All input for the `updateCategory` mutation."""
-input UpdateCategoryInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  An object where the defined keys will be set on the `Category` being updated.
-  """
-  patch: CategoryPatch!
-  id: Int!
-}
-
-"""The output of our update `Category` mutation."""
-type UpdateCategoryPayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """The `Category` that was updated by this mutation."""
-  category: Category
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-
-  """Reads a single `Site` that is related to this `Category`."""
-  site: Site
 }
 
 """All input for the `updatePassword` mutation."""
@@ -2193,64 +812,6 @@ type UpdatePasswordPayload {
   query: Query
 }
 
-"""All input for the `updatePostAssetsAssetByNodeId` mutation."""
-input UpdatePostAssetsAssetByNodeIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `PostAssetsAsset` to be updated.
-  """
-  nodeId: ID!
-
-  """
-  An object where the defined keys will be set on the `PostAssetsAsset` being updated.
-  """
-  patch: PostAssetsAssetPatch!
-}
-
-"""All input for the `updatePostAssetsAsset` mutation."""
-input UpdatePostAssetsAssetInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  An object where the defined keys will be set on the `PostAssetsAsset` being updated.
-  """
-  patch: PostAssetsAssetPatch!
-  postId: Int!
-  assetId: Int!
-}
-
-"""The output of our update `PostAssetsAsset` mutation."""
-type UpdatePostAssetsAssetPayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """The `PostAssetsAsset` that was updated by this mutation."""
-  postAssetsAsset: PostAssetsAsset
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-
-  """Reads a single `Post` that is related to this `PostAssetsAsset`."""
-  post: Post
-
-  """Reads a single `Asset` that is related to this `PostAssetsAsset`."""
-  asset: Asset
-}
-
 """All input for the `updatePostByNodeId` mutation."""
 input UpdatePostByNodeIdInput {
   """
@@ -2270,8 +831,8 @@ input UpdatePostByNodeIdInput {
   patch: PostPatch!
 }
 
-"""All input for the `updatePostBySiteIdAndName` mutation."""
-input UpdatePostBySiteIdAndNameInput {
+"""All input for the `updatePostByType` mutation."""
+input UpdatePostByTypeInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
@@ -2282,70 +843,7 @@ input UpdatePostBySiteIdAndNameInput {
   An object where the defined keys will be set on the `Post` being updated.
   """
   patch: PostPatch!
-  siteId: Int!
-  name: String!
-}
-
-"""All input for the `updatePostCategoriesCategoryByNodeId` mutation."""
-input UpdatePostCategoriesCategoryByNodeIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `PostCategoriesCategory` to be updated.
-  """
-  nodeId: ID!
-
-  """
-  An object where the defined keys will be set on the `PostCategoriesCategory` being updated.
-  """
-  patch: PostCategoriesCategoryPatch!
-}
-
-"""All input for the `updatePostCategoriesCategory` mutation."""
-input UpdatePostCategoriesCategoryInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  An object where the defined keys will be set on the `PostCategoriesCategory` being updated.
-  """
-  patch: PostCategoriesCategoryPatch!
-  postId: Int!
-  categoryId: Int!
-}
-
-"""The output of our update `PostCategoriesCategory` mutation."""
-type UpdatePostCategoriesCategoryPayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """The `PostCategoriesCategory` that was updated by this mutation."""
-  postCategoriesCategory: PostCategoriesCategory
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-
-  """
-  Reads a single `Post` that is related to this `PostCategoriesCategory`.
-  """
-  post: Post
-
-  """
-  Reads a single `Category` that is related to this `PostCategoriesCategory`.
-  """
-  category: Category
+  type: String!
 }
 
 """All input for the `updatePost` mutation."""
@@ -2378,133 +876,6 @@ type UpdatePostPayload {
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
-
-  """Reads a single `Site` that is related to this `Post`."""
-  site: Site
-}
-
-"""All input for the `updateSiteByName` mutation."""
-input UpdateSiteByNameInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  An object where the defined keys will be set on the `Site` being updated.
-  """
-  patch: SitePatch!
-  name: String!
-}
-
-"""All input for the `updateSiteByNodeId` mutation."""
-input UpdateSiteByNodeIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `Site` to be updated.
-  """
-  nodeId: ID!
-
-  """
-  An object where the defined keys will be set on the `Site` being updated.
-  """
-  patch: SitePatch!
-}
-
-"""All input for the `updateSite` mutation."""
-input UpdateSiteInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  An object where the defined keys will be set on the `Site` being updated.
-  """
-  patch: SitePatch!
-  id: Int!
-}
-
-"""The output of our update `Site` mutation."""
-type UpdateSitePayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """The `Site` that was updated by this mutation."""
-  site: Site
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-}
-
-"""All input for the `updateSiteUsersUserByNodeId` mutation."""
-input UpdateSiteUsersUserByNodeIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `SiteUsersUser` to be updated.
-  """
-  nodeId: ID!
-
-  """
-  An object where the defined keys will be set on the `SiteUsersUser` being updated.
-  """
-  patch: SiteUsersUserPatch!
-}
-
-"""All input for the `updateSiteUsersUser` mutation."""
-input UpdateSiteUsersUserInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  An object where the defined keys will be set on the `SiteUsersUser` being updated.
-  """
-  patch: SiteUsersUserPatch!
-  siteId: Int!
-  userId: Int!
-}
-
-"""The output of our update `SiteUsersUser` mutation."""
-type UpdateSiteUsersUserPayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """The `SiteUsersUser` that was updated by this mutation."""
-  siteUsersUser: SiteUsersUser
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-
-  """Reads a single `Site` that is related to this `SiteUsersUser`."""
-  site: Site
-
-  """Reads a single `User` that is related to this `SiteUsersUser`."""
-  user: User
 }
 
 """All input for the `updateUserByEmail` mutation."""
@@ -2573,9 +944,6 @@ type UpdateUserPayload {
   query: Query
 }
 
-"""The `Upload` scalar type represents a file upload."""
-scalar Upload
-
 type User implements Node {
   """
   A globally unique identifier. Can be used in various places throughout the system to identify this single value.
@@ -2588,23 +956,6 @@ type User implements Node {
   updatedBy: String
   createdAt: Datetime
   updatedAt: Datetime
-
-  """Reads and enables pagination through a set of `SiteUsersUser`."""
-  siteUsersUsers(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Skip the first `n` values."""
-    offset: Int
-
-    """The method to use when ordering `SiteUsersUser`."""
-    orderBy: [SiteUsersUsersOrderBy!]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: SiteUsersUserCondition
-  ): [SiteUsersUser!]!
 }
 
 """
