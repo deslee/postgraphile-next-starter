@@ -1,16 +1,16 @@
 import * as React from 'react';
-import { makeStyles, CssBaseline, AppBar, Toolbar, IconButton, Typography, Badge, Drawer, Divider, List, Container, Grid, Paper, ListItem, ListItemIcon, ListItemText, ListSubheader } from '@material-ui/core';
+import { makeStyles, CssBaseline, AppBar, Toolbar, IconButton, Typography, Badge, Drawer, Divider, List, Container, Grid, Paper, ListItem, ListItemIcon, ListItemText, ListSubheader, createMuiTheme } from '@material-ui/core';
 import clsx from 'clsx';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import DashboardIcon from '@material-ui/icons/Dashboard';
-import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
-import PeopleIcon from '@material-ui/icons/People';
-import BarChartIcon from '@material-ui/icons/BarChart';
-import LayersIcon from '@material-ui/icons/Layers';
-import AssignmentIcon from '@material-ui/icons/Assignment';
+import PostIcon from '@material-ui/icons/Notes';
+import AssetsIcon from '@material-ui/icons/Collections';
+import SettingsIcon from '@material-ui/icons/Settings';
 import constants from '../constants';
+import { ThemeProvider } from '@material-ui/styles';
+import theme from '../theme'
 
 export const mainListItems = (
     <div>
@@ -18,55 +18,25 @@ export const mainListItems = (
             <ListItemIcon>
                 <DashboardIcon />
             </ListItemIcon>
-            <ListItemText primary="Dashboard" />
+            <ListItemText primary="Site" />
         </ListItem>
         <ListItem button>
             <ListItemIcon>
-                <ShoppingCartIcon />
+                <PostIcon />
             </ListItemIcon>
-            <ListItemText primary="Orders" />
+            <ListItemText primary="Posts" />
         </ListItem>
         <ListItem button>
             <ListItemIcon>
-                <PeopleIcon />
+                <AssetsIcon />
             </ListItemIcon>
-            <ListItemText primary="Customers" />
+            <ListItemText primary="Assets" />
         </ListItem>
         <ListItem button>
             <ListItemIcon>
-                <BarChartIcon />
+                <SettingsIcon />
             </ListItemIcon>
-            <ListItemText primary="Reports" />
-        </ListItem>
-        <ListItem button>
-            <ListItemIcon>
-                <LayersIcon />
-            </ListItemIcon>
-            <ListItemText primary="Integrations" />
-        </ListItem>
-    </div>
-);
-
-export const secondaryListItems = (
-    <div>
-        <ListSubheader inset>Saved reports</ListSubheader>
-        <ListItem button>
-            <ListItemIcon>
-                <AssignmentIcon />
-            </ListItemIcon>
-            <ListItemText primary="Current month" />
-        </ListItem>
-        <ListItem button>
-            <ListItemIcon>
-                <AssignmentIcon />
-            </ListItemIcon>
-            <ListItemText primary="Last quarter" />
-        </ListItem>
-        <ListItem button>
-            <ListItemIcon>
-                <AssignmentIcon />
-            </ListItemIcon>
-            <ListItemText primary="Year-end sale" />
+            <ListItemText primary="Settings" />
         </ListItem>
     </div>
 );
@@ -78,12 +48,18 @@ const useStyles = makeStyles(theme => ({
     toolbar: {
         paddingRight: 24, // keep right padding when drawer closed
     },
-    toolbarIcon: {
+    toolbarHeader: {
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'flex-end',
         padding: '0 8px',
         ...theme.mixins.toolbar,
+    },
+    toolbarTitle: {
+        flexGrow: 1,
+        paddingLeft: theme.spacing(2)
+    },
+    title: {
+        flexGrow: 1
     },
     appBar: {
         zIndex: theme.zIndex.drawer + 1,
@@ -105,9 +81,6 @@ const useStyles = makeStyles(theme => ({
     },
     menuButtonHidden: {
         display: 'none',
-    },
-    title: {
-        flexGrow: 1,
     },
     drawerPaper: {
         position: 'relative',
@@ -151,6 +124,13 @@ interface Props {
     children: React.ReactNode
 }
 
+const darkTheme = createMuiTheme({
+    ...theme,
+    palette: {
+        type: 'dark'
+    },
+});
+
 function Layout(props: Props) {
     const classes = useStyles();
     const { children } = props;
@@ -178,7 +158,7 @@ function Layout(props: Props) {
                     </IconButton>
                     <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
                         Dashboard
-            </Typography>
+                </Typography>
                     <IconButton color="inherit">
                         <Badge badgeContent={4} color="secondary">
                             <NotificationsIcon />
@@ -186,23 +166,24 @@ function Layout(props: Props) {
                     </IconButton>
                 </Toolbar>
             </AppBar>
-            <Drawer
-                variant="permanent"
-                classes={{
-                    paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
-                }}
-                open={open}
-            >
-                <div className={classes.toolbarIcon}>
-                    <IconButton onClick={handleDrawerClose}>
-                        <ChevronLeftIcon />
-                    </IconButton>
-                </div>
-                <Divider />
-                <List>{mainListItems}</List>
-                <Divider />
-                <List>{secondaryListItems}</List>
-            </Drawer>
+            <ThemeProvider theme={darkTheme}>
+                <Drawer
+                    variant="permanent"
+                    classes={{
+                        paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
+                    }}
+                    open={open}
+                >
+                    <div className={classes.toolbarHeader}>
+                        <Typography variant="h6" className={classes.toolbarTitle}>Admin</Typography>
+                        <IconButton onClick={handleDrawerClose}>
+                            <ChevronLeftIcon />
+                        </IconButton>
+                    </div>
+                    <Divider />
+                    <List>{mainListItems}</List>
+                </Drawer>
+            </ThemeProvider>
             <main className={classes.content}>
                 <div className={classes.appBarSpacer} />
                 <Container maxWidth="lg" className={classes.container}>

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Typography } from '@material-ui/core';
+import { Button, Typography, FormControlLabel, Checkbox, makeStyles } from '@material-ui/core';
 import { Formik, Form, Field } from 'formik';
 import { graphql, MutateProps, withApollo, WithApolloClient } from 'react-apollo';
 import { TextField } from 'formik-material-ui';
@@ -13,9 +13,15 @@ interface ComponentProps {
 interface Props extends WithApolloClient<ComponentProps>, MutateProps<LoginResult, LoginVariables> {
 }
 
-const Login: React.FC<Props> = ({ mutate: login, client }) => {
+const useStyles = makeStyles(theme => ({
+  submit: {
+    margin: theme.spacing(3, 0, 2),
+  },
+}));
+
+const LoginForm: React.FC<Props> = ({ mutate: login, client }) => {
+    const classes = useStyles();
     return <>
-        <Typography variant="h2">Login</Typography>
         <Formik<LoginInput>
             initialValues={{ email: '', password: '' }}
             validationSchema={LoginInputShape}
@@ -40,11 +46,39 @@ const Login: React.FC<Props> = ({ mutate: login, client }) => {
                 }
             }}
         >{({ errors, touched }) => <Form>
-            <Field name="email" component={TextField} type="text" label="Email" /><br />
-            <Field name="password" component={TextField} type="password" label="Password" /><br />
-            <Button type="submit">Login</Button>
+            <Field 
+                name="email" 
+                component={TextField} 
+                type="text" 
+                label="Email" 
+                fullWidth
+                autoFocus
+                margin="normal"
+                variant="outlined"
+            /><br />
+            <Field 
+                name="password" 
+                component={TextField} 
+                type="password" 
+                label="Password" 
+                fullWidth
+                margin="normal"
+                variant="outlined"
+            /><br />
+            <FormControlLabel
+              control={<Checkbox value="remember" color="primary" />}
+              label="Remember me"
+            />
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+            >
+              Sign In
+            </Button>
         </Form>}</Formik>
-        <Logout />
     </>
 }
 interface LoginVariables {
@@ -64,4 +98,4 @@ mutation Login($input: LoginInput!) {
         }
     }
 }
-`)(Login))
+`)(LoginForm))

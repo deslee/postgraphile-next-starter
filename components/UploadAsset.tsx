@@ -29,7 +29,7 @@ const UploadAssetComponent: React.FC<Props> = (props: Props) => {
     const classes = useStyles();
 
     return <>
-        <Typography variant="h2">Upload Asset</Typography>
+        <Typography variant="h4">Upload Asset</Typography>
         <Formik<any>
             initialValues={{}}
             onSubmit={async (values, action) => {
