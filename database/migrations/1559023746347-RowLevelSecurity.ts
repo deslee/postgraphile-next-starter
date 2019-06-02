@@ -1,7 +1,7 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
+import globalConfig from "../../globalConfig";
 
-const tables = ['user', 'site', 'post', 'asset', 'category']
-const user = "le3io_user";
+const user = globalConfig.db.regularUser.name;
 const userId = `current_setting('claims.userId', true)::text`
 
 export class RowLevelSecurity1559023746347 implements MigrationInterface {

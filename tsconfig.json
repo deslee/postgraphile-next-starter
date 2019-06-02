@@ -16,5 +16,5 @@
     "preserveConstEnums": true,
     "sourceMap": true
   },
-  "exclude": ["dist", ".next", "out", "next.config.js", "database"]
+  "exclude": ["dist", ".next", "out", "next.config.js", "database", "globalConfig.compiled.js"]
 }

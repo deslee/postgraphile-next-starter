@@ -4,7 +4,6 @@ import { Asset, CreateAssetPayload, AssetInput, CreateAssetInput } from 'server/
 import gql from 'graphql-tag';
 import { Input, Button, Typography } from '@material-ui/core';
 import { useState, useContext } from 'react';
-import { AppContext } from '../utils/AppContext';
 
 interface ComponentProps {
 
@@ -19,7 +18,6 @@ const UploadComponent: React.FC<Props> = (props: Props) => {
     const [filename, setFilename] = useState<string>("Select file");
     const [loading, setLoading] = useState<boolean>(false);
     const [uri, setUri] = useState<string>('');
-    const appContext = useContext(AppContext)
 
     return <div>
         <form
@@ -62,7 +60,7 @@ const UploadComponent: React.FC<Props> = (props: Props) => {
                     e.target.files.length > 0 ? e.target.files[0].name : "";
             }} />
             <Button type="submit">Submit</Button><br />
-            {uri && <Typography>Uploaded:: <a target="_blank" href={`${appContext.s3Url}/${uri}`}>{`${appContext.s3Url}/${uri}`}</a></Typography>}
+            {uri && <Typography>Uploaded:: <a target="_blank" href={`${process.env.s3bucketUrl}/${uri}`}>{`${process.env.s3bucketUrl}/${uri}`}</a></Typography>}
 
         </form>
         {loading && <Typography>Loading...</Typography>}

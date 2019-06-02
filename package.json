@@ -4,8 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon",
-    "build": "next build && tsc --project tsconfig.server.json",
+    "dev": "npm run build-config && nodemon",
+    "build": "npm-run-all build-config build-next",
+    "build-config": "tsc globalConfig.ts && renamer globalConfig.js --replace globalConfig.compiled.js --force",
+    "build-next": "next build && tsc --project tsconfig.server.json",
     "start": "cross-env NODE_ENV=production node dist/server/index.js",
     "migration:create": "cross-env TS_NODE_PROJECT=tsconfig.typeorm.json ts-node ./node_modules/typeorm/cli.js migration:create -n Migration -f database/typeOrmConfig.ts -d database/migrations/",
     "migration:generate": "cross-env TS_NODE_PROJECT=tsconfig.typeorm.json ts-node ./node_modules/typeorm/cli.js migration:generate -n Migration -f database/typeOrmConfig.ts -d database/migrations/",
@@ -84,6 +86,7 @@
     "cross-env": "^5.2.0",
     "nodemon": "^1.19.1",
     "npm-run-all": "^4.1.5",
+    "renamer": "^1.1.1",
     "ts-node": "^8.2.0",
     "ts-node-dev": "^1.0.0-pre.39",
     "typescript": "^3.4.5"
