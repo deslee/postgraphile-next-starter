@@ -4,6 +4,7 @@ import PostList from '../components/PostList';
 import { Grid, withStyles, WithStyles, Paper, Container } from '@material-ui/core';
 import { NextContext } from 'next';
 import LoginForm from '../components/LoginForm';
+import constants from '../constants';
 
 interface InitialProps {
     postId?: string
@@ -28,7 +29,7 @@ class Posts extends React.Component<Props> {
                 </Grid>
                 <Grid item className={classes.content} xs={12} md={6} lg={8} xl={9}>
                     <Paper className={classes.contentPaper}>
-                        Hello world
+                        Hello world - post {postId}
                     </Paper>
                 </Grid>
             </Grid>
@@ -38,7 +39,7 @@ class Posts extends React.Component<Props> {
 
 export default withStyles(theme => ({
     container: {
-        height: `calc(100vh - 64px)`,
+        height: `calc(100vh - ${constants.appBarHeight}px)`,
         width: '100%',
         overflow: 'hidden',
     },
@@ -53,6 +54,6 @@ export default withStyles(theme => ({
     contentPaper: {
         margin: theme.spacing(3),
         padding: theme.spacing(4),
-        height: '100%',
+        minHeight: `calc(100% - ${theme.spacing(3)*2}px)`,
     },
 }))(Posts);
