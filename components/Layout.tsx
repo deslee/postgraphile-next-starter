@@ -11,33 +11,42 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import constants from '../constants';
 import { ThemeProvider } from '@material-ui/styles';
 import theme from '../theme'
+import Link from 'next/link'
 
 export const mainListItems = (
     <div>
-        <ListItem button>
-            <ListItemIcon>
-                <DashboardIcon />
-            </ListItemIcon>
-            <ListItemText primary="Site" />
-        </ListItem>
-        <ListItem button>
-            <ListItemIcon>
-                <PostIcon />
-            </ListItemIcon>
-            <ListItemText primary="Posts" />
-        </ListItem>
-        <ListItem button>
-            <ListItemIcon>
-                <AssetsIcon />
-            </ListItemIcon>
-            <ListItemText primary="Assets" />
-        </ListItem>
-        <ListItem button>
-            <ListItemIcon>
-                <SettingsIcon />
-            </ListItemIcon>
-            <ListItemText primary="Settings" />
-        </ListItem>
+        <Link href="/">
+            <ListItem button component="a" href="/">
+                <ListItemIcon>
+                    <DashboardIcon />
+                </ListItemIcon>
+                <ListItemText primary="Site" />
+            </ListItem>
+        </Link>
+        <Link href="/posts">
+            <ListItem button component="a" href="/posts">
+                <ListItemIcon>
+                    <PostIcon />
+                </ListItemIcon>
+                <ListItemText primary="Posts" />
+            </ListItem>
+        </Link>
+        <Link href="/assets">
+            <ListItem button component="a" href="/assets">
+                <ListItemIcon>
+                    <AssetsIcon />
+                </ListItemIcon>
+                <ListItemText primary="Assets" />
+            </ListItem>
+        </Link>
+        <Link href="/settings">
+            <ListItem button component="a" href="/settings">
+                <ListItemIcon>
+                    <SettingsIcon />
+                </ListItemIcon>
+                <ListItemText primary="Settings" />
+            </ListItem>
+        </Link>
     </div>
 );
 
@@ -108,10 +117,6 @@ const useStyles = makeStyles(theme => ({
         height: '100vh',
         overflow: 'auto',
     },
-    container: {
-        paddingTop: theme.spacing(4),
-        paddingBottom: theme.spacing(4),
-    },
     paper: {
         padding: theme.spacing(2),
         display: 'flex',
@@ -121,7 +126,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 interface Props {
-    children: React.ReactNode
+    children: React.ReactNode,
+    title: string
 }
 
 const darkTheme = createMuiTheme({
@@ -186,9 +192,7 @@ function Layout(props: Props) {
             </ThemeProvider>
             <main className={classes.content}>
                 <div className={classes.appBarSpacer} />
-                <Container maxWidth="lg" className={classes.container}>
-                    {children}
-                </Container>
+                {children}
             </main>
         </div>
     );

@@ -61,6 +61,7 @@
     "passport": "^0.4.0",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
+    "path-match": "^1.2.4",
     "postgraphile": "^4.4.0",
     "postgraphile-plugin-upload-field": "^1.0.0-alpha.8",
     "react": "^16.8.6",
