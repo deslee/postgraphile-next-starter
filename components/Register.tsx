@@ -49,11 +49,8 @@ const Register: React.FC<Props> = ({ client, mutate }: Props) => <>
         }}
     >{({ errors, touched }) => <Form>
         <Field name="name" component={TextField} type="text" label="Name" /><br />
-        {errors.name && touched.name && <div>{errors.name}</div>}
         <Field name="email" component={TextField} type="text" label="Email" /><br />
-        {errors.email && touched.email && <div>{errors.email}</div>}
         <Field name="password" component={TextField} type="password" label="Password" /><br />
-        {errors.password && touched.password && <div>{errors.password}</div>}
         <Button type="submit">Register</Button>
     </Form>}</Formik>
 </>

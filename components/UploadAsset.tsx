@@ -2,7 +2,7 @@ import * as React from 'react';
 import { MutateProps, withApollo, graphql } from 'react-apollo';
 import { Asset, CreateAssetPayload, AssetInput, CreateAssetInput } from 'server/embeddedGraphql/bindings/generated';
 import gql from 'graphql-tag';
-import { Input, Button, Typography } from '@material-ui/core';
+import { Input, Button, Typography, makeStyles } from '@material-ui/core';
 import { TextField } from 'formik-material-ui';
 import { useState, useContext } from 'react';
 import { Formik, Form, Field } from 'formik';
@@ -14,12 +14,19 @@ interface Props extends ComponentProps, MutateProps<CreateAssetResponse, CreateA
 
 }
 
+const useStyles = makeStyles(theme => ({
+    error: {
+        color: theme.palette.error.main,
+    },
+}));
+
 
 const UploadAssetComponent: React.FC<Props> = (props: Props) => {
     const { mutate } = props;
     const [filename, setFilename] = useState<string>();
     const [loading, setLoading] = useState<boolean>(false);
     const [uri, setUri] = useState<string>('');
+    const classes = useStyles();
 
     return <>
         <Typography variant="h2">Upload Asset</Typography>
@@ -48,15 +55,18 @@ const UploadAssetComponent: React.FC<Props> = (props: Props) => {
                         setUri(response.data.createAsset.asset.uri)
                     }
                 }
+                catch(e) {
+                    action.setError(e.message);
+                }
                 finally {
                     setLoading(false);
                     action.setSubmitting(false);
                 }
             }}
         >
-        {({errors, touched}) => <Form>
+        {({error, errors, touched}) => <Form>
+            {error && <Typography className={classes.error}>{error}</Typography>}<br />
             <Field name="name" component={TextField} type="text" label="Name" required/><br />
-            {errors.name && touched.name && <div>{errors.name}</div>}
             <Field name="file" component="input" type="file" label="file" onChange={e => {
                 const fileName =
                     e.target.files.length > 0 ? e.target.files[0].name : "";

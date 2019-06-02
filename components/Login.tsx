@@ -41,9 +41,7 @@ const Login: React.FC<Props> = ({ mutate: login, client }) => {
             }}
         >{({ errors, touched }) => <Form>
             <Field name="email" component={TextField} type="text" label="Email" /><br />
-            {errors.email && touched.email && <div>{errors.email}</div>}
             <Field name="password" component={TextField} type="password" label="Password" /><br />
-            {errors.password && touched.password && <div>{errors.password}</div>}
             <Button type="submit">Login</Button>
         </Form>}</Formik>
         <Logout />
