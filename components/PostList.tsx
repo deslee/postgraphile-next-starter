@@ -15,8 +15,8 @@ interface Props {
 
 const useStyles = makeStyles(theme => ({
     root: {
-        width: '100%',
         overflowX: 'auto',
+        height: '100%'
     },
     row: {
         paddingTop: theme.spacing(1.5),
@@ -29,6 +29,34 @@ function createData(id, title, date) {
 }
 
 const rows = [
+    createData(1, 'Frozen yoghurt', '06/28/2019'),
+    createData(2, 'Ice cream sandwich', '06/28/2019'),
+    createData(3, 'Eclair', '06/28/2019'),
+    createData(4, 'Cupcake', '06/28/2019'),
+    createData(5, 'Gingerbread', '06/28/2019'),
+    createData(6, 'Cupcake', '06/28/2019'),
+    createData(7, 'Gingerbread', '06/28/2019'),
+    createData(1, 'Frozen yoghurt', '06/28/2019'),
+    createData(2, 'Ice cream sandwich', '06/28/2019'),
+    createData(3, 'Eclair', '06/28/2019'),
+    createData(4, 'Cupcake', '06/28/2019'),
+    createData(5, 'Gingerbread', '06/28/2019'),
+    createData(6, 'Cupcake', '06/28/2019'),
+    createData(7, 'Gingerbread', '06/28/2019'),
+    createData(1, 'Frozen yoghurt', '06/28/2019'),
+    createData(2, 'Ice cream sandwich', '06/28/2019'),
+    createData(3, 'Eclair', '06/28/2019'),
+    createData(4, 'Cupcake', '06/28/2019'),
+    createData(5, 'Gingerbread', '06/28/2019'),
+    createData(6, 'Cupcake', '06/28/2019'),
+    createData(7, 'Gingerbread', '06/28/2019'),
+    createData(1, 'Frozen yoghurt', '06/28/2019'),
+    createData(2, 'Ice cream sandwich', '06/28/2019'),
+    createData(3, 'Eclair', '06/28/2019'),
+    createData(4, 'Cupcake', '06/28/2019'),
+    createData(5, 'Gingerbread', '06/28/2019'),
+    createData(6, 'Cupcake', '06/28/2019'),
+    createData(7, 'Gingerbread', '06/28/2019'),
     createData(1, 'Frozen yoghurt', '06/28/2019'),
     createData(2, 'Ice cream sandwich', '06/28/2019'),
     createData(3, 'Eclair', '06/28/2019'),
@@ -52,7 +80,7 @@ const PostList = (props: Props) => {
         </List>
         <Divider />
         <List>
-            {rows.map((row, i) => <React.Fragment key={row.title}>
+            {rows.map((row, i) => <React.Fragment key={row.id}>
                 <Link href={`/posts?postId=${row.id}`} as={`/posts/${row.id}`}>
                     <ListItem button component="a" href={`/posts/${row.id}`}>
                         <Grid container className={classes.row}>

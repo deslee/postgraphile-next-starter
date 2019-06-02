@@ -1,8 +1,9 @@
 import * as React from 'react';
 import Layout from '../components/Layout';
 import PostList from '../components/PostList';
-import { Grid, withStyles, WithStyles } from '@material-ui/core';
+import { Grid, withStyles, WithStyles, Paper, Container } from '@material-ui/core';
 import { NextContext } from 'next';
+import LoginForm from '../components/LoginForm';
 
 interface InitialProps {
     postId?: string
@@ -21,12 +22,14 @@ class Posts extends React.Component<Props> {
         const { classes, postId } = this.props;
 
         return <Layout title="Posts">
-            <Grid container direction="row">
-                <Grid item className={classes.list} xs={3}>
+            <Grid container direction="row" className={classes.container}>
+                <Grid item className={classes.list} sm={12} md={6} lg={4} xl={3}>
                     <PostList />
                 </Grid>
-                <Grid item className={classes.content} xs={9}>
-                    <div>hi, i'm on post {postId}</div>
+                <Grid item className={classes.content} xs={12} md={6} lg={8} xl={9}>
+                    <Paper className={classes.contentPaper}>
+                        Hello world
+                    </Paper>
                 </Grid>
             </Grid>
         </Layout>
@@ -34,8 +37,22 @@ class Posts extends React.Component<Props> {
 }
 
 export default withStyles(theme => ({
+    container: {
+        height: `calc(100vh - 64px)`,
+        width: '100%',
+        overflow: 'hidden',
+    },
     list: {
+        height: '100%',
+        overflowY: 'auto',
     },
     content: {
+        height: '100%',
+        overflow: 'auto',
+    },
+    contentPaper: {
+        margin: theme.spacing(3),
+        padding: theme.spacing(4),
+        height: '100%',
     },
 }))(Posts);
