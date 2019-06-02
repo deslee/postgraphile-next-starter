@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Paper, TextField, FormControl, InputLabel, FormHelperText, Grid, InputAdornment, FormControlLabel, Switch, FormGroup, Button, IconButton, Divider, Fab, Collapse } from '@material-ui/core';
+import { Paper, TextField, FormControl, InputLabel, FormHelperText, Grid, InputAdornment, FormControlLabel, Switch, FormGroup, Button, IconButton, Divider, Fab, Collapse, Input } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add';
 import { Formik } from 'formik';
@@ -8,6 +8,8 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import * as dayjs from 'dayjs';
 import Slices, { SliceModel } from './Slices';
 import * as uuid from 'uuid/v4';
+import Visibility from '@material-ui/icons/Visibility';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
 interface Props {
 
@@ -45,7 +47,8 @@ const useStyles = makeStyles(theme => ({
 
 const PostForm = (props: Props) => {
     const classes = useStyles();
-    const [slices, setSlices] = React.useState([{ id: uuid(), state: 'ACTIVE' }] as SliceModel[])
+    const [showPassword, setShowPassword] = React.useState(false);
+    const [slices, setSlices] = React.useState([{ id: uuid(), state: 'ACTIVE', type: 'TEXT' }, { id: uuid(), state: 'ACTIVE', type: 'IMAGES' }, { id: uuid(), state: 'ACTIVE', type: 'VIDEO' }] as SliceModel[])
 
     return <div className={classes.root}>
         <Paper className={classes.paper}>
@@ -65,7 +68,6 @@ const PostForm = (props: Props) => {
                 </Grid>
                 <Grid item xs={12}>
                     <TextField
-                        //variant="outlined"
                         fullWidth
                         label="Title"
                         helperText="The title of the post"
@@ -75,14 +77,23 @@ const PostForm = (props: Props) => {
                     <DatePicker fullWidth helperText="The date of the post" label="Date" value={dayjs('2019-06-28')} onChange={() => { }} />
                 </Grid>
                 <Grid item xs={6} md={6}>
-                    <FormGroup row>
-                        <TextField
+                    <FormControl fullWidth>
+                        <InputLabel htmlFor="post-password">Password</InputLabel>
+                        <Input
+                            id="post-password"
                             fullWidth
-                            type="password"
-                            label="Passport protection"
-                            helperText="Password protection is disabled"
+                            type={showPassword ? 'text' : 'password'}
+                            aria-describedBy="post-password-helper-text"
+                            endAdornment={
+                                <InputAdornment position="end">
+                                <IconButton aria-label="Toggle password visibility" onClick={() => setShowPassword(!showPassword)}>
+                                    {showPassword ? <Visibility /> : <VisibilityOff />}
+                                </IconButton>
+                                </InputAdornment>
+                            }
                         />
-                    </FormGroup>
+                        <FormHelperText id="post-password-helper-text">Password protection is disabled</FormHelperText>
+                    </FormControl>
                 </Grid>
             </Grid>
         </Paper>
