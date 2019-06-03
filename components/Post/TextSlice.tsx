@@ -22,7 +22,6 @@ const TextSlice = (props: Props) => {
             fullWidth
             rowsMax={16}
             placeholder="..."
-            help
             helperText="This supports Markdown"
         />
     </>

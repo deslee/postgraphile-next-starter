@@ -35,7 +35,7 @@ class Posts extends React.Component<Props> {
                     </Link>
                 </Grid>
                 <Grid item className={classes.content} xs={12} md={6} lg={8} xl={9}>
-                    { postId === 'new' ? <NewPost /> : ( postId && <EditPost postId={postId} /> ) }
+                    { postId === 'new' ? <NewPost /> : ( postId && parseInt(postId) !== NaN && <EditPost postId={parseInt(postId)} /> ) }
                 </Grid>
             </Grid>
         </Layout>

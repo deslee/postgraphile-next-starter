@@ -124,6 +124,8 @@ export type PostsOrderBy =   'NATURAL' |
   'CREATED_AT_DESC' |
   'UPDATED_AT_ASC' |
   'UPDATED_AT_DESC' |
+  'PASSWORD_ASC' |
+  'PASSWORD_DESC' |
   'PRIMARY_KEY_ASC' |
   'PRIMARY_KEY_DESC'
 
@@ -304,6 +306,7 @@ export interface PostCondition {
   updatedBy?: String | null
   createdAt?: Datetime | null
   updatedAt?: Datetime | null
+  password?: String | null
 }
 
 /*
@@ -316,6 +319,7 @@ export interface PostInput {
   type?: String | null
   date?: Datetime | null
   data: JSON
+  password?: String | null
 }
 
 /*
@@ -328,6 +332,7 @@ export interface PostPatch {
   type?: String | null
   date?: Datetime | null
   data?: JSON | null
+  password?: String | null
 }
 
 /*
@@ -592,6 +597,7 @@ export interface Post extends Node {
   updatedBy?: String | null
   createdAt?: Datetime | null
   updatedAt?: Datetime | null
+  password?: String | null
 }
 
 /*

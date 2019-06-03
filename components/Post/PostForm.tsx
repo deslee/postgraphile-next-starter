@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { Paper, TextField, FormControl, InputLabel, FormHelperText, Grid, InputAdornment, FormControlLabel, Switch, FormGroup, Button, IconButton, Divider, Fab, Collapse, Input } from '@material-ui/core';
+import { Paper, FormControl, InputLabel, FormHelperText, Grid, InputAdornment, FormControlLabel, Switch, FormGroup, Button, IconButton, Divider, Fab, Collapse, Input, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add';
-import { Formik } from 'formik';
 import { DatePicker } from '@material-ui/pickers';
 import DeleteIcon from '@material-ui/icons/Delete';
 import * as dayjs from 'dayjs';
@@ -10,8 +9,12 @@ import Slices, { SliceModel } from './Slices';
 import * as uuid from 'uuid/v4';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import { Formik, Form, Field, FieldProps, FormikProps } from 'formik';
+import { PostInput } from 'server/embeddedGraphql/bindings';
+import { TextField } from 'formik-material-ui';
+import { PostData, PostInputWithData } from './PostData';
 
-interface Props {
+interface Props extends FormikProps<PostInputWithData> {
 
 }
 
@@ -43,18 +46,25 @@ const useStyles = makeStyles(theme => ({
     addNextSlice: {
 
     },
+    error: {
+        color: theme.palette.error.main,
+    },
 }))
 
-const PostForm = (props: Props) => {
+const PostForm = ({ isSubmitting, values, error }: Props) => {
     const classes = useStyles();
     const [showPassword, setShowPassword] = React.useState(false);
-    const [slices, setSlices] = React.useState([{ id: uuid(), state: 'ACTIVE', type: 'TEXT' }, { id: uuid(), state: 'ACTIVE', type: 'IMAGES' }, { id: uuid(), state: 'ACTIVE', type: 'VIDEO' }] as SliceModel[])
+    const [slices, setSlices] = React.useState([] as SliceModel[])
 
-    return <div className={classes.root}>
+    return <Form className={classes.root}>
         <Paper className={classes.paper}>
             <Grid container spacing={2}>
+                <Grid item xs={12}><Typography className={classes.error}>{error}</Typography></Grid>
                 <Grid item xs={12} className={classes.top}>
-                    <TextField
+                    <Field
+                        name="name"
+                        component={TextField}
+                        type="text"
                         variant="outlined"
                         className={classes.permaLink}
                         label="Permalink"
@@ -64,44 +74,60 @@ const PostForm = (props: Props) => {
                     <IconButton className={classes.deleteAction} aria-label="Delete">
                         <DeleteIcon fontSize="large" />
                     </IconButton>
-                    <Button className={classes.saveAction} size="large" color="primary" variant="contained">Save</Button>
+                    <Button disabled={isSubmitting} type="submit" className={classes.saveAction} size="large" color="primary" variant="contained">Save</Button>
                 </Grid>
                 <Grid item xs={12}>
-                    <TextField
+                    <Field
+                        name="data.title"
+                        type="text"
+                        component={TextField}
                         fullWidth
                         label="Title"
                         helperText="The title of the post"
                     />
                 </Grid>
                 <Grid item xs={12} md={6}>
-                    <DatePicker fullWidth helperText="The date of the post" label="Date" value={dayjs('2019-06-28')} onChange={() => { }} />
+                    <Field
+                        name="date"
+                    >{({ field: { name, value, onBlur }, form: { setFieldValue, errors } }: FieldProps<PostInputWithData>) =>
+                        <DatePicker
+                            fullWidth
+                            helperText={!!errors[name] ? errors[name] : "The date of the post"}
+                            label="Date"
+                            value={value}
+                            onChange={date => setFieldValue(name, date.toISOString())}
+                            onBlur={onBlur}
+                            name={name}
+                            error={!!errors[name]}
+                        />
+                        }</Field>
+
                 </Grid>
                 <Grid item xs={6} md={6}>
-                    <FormControl fullWidth>
-                        <InputLabel htmlFor="post-password">Password</InputLabel>
-                        <Input
-                            id="post-password"
-                            fullWidth
-                            type={showPassword ? 'text' : 'password'}
-                            aria-describedBy="post-password-helper-text"
-                            endAdornment={
+                    <Field
+                        name="password"
+                        component={TextField}
+                        fullWidth
+                        label="Password"
+                        type={showPassword ? 'text' : 'password'}
+                        helperText={`Password protection is ${values["password"] ? 'enabled' : 'disabled'}`}
+                        InputProps={{
+                            endAdornment:
                                 <InputAdornment position="end">
-                                <IconButton aria-label="Toggle password visibility" onClick={() => setShowPassword(!showPassword)}>
-                                    {showPassword ? <Visibility /> : <VisibilityOff />}
-                                </IconButton>
+                                    <IconButton aria-label="Toggle password visibility" onClick={() => setShowPassword(!showPassword)}>
+                                        {showPassword ? <Visibility /> : <VisibilityOff />}
+                                    </IconButton>
                                 </InputAdornment>
-                            }
-                        />
-                        <FormHelperText id="post-password-helper-text">Password protection is disabled</FormHelperText>
-                    </FormControl>
+
+                        }}
+                    />
                 </Grid>
             </Grid>
         </Paper>
         <Slices slices={slices} onSlicesUpdate={slices => {
             setSlices(slices)
         }} />
-    </div>
-
+    </Form>
 }
 
 export default PostForm;

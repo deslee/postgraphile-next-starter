@@ -12,7 +12,11 @@ export class Post implements Auditable {
     @Column()
     name: string;
 
-    @Column({nullable: true, unique: true})
+    @Column({nullable: true})
+    password: string;
+
+    @Column({nullable: true})
+    @Index()
     type: string;
 
     @Column({nullable: true})

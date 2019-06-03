@@ -54,7 +54,13 @@ function create(initialState: NormalizedCacheObject, options: InitApolloOptions)
         ssrMode: !process.browser, // Disables forceFetch on the server (so queries are only run once)
         // if SSR, provide link
         link: options.link ? options.link : browserLink(options),
-        cache: new InMemoryCache().restore(initialState || {})
+        cache: new InMemoryCache({
+            cacheRedirects: {
+                Query: {
+                    post: (_, args, { getCacheKey }) => getCacheKey({__typename: 'Post', id: args.id })
+                }
+            }
+        }).restore(initialState || {})
     })
 }
 

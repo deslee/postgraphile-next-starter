@@ -14,7 +14,8 @@
                 "dev"
             ],
             "port": 9229,
-            "outputCapture": "std"
+            "outputCapture": "std",
+            "timeout": 20000
         }
     ]
 }

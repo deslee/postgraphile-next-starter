@@ -6,13 +6,23 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import * as dayjs from 'dayjs';
 import Paper from '@material-ui/core/Paper';
-import { Grid, List, ListItem, Divider } from '@material-ui/core';
+import { Grid, List, ListItem, Divider, Typography } from '@material-ui/core';
 import Link from 'next/link';
+import { graphql, DataProps } from 'react-apollo';
+import gql from 'graphql-tag';
+import { Post } from 'server/embeddedGraphql/bindings';
+import { Omit } from '../utils/TypeUtils';
+import { PostData, PostWithData } from './Post/PostData';
+import { POST_LIST_QUERY } from './Post/PostQueries';
 
-interface Props {
-
+interface ComponentProps {
 }
+
+interface Props extends DataProps<PostsResult> {
+}
+
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -22,53 +32,32 @@ const useStyles = makeStyles(theme => ({
     row: {
         paddingTop: theme.spacing(1.5),
         paddingBottom: theme.spacing(1.5),
+    },
+    noPostsMessage: {
+        textAlign: 'center',
+        paddingTop: theme.spacing(2)
     }
 }));
 
-function createData(id, title, date) {
-    return { id, title, date };
-}
-
-const rows = [
-    createData(uuid(), 'Frozen yoghurt', '06/28/2019'),
-    createData(uuid(), 'Ice cream sandwich', '06/28/2019'),
-    createData(uuid(), 'Eclair', '06/28/2019'),
-    createData(uuid(), 'Cupcake', '06/28/2019'),
-    createData(uuid(), 'Gingerbread', '06/28/2019'),
-    createData(uuid(), 'Cupcake', '06/28/2019'),
-    createData(uuid(), 'Gingerbread', '06/28/2019'),
-    createData(uuid(), 'Frozen yoghurt', '06/28/2019'),
-    createData(uuid(), 'Ice cream sandwich', '06/28/2019'),
-    createData(uuid(), 'Eclair', '06/28/2019'),
-    createData(uuid(), 'Cupcake', '06/28/2019'),
-    createData(uuid(), 'Gingerbread', '06/28/2019'),
-    createData(uuid(), 'Cupcake', '06/28/2019'),
-    createData(uuid(), 'Gingerbread', '06/28/2019'),
-    createData(uuid(), 'Frozen yoghurt', '06/28/2019'),
-    createData(uuid(), 'Ice cream sandwich', '06/28/2019'),
-    createData(uuid(), 'Eclair', '06/28/2019'),
-    createData(uuid(), 'Cupcake', '06/28/2019'),
-    createData(uuid(), 'Gingerbread', '06/28/2019'),
-    createData(uuid(), 'Cupcake', '06/28/2019'),
-    createData(uuid(), 'Gingerbread', '06/28/2019'),
-    createData(uuid(), 'Frozen yoghurt', '06/28/2019'),
-    createData(uuid(), 'Ice cream sandwich', '06/28/2019'),
-    createData(uuid(), 'Eclair', '06/28/2019'),
-    createData(uuid(), 'Cupcake', '06/28/2019'),
-    createData(uuid(), 'Gingerbread', '06/28/2019'),
-    createData(uuid(), 'Cupcake', '06/28/2019'),
-    createData(uuid(), 'Gingerbread', '06/28/2019'),
-    createData(uuid(), 'Frozen yoghurt', '06/28/2019'),
-    createData(uuid(), 'Ice cream sandwich', '06/28/2019'),
-    createData(uuid(), 'Eclair', '06/28/2019'),
-    createData(uuid(), 'Cupcake', '06/28/2019'),
-    createData(uuid(), 'Gingerbread', '06/28/2019'),
-    createData(uuid(), 'Cupcake', '06/28/2019'),
-    createData(uuid(), 'Gingerbread', '06/28/2019'),
-];
-
-const PostList = (props: Props) => {
+const PostList = ({ data: { loading, posts } }: Props) => {
     const classes = useStyles();
+
+    function list() {
+        if (posts.length === 0) {
+            return <Typography className={classes.noPostsMessage}>There seems to be nothing here</Typography>
+        }
+        return posts.map(p => ({...p, data: JSON.parse(p.data)} as PostWithData)).map((post, i) => <React.Fragment key={post.id}>
+            <Link href={`/posts?postId=${post.id}`} as={`/posts/${post.id}`}>
+                <ListItem button component="a" href={`/posts/${post.id}`}>
+                    <Grid container className={classes.row}>
+                        <Grid container item xs>{post.data.title}</Grid>
+                        <Grid container item xs={3}>{dayjs(post.date).format('MM/DD/YYYY')}</Grid>
+                    </Grid>
+                </ListItem>
+            </Link>
+            {i !== posts.length - 1 && <Divider />}
+        </React.Fragment>);
+    }
 
     return <Paper className={classes.root}>
         <List>
@@ -81,19 +70,11 @@ const PostList = (props: Props) => {
         </List>
         <Divider />
         <List>
-            {rows.map((row, i) => <React.Fragment key={row.id}>
-                <Link href={`/posts?postId=${row.id}`} as={`/posts/${row.id}`}>
-                    <ListItem button component="a" href={`/posts/${row.id}`}>
-                        <Grid container className={classes.row}>
-                            <Grid container item xs>{row.title}</Grid>
-                            <Grid container item xs={3}>{row.date}</Grid>
-                        </Grid>
-                    </ListItem>
-                </Link>
-                {i !== rows.length - 1 && <Divider />}
-            </React.Fragment>)}
+            {!loading && list()}
         </List>
     </Paper>
 }
-
-export default PostList;
+export interface PostsResult {
+    posts: Post[]
+}
+export default graphql<ComponentProps, PostsResult>(POST_LIST_QUERY)(PostList);
