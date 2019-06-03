@@ -9,6 +9,7 @@ fragment postFragment on Post {
   type
   date
   data
+  password
   createdBy
   createdAt
   updatedBy

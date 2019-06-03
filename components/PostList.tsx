@@ -53,7 +53,7 @@ const PostList = ({ type }: Props) => {
             </ListItem>
         </List>
         <Divider />
-        <Query<PostsResult, GetPostListVariables> query={POST_LIST_QUERY} variables={{ type }}>{({ loading, data: { posts } }) => <List>
+        <Query<PostsResult, GetPostListVariables> query={POST_LIST_QUERY} variables={{ type }}>{({ loading, data: { posts = [] } }) => <List>
             {posts.length === 0 && <Typography className={classes.noPostsMessage}>There seems to be nothing here</Typography>}
             {posts.map(p => ({ ...p, data: jsonToPostData(p.data) } as PostWithData)).map((post, i) => <React.Fragment key={post.id}>
                 <Link href={`/posts?postId=${post.id}&type=${type}`} as={`/${type.toLowerCase()}s/${post.id}`}>
