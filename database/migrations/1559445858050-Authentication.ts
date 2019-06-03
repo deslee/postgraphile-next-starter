@@ -113,13 +113,13 @@ export class Authentication1559445858050 implements MigrationInterface {
         `);
 
         for(const table of tables) {
-            await queryRunner.query(`GRANT SELECT, INSERT ON TABLE "app_public"."${table}" TO ${globalConfig.db.regularUser.name}`);
+            await queryRunner.query(`GRANT SELECT, INSERT, UPDATE ON TABLE "app_public"."${table}" TO ${globalConfig.db.regularUser.name}`);
         }
     }
 
     public async down(queryRunner: QueryRunner): Promise<any> {
         for(const table of tables) {
-            await queryRunner.query(`REVOKE SELECT, INSERT ON TABLE "app_public"."${table}" FROM ${globalConfig.db.regularUser.name}`);
+            await queryRunner.query(`REVOKE SELECT, INSERT, UPDATE ON TABLE "app_public"."${table}" FROM ${globalConfig.db.regularUser.name}`);
         }
         await queryRunner.query(`DROP VIEW app_private.active_sessions`);
         await queryRunner.query(`DROP FUNCTION app_public.me()`);
