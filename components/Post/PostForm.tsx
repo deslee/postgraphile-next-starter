@@ -5,17 +5,20 @@ import AddIcon from '@material-ui/icons/Add';
 import { DatePicker } from '@material-ui/pickers';
 import DeleteIcon from '@material-ui/icons/Delete';
 import * as dayjs from 'dayjs';
-import Slices, { SliceModel } from './Slices';
+import Slices from './Slices';
 import * as uuid from 'uuid/v4';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
-import { Formik, Form, Field, FieldProps, FormikProps } from 'formik';
+import { Formik, Form, Field, FieldProps, FormikProps, FieldArray } from 'formik';
 import { PostInput } from 'server/embeddedGraphql/bindings';
 import { TextField } from 'formik-material-ui';
 import { PostData, PostInputWithData } from './PostData';
+import Slice from './Slice';
+import { useDialog } from '../../utils/DialogContext';
 
 interface ComponentProps {
-    onDelete?: () => Promise<void>
+    onDelete?: () => Promise<void>;
+    type: string;
 }
 
 interface Props extends FormikProps<PostInputWithData>, ComponentProps {
@@ -55,10 +58,10 @@ const useStyles = makeStyles(theme => ({
     },
 }))
 
-const PostForm = ({ isSubmitting, values, error, onDelete }: Props) => {
+const PostForm = ({ isSubmitting, values, error, onDelete, type }: Props) => {
     const classes = useStyles();
+    const { confirmDialog } = useDialog();
     const [showPassword, setShowPassword] = React.useState(false);
-    const [slices, setSlices] = React.useState([] as SliceModel[])
 
     return <Form className={classes.root}>
         <Paper className={classes.paper}>
@@ -73,9 +76,9 @@ const PostForm = ({ isSubmitting, values, error, onDelete }: Props) => {
                         className={classes.permaLink}
                         label="Permalink"
                         helperText="This will go in the url"
-                        InputProps={{ startAdornment: <InputAdornment position="start">/posts/</InputAdornment> }}
+                        InputProps={{ startAdornment: <InputAdornment position="start">{`/${type.toLowerCase()}s/`}</InputAdornment> }}
                     />
-                    {onDelete && <IconButton className={classes.deleteAction} aria-label="Delete" onClick={() => onDelete()}>
+                    {onDelete && <IconButton className={classes.deleteAction} aria-label="Delete" onClick={async () => (await confirmDialog(`Are you sure you want to delete this ${type[0].toUpperCase()}${type.substring(1).toLowerCase()}?`)) && onDelete()}>
                         <DeleteIcon fontSize="large" />
                     </IconButton>}
                     <Button disabled={isSubmitting} type="submit" className={classes.saveAction} size="large" color="primary" variant="contained">Save</Button>
@@ -128,9 +131,7 @@ const PostForm = ({ isSubmitting, values, error, onDelete }: Props) => {
                 </Grid>
             </Grid>
         </Paper>
-        <Slices slices={slices} onSlicesUpdate={slices => {
-            setSlices(slices)
-        }} />
+        <Slices slices={values.data.slices || []} />
     </Form>
 }
 

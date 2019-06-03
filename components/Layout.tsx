@@ -7,6 +7,7 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import PostIcon from '@material-ui/icons/Notes';
 import AssetsIcon from '@material-ui/icons/Collections';
+import PageIcon from '@material-ui/icons/LibraryBooks';
 import SettingsIcon from '@material-ui/icons/Settings';
 import constants from '../constants';
 import { ThemeProvider } from '@material-ui/styles';
@@ -29,6 +30,14 @@ export const mainListItems = (
                     <PostIcon />
                 </ListItemIcon>
                 <ListItemText primary="Posts" />
+            </ListItem>
+        </Link>
+        <Link href="/posts?type=PAGE" as="/pages">
+            <ListItem button component="a" href="/pages">
+                <ListItemIcon>
+                    <PageIcon />
+                </ListItemIcon>
+                <ListItemText primary="Pages" />
             </ListItem>
         </Link>
         <Link href="/assets">

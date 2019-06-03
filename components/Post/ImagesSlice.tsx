@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
+import { ImagesSlice } from './PostData';
 
 const useStyles = makeStyles(theme => ({
     textArea: {
@@ -9,12 +10,13 @@ const useStyles = makeStyles(theme => ({
 }))
 
 interface Props {
-
+    slice: ImagesSlice;
+    name: string;
 }
 
-const ImagesSlice = (props: Props) => {
+const ImagesSliceComponent = (props: Props) => {
     const classes = useStyles()
     return <></>
 }
 
-export default ImagesSlice;
+export default ImagesSliceComponent;

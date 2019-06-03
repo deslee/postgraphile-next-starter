@@ -4,42 +4,50 @@ import { graphql, MutateProps, WithApolloClient } from 'react-apollo';
 import gql from "graphql-tag";
 import { Formik } from 'formik';
 import * as dayjs from 'dayjs';
-import { PostInputWithData } from './PostData';
+import { PostInputWithData, postDataToJson, PostInputWithDataShape } from './PostData';
 import { CreatePostInjectedProps, withCreatePost, POST_LIST_QUERY } from './PostQueries';
 import Router from 'next/router';
+import { useSnackbar } from 'notistack';
+
 
 interface ComponentProps {
+    type: string;
+}
+
+interface Props extends ComponentProps, CreatePostInjectedProps {
 
 }
 
-interface Props extends ComponentProps, CreatePostInjectedProps  {
-
-}
-
-const NewPost = (props: Props) => {
+const NewPost = ({ type, mutate }: Props) => {
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     return <Formik<PostInputWithData>
         initialValues={{
             name: '',
-            type: 'POST',
+            type,
             date: dayjs(new Date()).toISOString(),
             password: '',
             data: {
-                title: ''
+                title: '',
+                slices: []
             }
         }}
+        validationSchema={PostInputWithDataShape}
         onSubmit={async (values, actions) => {
             try {
-                const result = await props.mutate({
+                const result = await mutate({
                     variables: {
                         input: {
                             post: {
                                 ...values,
-                                data: JSON.stringify(values.data)
+                                data: postDataToJson(values.data)
                             }
                         }
                     },
                     refetchQueries: [{
-                        query: POST_LIST_QUERY
+                        query: POST_LIST_QUERY,
+                        variables: {
+                            type
+                        }
                     }]
                 })
                 if (result && result.errors && result.errors.length) {
@@ -48,13 +56,16 @@ const NewPost = (props: Props) => {
                 if (result && result.data && result.data.createPost && result.data.createPost.post && result.data.createPost.post.id) {
                     Router.push(`/posts/${result.data.createPost.post.id}`)
                 }
-            } catch(e) {
+                enqueueSnackbar('Success!', {
+                    variant: 'success'
+                })
+            } catch (e) {
                 actions.setError(e.message);
             } finally {
                 actions.setSubmitting(false);
             }
         }}
-        component={PostFormComponent}
+        render={props => <PostFormComponent {...props} type={type} />}
     />
 }
 

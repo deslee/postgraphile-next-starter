@@ -72,9 +72,13 @@ export const GET_POST_QUERY = gql`
   ${PostFragment}
 `
 
+export interface GetPostListVariables {
+  type: string
+}
+
 export const POST_LIST_QUERY = gql`
-query Posts {
-  posts(orderBy: [DATE_DESC]) {
+query Posts($type: String) {
+  posts(condition: { type: $type }, orderBy: [DATE_DESC]) {
     ...postFragment
   }
 }

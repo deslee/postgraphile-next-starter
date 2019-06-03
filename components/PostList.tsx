@@ -10,17 +10,18 @@ import * as dayjs from 'dayjs';
 import Paper from '@material-ui/core/Paper';
 import { Grid, List, ListItem, Divider, Typography } from '@material-ui/core';
 import Link from 'next/link';
-import { graphql, DataProps } from 'react-apollo';
+import { graphql, DataProps, Query } from 'react-apollo';
 import gql from 'graphql-tag';
 import { Post } from 'server/embeddedGraphql/bindings';
 import { Omit } from '../utils/TypeUtils';
-import { PostData, PostWithData } from './Post/PostData';
-import { POST_LIST_QUERY } from './Post/PostQueries';
+import { PostData, PostWithData, jsonToPostData } from './Post/PostData';
+import { POST_LIST_QUERY, GetPostListVariables } from './Post/PostQueries';
 
 interface ComponentProps {
+    type: string
 }
 
-interface Props extends DataProps<PostsResult> {
+interface Props extends ComponentProps {
 }
 
 
@@ -39,25 +40,8 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const PostList = ({ data: { loading, posts } }: Props) => {
+const PostList = ({ type }: Props) => {
     const classes = useStyles();
-
-    function list() {
-        if (posts.length === 0) {
-            return <Typography className={classes.noPostsMessage}>There seems to be nothing here</Typography>
-        }
-        return posts.map(p => ({...p, data: JSON.parse(p.data)} as PostWithData)).map((post, i) => <React.Fragment key={post.id}>
-            <Link href={`/posts?postId=${post.id}`} as={`/posts/${post.id}`}>
-                <ListItem button component="a" href={`/posts/${post.id}`}>
-                    <Grid container className={classes.row}>
-                        <Grid container item xs>{post.data.title}</Grid>
-                        <Grid container item xs={3}>{dayjs(post.date).format('MM/DD/YYYY')}</Grid>
-                    </Grid>
-                </ListItem>
-            </Link>
-            {i !== posts.length - 1 && <Divider />}
-        </React.Fragment>);
-    }
 
     return <Paper className={classes.root}>
         <List>
@@ -69,12 +53,23 @@ const PostList = ({ data: { loading, posts } }: Props) => {
             </ListItem>
         </List>
         <Divider />
-        <List>
-            {!loading && list()}
-        </List>
+        <Query<PostsResult, GetPostListVariables> query={POST_LIST_QUERY} variables={{ type }}>{({ loading, data: { posts } }) => <List>
+            {posts.length === 0 && <Typography className={classes.noPostsMessage}>There seems to be nothing here</Typography>}
+            {posts.map(p => ({ ...p, data: jsonToPostData(p.data) } as PostWithData)).map((post, i) => <React.Fragment key={post.id}>
+                <Link href={`/posts?postId=${post.id}&type=${type}`} as={`/${type.toLowerCase()}s/${post.id}`}>
+                    <ListItem button component="a" href={`/${type}s/${post.id}`}>
+                        <Grid container className={classes.row}>
+                            <Grid container item xs>{post.data.title}</Grid>
+                            <Grid container item xs={3}>{dayjs(post.date).format('MM/DD/YYYY')}</Grid>
+                        </Grid>
+                    </ListItem>
+                </Link>
+                {i !== posts.length - 1 && <Divider />}
+            </React.Fragment>)}
+        </List>}</Query>
     </Paper>
 }
 export interface PostsResult {
     posts: Post[]
 }
-export default graphql<ComponentProps, PostsResult>(POST_LIST_QUERY)(PostList);
+export default PostList;

@@ -7,17 +7,18 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import * as dayjs from 'dayjs';
 import clsx from 'clsx';
 import UpIcon from '@material-ui/icons/ArrowUpward'
+import { Slice as SliceModel, TextSlice, isTextSlice, isImagesSlice, isVideoSlice } from './PostData'
 import DownIcon from '@material-ui/icons/ArrowDownward'
-import { SliceModel } from './Slices';
 import ImagesSlice from './ImagesSlice';
 import VideoSlice from './VideoSlice';
-import TextSlice from './TextSlice';
+import TextSliceComponent from './TextSlice';
 
 interface Props {
     onRemoveSlice: () => void;
     onMoveUp?: () => void;
     onMoveDown?: () => void;
     slice: SliceModel;
+    name: string;
 }
 
 const useStyles = makeStyles(theme => ({
@@ -37,20 +38,17 @@ const useStyles = makeStyles(theme => ({
     },
 }))
 
-const Slice = ({ slice, onRemoveSlice, onMoveUp, onMoveDown }: Props) => {
+const Slice = ({ slice, onRemoveSlice, onMoveUp, onMoveDown, name }: Props) => {
     const classes = useStyles();
     const [deleted, setDeleted] = React.useState(false);
 
     const s = () => {
-        switch (slice.type) {
-            case 'TEXT':
-                return <TextSlice />
-            case 'IMAGES':
-                return <ImagesSlice />
-            case 'VIDEO':
-                return <VideoSlice />
-            default:
-                return undefined;
+        if (isTextSlice(slice)) {
+            return <TextSliceComponent slice={slice} name={name} />
+        } else if (isImagesSlice(slice)) {
+            return <ImagesSlice slice={slice} name={name} />
+        } else if (isVideoSlice(slice)) {
+            return <VideoSlice slice={slice} name={name} />
         }
     }
 
@@ -70,10 +68,10 @@ const Slice = ({ slice, onRemoveSlice, onMoveUp, onMoveDown }: Props) => {
                             >
                                 <DeleteIcon />
                             </IconButton>
-                            <IconButton size="small" disabled={onMoveUp === undefined} onClick={() => onMoveUp && onMoveUp()} >
+                            <IconButton size="small" disabled={!onMoveUp} onClick={() => onMoveUp && onMoveUp()} >
                                 <UpIcon />
                             </IconButton><br />
-                            <IconButton size="small" disabled={onMoveDown === undefined} onClick={() => onMoveDown && onMoveDown()} >
+                            <IconButton size="small" disabled={!onMoveDown} onClick={() => onMoveDown && onMoveDown()} >
                                 <DownIcon />
                             </IconButton>
                         </div>

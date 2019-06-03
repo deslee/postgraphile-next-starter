@@ -31,13 +31,15 @@ export const middleware: (opts: MiddlewareOptions) => express.RequestHandler = (
     });
 
     const routes = [
-        [route('/posts/:postId'), '/posts']
+        [route('/posts/:postId'), '/posts'],
+        [route('/pages/:postId'), '/posts', {type: 'PAGE'}],
+        [route('/pages'), '/posts', {type: 'PAGE'}],
     ]
 
-    for(const [match, route] of routes) {
+    for(const [match, route, extraQueries = {}] of routes) {
         const params = match(pathname);
         if (params !== false) {
-            nextServer.render(req, res, route, Object.assign(params, query))
+            nextServer.render(req, res, route, Object.assign(params, query, extraQueries))
             return;
         }
     }

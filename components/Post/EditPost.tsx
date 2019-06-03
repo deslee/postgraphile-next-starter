@@ -3,14 +3,16 @@ import Router from 'next/router';
 import { makeStyles } from '@material-ui/core/styles';
 import { Formik } from 'formik';
 import PostFormComponent from './PostForm';
-import { PostInputWithData } from './PostData';
+import { PostInputWithData, jsonToPostData, postDataToJson, PostInputWithDataShape as PostInputWithDataShape } from './PostData';
 import { compose } from 'recompose';
 import * as dayjs from 'dayjs';
 import { withUpdatePost, UpdatePostInjectedProps, GET_POST_QUERY, GetPostResult, GetPostVariables, POST_LIST_QUERY, withDeletePost, DeletePostInjectedProps } from './PostQueries';
 import { Query, withApollo, WithApolloClient } from 'react-apollo';
+import { useSnackbar } from 'notistack';
 
 interface ComponentProps {
     postId: number;
+    type: string;
     children?: React.ReactNode;
 }
 
@@ -20,18 +22,20 @@ interface Props extends WithApolloClient<ComponentProps>, UpdatePostInjectedProp
 const useStyles = makeStyles(theme => ({
 }))
 
-const EditPost = ({ postId, mutate, deletePost, client }: Props) => {
+const EditPost = ({ postId, mutate, type, deletePost, client }: Props) => {
     const classes = useStyles();
-    console.log("render edit post")
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+
     return <Query<GetPostResult, GetPostVariables> query={GET_POST_QUERY} variables={{ postId }}>{({ loading, data }) => {
         return !loading && data && data.post && <Formik<PostInputWithData>
         enableReinitialize={true}
+        validationSchema={PostInputWithDataShape}
         initialValues={{
             name: data.post.name,
-            type: 'POST',
+            type,
             date: dayjs(data.post.date).toISOString(),
             password: data.post.password || '',
-            data: JSON.parse(data.post.data)
+            data: jsonToPostData(data.post.data)
         }}
         onSubmit={async (values, actions) => {
             try {
@@ -41,13 +45,19 @@ const EditPost = ({ postId, mutate, deletePost, client }: Props) => {
                             id: postId,
                             patch: {
                                 ...values,
-                                data: JSON.stringify(values.data)
+                                data: postDataToJson(values.data)
                             }
                         }
                     },
                     refetchQueries: [{
-                        query: POST_LIST_QUERY
+                        query: POST_LIST_QUERY,
+                        variables: {
+                            type
+                        }
                     }]
+                })
+                enqueueSnackbar('Success!', {
+                    variant: 'success'
                 })
                 if (result && result.errors && result.errors.length) {
                     actions.setError(result.errors.map(e => e.message).join(', '))
@@ -56,11 +66,11 @@ const EditPost = ({ postId, mutate, deletePost, client }: Props) => {
                 actions.setSubmitting(false);
             }
         }}
-        render={props => <PostFormComponent {...props} onDelete={async () => {
+        render={props => <PostFormComponent {...props} type={type} onDelete={async () => {
             try {
                 props.setSubmitting(true);
                 const result = await deletePost({
-                    refetchQueries: [{query: POST_LIST_QUERY}]
+                    refetchQueries: [{query: POST_LIST_QUERY, variables: {type}}]
                 })
                 if (result && result.errors && result.errors.length) {
                     props.setError(result.errors.map(e => e.message).join(', '))

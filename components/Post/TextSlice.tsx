@@ -1,9 +1,12 @@
 import * as React from 'react'
-import { TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
+import { TextSlice } from './PostData';
+import { TextField } from 'formik-material-ui';
+import { Field } from 'formik';
 
 interface Props {
-
+    slice: TextSlice;
+    name: string;
 }
 
 const useStyles = makeStyles(theme => ({
@@ -11,20 +14,22 @@ const useStyles = makeStyles(theme => ({
     }
 }))
 
-const TextSlice = (props: Props) => {
+const TextSliceComponent = ({ name }: Props) => {
     const classes = useStyles()
     const [value, setValue] = React.useState('')
 
     return <>
-        <TextField 
+        <Field
+            name={`${name}.text`}
+            type="text"
+            component={TextField}
             className={classes.textArea}
-            multiline 
+            multiline
             fullWidth
             rowsMax={16}
-            placeholder="..."
             helperText="This supports Markdown"
         />
     </>
 }
 
-export default TextSlice;
+export default TextSliceComponent;

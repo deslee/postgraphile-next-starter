@@ -61,6 +61,7 @@
     "jsonwebtoken": "^8.5.1",
     "mime-types": "^2.1.24",
     "next": "^8.1.0",
+    "notistack": "^0.8.5",
     "passport": "^0.4.0",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",

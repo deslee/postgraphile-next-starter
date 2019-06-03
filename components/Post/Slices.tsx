@@ -8,23 +8,14 @@ import ImagesSliceIcon from '@material-ui/icons/InsertPhoto';
 import VideoSliceIcon from '@material-ui/icons/VideoLibrary';
 import debounce from '../../utils/debounce';
 import arrayMove from '../../utils/arrayMove';
+import { Slice as SliceModel, SliceType } from './PostData'
 import posed, { PoseGroup } from 'react-pose';
+import { FieldArray } from 'formik';
 const Item = posed.div();
 
 
-
-type SliceState = 'NEW' | 'ACTIVE'
-type SliceType = 'TEXT' | 'IMAGES' | 'VIDEO'
-
-export interface SliceModel {
-    id: string,
-    state: SliceState,
-    type?: SliceType
-}
-
 interface Props {
     slices: SliceModel[]
-    onSlicesUpdate: (slices: SliceModel[]) => void;
 }
 
 const useStyles = makeStyles(theme => ({
@@ -39,81 +30,75 @@ const useStyles = makeStyles(theme => ({
     },
 }))
 
-const Slices = ({ slices, onSlicesUpdate }: Props) => {
+const Slices = ({ slices }: Props) => {
     const classes = useStyles();
     const [newSlice, setNewSlice] = React.useState({ id: uuid(), state: 'NEW' } as SliceModel)
     const [anchorEl, setAnchorEl] = React.useState(null);
+    //  {slices.map((slice, idx) => <Slice slice={slice} onRemoveSlice={() => remove(idx)} onMoveUp={idx > 0 && handleMove(idx, idx + 1)} onMoveDown={idx < slices.length-1 && handleMove(idx, idx - 1)} />)}
 
-    const onAdd = (slice: SliceModel) => {
-        onSlicesUpdate([...slices, { ...slice, state: 'ACTIVE' }])
-    }
-
-    const onRemove = (slice: SliceModel) => {
-        onSlicesUpdate(slices.filter(s => s.id !== slice.id))
-    }
-
-    const onMoveUp = (slice: SliceModel) => {
-        const index = slices.indexOf(slice);
-        onSlicesUpdate(arrayMove(slices, index, index-1))
-    }
-
-    const onMoveDown = (slice: SliceModel) => {
-        const index = slices.indexOf(slice);
-        onSlicesUpdate(arrayMove(slices, index, index+1))
-    }
 
     const closeMenu = () => {
         setAnchorEl(null);
     }
 
-    const addSlice = (type: SliceType) => {
-        onAdd({
-            ...newSlice,
-            type
-        })
-        setNewSlice({id: uuid(), state: 'NEW'})
-        closeMenu();
-    }
-
     return <>
-        <PoseGroup>{[...slices, newSlice].map((slice, idx) => <Item key={slice.id}>
-            <Slice slice={slice} onRemoveSlice={() => onRemove(slice)} onMoveUp={idx !== 0 ? () => onMoveUp(slice) : undefined} onMoveDown={idx !== slices.length - 1 ? () => onMoveDown(slice) : undefined} />
-        </Item>)}</PoseGroup>
-        <div className={classes.addSliceAction}>
-            <Fab 
-                aria-owns={anchorEl ? 'add-new-slice-menu' : undefined}
-                aria-haspopup="true"
-                onClick={(event) => {
-                    setAnchorEl(event.target)
-                }}
-                variant="extended"
-                className={classes.addSliceButton}
-                color="primary"
-                size="medium"
-                aria-label="Add Slice"
-            ><AddIcon className={classes.addSliceIcon} />Add Slice</Fab>
-            <Menu id="add-new-slice-menu" anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => closeMenu()}>
-                <MenuItem onClick={() => addSlice('TEXT')}>
-                    <ListItemIcon>
-                        <TextSliceIcon />
-                    </ListItemIcon>
-                    <Typography variant="inherit">Text</Typography>
-                </MenuItem>
-                <MenuItem onClick={() => addSlice('IMAGES')}>
-                    <ListItemIcon>
-                        <ImagesSliceIcon />
-                    </ListItemIcon>
-                    <Typography variant="inherit">Images</Typography>
-                </MenuItem>
-                <MenuItem onClick={() => addSlice('VIDEO')}>
-                    <ListItemIcon>
-                        <VideoSliceIcon />
-                    </ListItemIcon>
-                    <Typography variant="inherit">Video</Typography>
-                </MenuItem>
-            </Menu>
-        </div>
+        <FieldArray
+            name="data.slices"
+            render={({ move, swap, push, insert, unshift, pop, remove, handleMove }) => {
+                const addSlice = (type: SliceType) => {
+                    push({
+                        ...newSlice,
+                        type,
+                        state: 'ACTIVE'
+                    })
+                    setNewSlice({ id: uuid(), state: 'NEW' })
+                    closeMenu();
+                }
+
+                return <>
+                    <PoseGroup>
+                        {[...slices, newSlice].map((slice, idx) => <Item key={slice.id}>
+                            <Slice name={`data.slices[${idx}]`} slice={slice} onRemoveSlice={() => remove(slices.indexOf(slice))} onMoveUp={idx > 0 && handleMove(idx, idx - 1)} onMoveDown={idx < slices.length - 1 && handleMove(idx, idx + 1)} />
+                        </Item>)}
+                    </PoseGroup>
+                    <div className={classes.addSliceAction}>
+                        <Fab 
+                            aria-owns={anchorEl ? 'add-new-slice-menu' : undefined}
+                            aria-haspopup="true"
+                            onClick={(event) => {
+                                setAnchorEl(event.target)
+                            }}
+                            variant="extended"
+                            className={classes.addSliceButton}
+                            color="primary"
+                            size="medium"
+                            aria-label="Add Slice"
+                        ><AddIcon className={classes.addSliceIcon} />Add Slice</Fab>
+                        <Menu id="add-new-slice-menu" anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => closeMenu()}>
+                            <MenuItem onClick={() => addSlice('TEXT')}>
+                                <ListItemIcon>
+                                    <TextSliceIcon />
+                                </ListItemIcon>
+                                <Typography variant="inherit">Text</Typography>
+                            </MenuItem>
+                            <MenuItem onClick={() => addSlice('IMAGES')}>
+                                <ListItemIcon>
+                                    <ImagesSliceIcon />
+                                </ListItemIcon>
+                                <Typography variant="inherit">Images</Typography>
+                            </MenuItem>
+                            <MenuItem onClick={() => addSlice('VIDEO')}>
+                                <ListItemIcon>
+                                    <VideoSliceIcon />
+                                </ListItemIcon>
+                                <Typography variant="inherit">Video</Typography>
+                            </MenuItem>
+                        </Menu>
+                    </div>
+                </>
+            }}
+        />
     </>
+
 }
-const propsAreEqual = ({slices: prevSlices}: Props, {slices}: Props) => slices.map(s => s.id).join(',') === prevSlices.map(s => s.id).join(',')
-export default React.memo<Props>(Slices, propsAreEqual);
+export default Slices;

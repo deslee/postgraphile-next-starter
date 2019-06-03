@@ -8,6 +8,8 @@ import { ThemeProvider } from '@material-ui/styles';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import DayJsUtils from '@date-io/dayjs';
 import theme from '../theme';
+import { SnackbarProvider } from 'notistack';
+import { DialogProvider } from '../utils/DialogContext';
 
 interface Props {
     apolloClient: ApolloClient<NormalizedCacheObject>
@@ -16,9 +18,6 @@ interface Props {
 interface State {
 
 }
-
-
-
 
 export class CustomApp extends App<Props, State> {
     static async getInitialProps({ Component, ctx }: NextAppContext) {
@@ -51,7 +50,11 @@ export class CustomApp extends App<Props, State> {
             <ApolloProvider client={apolloClient}>
                 <MuiPickersUtilsProvider utils={DayJsUtils}>
                     <ThemeProvider theme={theme}>
-                        <Component {...pageProps} />
+                        <DialogProvider>
+                            <SnackbarProvider maxSnack={3} autoHideDuration={1500}>
+                                <Component {...pageProps} />
+                            </SnackbarProvider>
+                        </DialogProvider>
                     </ThemeProvider>
                 </MuiPickersUtilsProvider>
             </ApolloProvider>

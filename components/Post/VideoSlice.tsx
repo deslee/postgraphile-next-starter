@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
+import { VideoSlice } from './PostData';
 
 const useStyles = makeStyles(theme => ({
     textArea: {
@@ -9,12 +10,13 @@ const useStyles = makeStyles(theme => ({
 }))
 
 interface Props {
-
+    slice: VideoSlice;
+    name: string;
 }
 
-const VideoSlice = (props: Props) => {
+const VideoSliceComponent = (props: Props) => {
     const classes = useStyles()
     return <></>
 }
 
-export default VideoSlice;
+export default VideoSliceComponent;
