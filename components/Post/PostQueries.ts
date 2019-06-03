@@ -1,4 +1,4 @@
-import { graphql, MutateProps, WithApolloClient } from 'react-apollo';
+import { graphql, MutateProps, WithApolloClient, MutationFn } from 'react-apollo';
 import { UpdatePostInput, UpdatePostPayload, CreatePostInput, CreatePostPayload, Post } from 'server/embeddedGraphql/bindings';
 import gql from "graphql-tag";
 
@@ -80,3 +80,18 @@ query Posts {
 }
 ${PostFragment}
 `
+
+export const DELETE_POST_MUTATION = gql`
+mutation DeletePost($postId: Int!) {
+  deletePost(input: {id: $postId}) {
+    clientMutationId
+  }
+}
+`
+export interface DeletePostVariables {
+  postId: number
+}
+export type DeletePostInjectedProps = {
+  deletePost: MutationFn<{}, DeletePostVariables>
+};
+export const withDeletePost = <T>() => graphql<T, {}, DeletePostVariables, DeletePostInjectedProps>(DELETE_POST_MUTATION, { props: (props) => ({ deletePost: props.mutate }) });

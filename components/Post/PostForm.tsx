@@ -14,7 +14,11 @@ import { PostInput } from 'server/embeddedGraphql/bindings';
 import { TextField } from 'formik-material-ui';
 import { PostData, PostInputWithData } from './PostData';
 
-interface Props extends FormikProps<PostInputWithData> {
+interface ComponentProps {
+    onDelete?: () => Promise<void>
+}
+
+interface Props extends FormikProps<PostInputWithData>, ComponentProps {
 
 }
 
@@ -51,7 +55,7 @@ const useStyles = makeStyles(theme => ({
     },
 }))
 
-const PostForm = ({ isSubmitting, values, error }: Props) => {
+const PostForm = ({ isSubmitting, values, error, onDelete }: Props) => {
     const classes = useStyles();
     const [showPassword, setShowPassword] = React.useState(false);
     const [slices, setSlices] = React.useState([] as SliceModel[])
@@ -71,9 +75,9 @@ const PostForm = ({ isSubmitting, values, error }: Props) => {
                         helperText="This will go in the url"
                         InputProps={{ startAdornment: <InputAdornment position="start">/posts/</InputAdornment> }}
                     />
-                    <IconButton className={classes.deleteAction} aria-label="Delete">
+                    {onDelete && <IconButton className={classes.deleteAction} aria-label="Delete" onClick={() => onDelete()}>
                         <DeleteIcon fontSize="large" />
-                    </IconButton>
+                    </IconButton>}
                     <Button disabled={isSubmitting} type="submit" className={classes.saveAction} size="large" color="primary" variant="contained">Save</Button>
                 </Grid>
                 <Grid item xs={12}>

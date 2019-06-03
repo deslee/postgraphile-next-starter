@@ -1,28 +1,31 @@
 import * as React from 'react';
+import Router from 'next/router';
 import { makeStyles } from '@material-ui/core/styles';
 import { Formik } from 'formik';
 import PostFormComponent from './PostForm';
 import { PostInputWithData } from './PostData';
 import { compose } from 'recompose';
 import * as dayjs from 'dayjs';
-import { withUpdatePost, UpdatePostInjectedProps, GET_POST_QUERY, GetPostResult, GetPostVariables, POST_LIST_QUERY } from './PostQueries';
-import { Query } from 'react-apollo';
+import { withUpdatePost, UpdatePostInjectedProps, GET_POST_QUERY, GetPostResult, GetPostVariables, POST_LIST_QUERY, withDeletePost, DeletePostInjectedProps } from './PostQueries';
+import { Query, withApollo, WithApolloClient } from 'react-apollo';
 
 interface ComponentProps {
     postId: number;
     children?: React.ReactNode;
 }
 
-interface Props extends ComponentProps, UpdatePostInjectedProps {
+interface Props extends WithApolloClient<ComponentProps>, UpdatePostInjectedProps, DeletePostInjectedProps {
 }
 
 const useStyles = makeStyles(theme => ({
 }))
 
-const EditPost = ({ postId, mutate }: Props) => {
+const EditPost = ({ postId, mutate, deletePost, client }: Props) => {
     const classes = useStyles();
+    console.log("render edit post")
     return <Query<GetPostResult, GetPostVariables> query={GET_POST_QUERY} variables={{ postId }}>{({ loading, data }) => {
         return !loading && data && data.post && <Formik<PostInputWithData>
+        enableReinitialize={true}
         initialValues={{
             name: data.post.name,
             type: 'POST',
@@ -53,9 +56,29 @@ const EditPost = ({ postId, mutate }: Props) => {
                 actions.setSubmitting(false);
             }
         }}
-        component={PostFormComponent}
+        render={props => <PostFormComponent {...props} onDelete={async () => {
+            try {
+                props.setSubmitting(true);
+                const result = await deletePost({
+                    refetchQueries: [{query: POST_LIST_QUERY}]
+                })
+                if (result && result.errors && result.errors.length) {
+                    props.setError(result.errors.map(e => e.message).join(', '))
+                } else {
+                    Router.push(`/posts`)
+                }
+            } catch(error) {
+                props.setError(error.message);
+            } finally {
+                props.setSubmitting(false);
+            }
+        }} />}
     />
     }}</Query>
 }
 
-export default withUpdatePost<ComponentProps>()(EditPost) as React.ComponentType<ComponentProps>
+export default compose(
+    withDeletePost<ComponentProps>(),
+    withUpdatePost<ComponentProps>(),
+    withApollo
+)(EditPost) as React.ComponentType<ComponentProps>

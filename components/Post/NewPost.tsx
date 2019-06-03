@@ -48,6 +48,8 @@ const NewPost = (props: Props) => {
                 if (result && result.data && result.data.createPost && result.data.createPost.post && result.data.createPost.post.id) {
                     Router.push(`/posts/${result.data.createPost.post.id}`)
                 }
+            } catch(e) {
+                actions.setError(e.message);
             } finally {
                 actions.setSubmitting(false);
             }
