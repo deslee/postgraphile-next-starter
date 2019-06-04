@@ -1,4 +1,5 @@
 import * as React from 'react';
+import Router from 'next/router'
 import TextField from '@material-ui/core/TextField';
 import { Button } from '@material-ui/core';
 import { graphql, MutateProps, withApollo, WithApolloClient } from 'react-apollo';
@@ -20,6 +21,7 @@ const Logout: React.FC<Props> = ({client, mutate}: Props) => (
             expires: new Date()
         });
         client.resetStore()
+        Router.push('/login')
     }}>Logout</Button>
 )
 

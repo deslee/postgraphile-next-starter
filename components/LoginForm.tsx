@@ -7,8 +7,10 @@ import gql from "graphql-tag";
 import { LoginPayload, LoginInput } from 'server/embeddedGraphql/bindings';
 import Logout from './Logout';
 import { LoginInputShape } from '../server/validators/validators';
+import Register from "./Register";
 
 interface ComponentProps {
+    onLogin?: () => {}
 }
 interface Props extends WithApolloClient<ComponentProps>, MutateProps<LoginResult, LoginVariables> {
 }
@@ -19,7 +21,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const LoginForm: React.FC<Props> = ({ mutate: login, client }) => {
+const LoginForm: React.FC<Props> = ({ mutate: login, client, onLogin = () => {} }) => {
     const classes = useStyles();
     return <>
         <Formik<LoginInput>
@@ -34,12 +36,13 @@ const LoginForm: React.FC<Props> = ({ mutate: login, client }) => {
                                 password: values.password
                             } as LoginInput
                         }
-                    })
+                    });
                     if (loginResult && loginResult.data.login) {
                         // Force a reload of all the current queries now that the user is
                         // logged in
                         client.resetStore();
                     }
+                    onLogin();
                 }
                 finally {
                     actions.setSubmitting(false);
@@ -78,6 +81,8 @@ const LoginForm: React.FC<Props> = ({ mutate: login, client }) => {
             >
               Sign In
             </Button>
+            <Typography variant="h4">Register</Typography>
+            <Register />
         </Form>}</Formik>
     </>
 }

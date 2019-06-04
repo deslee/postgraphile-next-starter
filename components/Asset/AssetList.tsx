@@ -13,7 +13,7 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import Paper from "@material-ui/core/Paper";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import Divider from "@material-ui/core/Divider";
-import {assetDataToJson, jsonToAssetData} from "./AssetData";
+import {assetDataToJson, AssetWithData, jsonToAssetData} from "./AssetData";
 import AssetListCard from "./AssetListCard";
 import {Grid} from "@material-ui/core";
 import Container from "@material-ui/core/Container";
@@ -48,6 +48,8 @@ const useStyles = makeStyles(theme => ({
     },
     container: {
 
+    },
+    empty: {
     }
 }));
 
@@ -98,18 +100,24 @@ const AssetList = ({ createAsset }: Props) => {
         }
     };
 
+    const renderAssetList = (assets: AssetWithData[]) => {
+        return <Grid container spacing={2}>
+            <PoseGroup>
+                {assets.map(asset => <Item key={asset.id} item>
+                    <Grid item><AssetListCard onEditClicked={() => {}} asset={asset} /></Grid>
+                </Item>)}
+            </PoseGroup>
+        </Grid>
+    }
+
     return <Container className={classes.container}>
         <Paper className={classes.paper}>
             <FilePicker className={classes.uploadButton} variant="contained" color="primary" handleFilePicked={handleFilePicked}>Upload</FilePicker>
             {uploadAssetState[0] === 'UPLOADING' &&  <LinearProgress variant="determinate"  value={parseInt(uploadAssetState[1])} />}
             <Divider className={classes.divider} />
-            <Query<GetAssetListResult, GetAssetListVariables> query={ASSET_LIST_QUERY}>{({loading, data: {assets = []}}) => <Grid container spacing={2}>
-                <PoseGroup>
-                    {assets.map(asset => <Item key={asset.id} item>
-                        <Grid item><AssetListCard onEditClicked={() => {}} asset={{...asset, data: jsonToAssetData(asset.data)}} /></Grid>
-                    </Item>)}
-                </PoseGroup>
-            </Grid>}</Query>
+            <Query<GetAssetListResult, GetAssetListVariables> query={ASSET_LIST_QUERY}>{({loading, data: {assets = []}}) =>
+            loading ? <p>Loading</p> : assets.length ? renderAssetList(assets.map(asset => ({...asset, data: jsonToAssetData(asset.data)}))) : <p className={classes.empty}>There seems to be nothing here.</p>
+            }</Query>
         </Paper>
     </Container>
 };

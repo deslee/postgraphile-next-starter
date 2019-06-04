@@ -13,6 +13,8 @@ import constants from '../constants';
 import { ThemeProvider } from '@material-ui/styles';
 import theme from '../theme'
 import Link from 'next/link'
+import {Query} from "react-apollo";
+import {GET_CURRENT_USER_QUERY, GetCurrentUserResult, GetCurrentUserVariables} from "./User/UserQueries";
 
 export const mainListItems = (
     <div>
@@ -137,7 +139,8 @@ const useStyles = makeStyles(theme => ({
 
 interface Props {
     children: React.ReactNode,
-    title: string
+    title: string,
+    requiresAuthentication?: boolean
 }
 
 const darkTheme = createMuiTheme({
@@ -157,9 +160,9 @@ function Layout({title, children}: Props) {
         setOpen(false);
     };
 
-    return (
-        <div className={classes.root}>
-            <CssBaseline />
+    return <Query<GetCurrentUserResult, GetCurrentUserVariables> query={GET_CURRENT_USER_QUERY}>{({loading, data: {user}}) =>
+        loading ? <div>Loading</div> : <div className={classes.root}>
+            <CssBaseline/>
             <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
                 <Toolbar className={classes.toolbar}>
                     <IconButton
@@ -169,12 +172,13 @@ function Layout({title, children}: Props) {
                         onClick={handleDrawerOpen}
                         className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
                     >
-                        <MenuIcon />
+                        <MenuIcon/>
                     </IconButton>
-                    <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>{title}</Typography>
+                    <Typography component="h1" variant="h6" color="inherit" noWrap
+                                className={classes.title}>{title}</Typography>
                     <IconButton color="inherit">
                         <Badge badgeContent={4} color="secondary">
-                            <NotificationsIcon />
+                            <NotificationsIcon/>
                         </Badge>
                     </IconButton>
                 </Toolbar>
@@ -190,19 +194,19 @@ function Layout({title, children}: Props) {
                     <div className={classes.toolbarHeader}>
                         <Typography variant="h6" className={classes.toolbarTitle}>Admin</Typography>
                         <IconButton onClick={handleDrawerClose}>
-                            <ChevronLeftIcon />
+                            <ChevronLeftIcon/>
                         </IconButton>
                     </div>
-                    <Divider />
+                    <Divider/>
                     <List>{mainListItems}</List>
                 </Drawer>
             </ThemeProvider>
             <main className={classes.content}>
-                <div className={classes.appBarSpacer} />
+                <div className={classes.appBarSpacer}/>
                 {children}
             </main>
         </div>
-    );
+    }</Query>;
 }
 
 export default Layout;

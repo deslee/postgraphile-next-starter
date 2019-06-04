@@ -10,6 +10,7 @@ import { CustomApp } from '../pages/_app';
 import { NormalizedCacheObject } from 'apollo-cache-inmemory';
 import ApolloClient from 'apollo-client';
 import { CustomRequest } from '../server/CustomRequestResponse';
+import {CustomNextContext} from "./CustomNextContext";
 
 function parseCookies(req?: IncomingMessage, options = {}) {
     return cookie.parse(req ? req.headers.cookie || '' : document.cookie, options)
@@ -23,7 +24,8 @@ const withApollo = (App: typeof CustomApp) => {
                 Component,
                 router,
                 ctx: { req, res }
-            } = ctx
+            } = ctx;
+
             const apollo = initApollo(
                 {},
                 {
@@ -31,9 +33,10 @@ const withApollo = (App: typeof CustomApp) => {
                     getXsrfId: () => parseCookies(req)['X-XSRF-ID'],
                     link: req && (req as any).link
                 }
-            )
+            );
 
-            //ctx.ctx.apolloClient = apollo
+            (ctx.ctx as CustomNextContext).apolloClient = apollo;
+
             let appProps: DefaultAppIProps = {
                 pageProps: undefined
             }

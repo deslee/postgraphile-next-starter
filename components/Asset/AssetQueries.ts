@@ -5,6 +5,7 @@ import {Omit} from "../../utils/TypeUtils";
 
 export const AssetFragment = gql`
 fragment assetFragment on Asset {
+    nodeId
     id
     state
     data

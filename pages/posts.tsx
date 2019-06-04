@@ -7,7 +7,10 @@ import constants from '../constants';
 import AddIcon from '@material-ui/icons/Add';
 import NewPost from '../components/Post/NewPost';
 import Link from 'next/link';
-import EditPost from '../components/Post/EditPost'; 
+import EditPost from '../components/Post/EditPost';
+import checkLoggedIn from "../utils/checkLoggedIn";
+import redirect from "../utils/redirect";
+import {CustomNextContext} from "../utils/CustomNextContext";
 
 interface InitialProps {
     postId?: string
@@ -19,7 +22,12 @@ interface Props extends WithStyles, InitialProps {
 }
 
 class Posts extends React.Component<Props> {
-    static getInitialProps({ query: { postId, type } }: NextContext): InitialProps {
+    static async getInitialProps(ctx: CustomNextContext): Promise<InitialProps> {
+        const { query: { postId, type } } = ctx;
+        const loggedInUser = await checkLoggedIn(ctx.apolloClient);
+        if (!loggedInUser) {
+            redirect(ctx, "/login");
+        }
         return {
             postId: typeof postId === 'string' && postId,
             type: (typeof type === 'string' && type) || 'POST'
