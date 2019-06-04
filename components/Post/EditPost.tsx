@@ -59,9 +59,10 @@ const EditPost = ({ postId, mutate, type, deletePost, client }: Props) => {
                 enqueueSnackbar('Success!', {
                     variant: 'success'
                 })
-                if (result && result.errors && result.errors.length) {
-                    actions.setError(result.errors.map(e => e.message).join(', '))
-                }
+            } catch(error) {
+                enqueueSnackbar(error.message, {
+                    variant: 'error'
+                })
             } finally {
                 actions.setSubmitting(false);
             }
@@ -78,7 +79,9 @@ const EditPost = ({ postId, mutate, type, deletePost, client }: Props) => {
                     Router.push(`/posts`)
                 }
             } catch(error) {
-                props.setError(error.message);
+                enqueueSnackbar(error.message, {
+                    variant: 'error'
+                })
             } finally {
                 props.setSubmitting(false);
             }

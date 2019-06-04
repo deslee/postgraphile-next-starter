@@ -3,7 +3,6 @@ import { Typography, Paper, Grid, makeStyles, Container } from '@material-ui/cor
 import Login from '../components/LoginForm'
 import UserInfo from '../components/UserInfo';
 import Register from '../components/Register';
-import UploadAsset from '../components/UploadAsset';
 import Layout from '../components/Layout';
 import Logout from '../components/Logout';
 
@@ -41,11 +40,6 @@ const Index: React.FC<Props> = (props: Props) => {
                         <Logout />
                     </Paper>
                 </Grid>
-            </Grid>
-            <Grid item xs>
-                <Paper className={classes.sheet}>
-                    <UploadAsset />
-                </Paper>
             </Grid>
         </Container>
     </Layout>

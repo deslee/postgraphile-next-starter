@@ -54,7 +54,7 @@ const NewPost = ({ type, mutate }: Props) => {
                     actions.setError(result.errors.map(e => e.message).join(', '))
                 }
                 if (result && result.data && result.data.createPost && result.data.createPost.post && result.data.createPost.post.id) {
-                    Router.push(`/posts/${result.data.createPost.post.id}`)
+                    Router.push(`/${type.toLowerCase()}s?postId=${result.data.createPost.post.id}`, `/${type.toLowerCase()}s/${result.data.createPost.post.id}`)
                 }
                 enqueueSnackbar('Success!', {
                     variant: 'success'

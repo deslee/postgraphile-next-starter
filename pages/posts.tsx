@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Layout from '../components/Layout';
-import PostList from '../components/PostList';
+import PostList from '../components/Post/PostList';
 import { Grid, withStyles, WithStyles, Fab } from '@material-ui/core';
 import { NextContext } from 'next';
 import constants from '../constants';
@@ -20,7 +20,7 @@ interface Props extends WithStyles, InitialProps {
 
 class Posts extends React.Component<Props> {
     static getInitialProps({ query: { postId, type } }: NextContext): InitialProps {
-        return { 
+        return {
             postId: typeof postId === 'string' && postId,
             type: (typeof type === 'string' && type) || 'POST'
         }
@@ -31,7 +31,7 @@ class Posts extends React.Component<Props> {
         return <Layout title="Posts">
             <Grid container direction="row" className={classes.container}>
                 <Grid item className={classes.list} sm={12} md={6} lg={4} xl={3}>
-                    <PostList type={type} />
+                    <PostList type={type} selected={parseInt(postId) !== NaN && parseInt(postId)} />
                     <Link href={`/posts?postId=new&type=${type}`} as={`/${type.toLowerCase()}s/new`}>
                         <Fab color="secondary" aria-label="Add" className={classes.addPostFab} component="a" href={`/${type.toLowerCase()}s/new`}>
                             <AddIcon />

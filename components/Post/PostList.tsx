@@ -13,12 +13,13 @@ import Link from 'next/link';
 import { graphql, DataProps, Query } from 'react-apollo';
 import gql from 'graphql-tag';
 import { Post } from 'server/embeddedGraphql/bindings';
-import { Omit } from '../utils/TypeUtils';
-import { PostData, PostWithData, jsonToPostData } from './Post/PostData';
-import {POST_LIST_QUERY, GetPostListVariables, GetPostListResult} from './Post/PostQueries';
+import { Omit } from '../../utils/TypeUtils';
+import { PostData, PostWithData, jsonToPostData } from './PostData';
+import {POST_LIST_QUERY, GetPostListVariables, GetPostListResult} from './PostQueries';
 
 interface ComponentProps {
     type: string
+    selected?: number
 }
 
 interface Props extends ComponentProps {
@@ -40,7 +41,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const PostList = ({ type }: Props) => {
+const PostList = ({ type, selected }: Props) => {
     const classes = useStyles();
 
     return <Paper className={classes.root}>
@@ -57,7 +58,7 @@ const PostList = ({ type }: Props) => {
             {posts.length === 0 && <Typography className={classes.noPostsMessage}>There seems to be nothing here</Typography>}
             {posts.map(p => ({ ...p, data: jsonToPostData(p.data) } as PostWithData)).map((post, i) => <React.Fragment key={post.id}>
                 <Link href={`/posts?postId=${post.id}&type=${type}`} as={`/${type.toLowerCase()}s/${post.id}`}>
-                    <ListItem button component="a" href={`/${type}s/${post.id}`}>
+                    <ListItem button component="a" href={`/${type.toLowerCase()}s/${post.id}`} selected={post.id === selected}>
                         <Grid container className={classes.row}>
                             <Grid container item xs>{post.data.title}</Grid>
                             <Grid container item xs={3}>{dayjs(post.date).format('MM/DD/YYYY')}</Grid>
