@@ -5,6 +5,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import DashboardIcon from '@material-ui/icons/Dashboard';
+import LogoutIcon from '@material-ui/icons/ExitToApp';
 import PostIcon from '@material-ui/icons/Notes';
 import AssetsIcon from '@material-ui/icons/Collections';
 import PageIcon from '@material-ui/icons/LibraryBooks';
@@ -15,9 +16,10 @@ import theme from '../theme'
 import Link from 'next/link'
 import {Query} from "react-apollo";
 import {GET_CURRENT_USER_QUERY, GetCurrentUserResult, GetCurrentUserVariables} from "./User/UserQueries";
+import Logout from "./Logout";
 
 export const mainListItems = (
-    <div>
+    <>
         <Link href="/">
             <ListItem button component="a" href="/">
                 <ListItemIcon>
@@ -58,7 +60,7 @@ export const mainListItems = (
                 <ListItemText primary="Settings" />
             </ListItem>
         </Link>
-    </div>
+    </>
 );
 
 const useStyles = makeStyles(theme => ({
@@ -135,6 +137,11 @@ const useStyles = makeStyles(theme => ({
         overflow: 'auto',
         flexDirection: 'column',
     },
+    topDrawerList: {
+        flexGrow: 1
+    },
+    bottomDrawerList: {
+    },
 }));
 
 interface Props {
@@ -198,7 +205,17 @@ function Layout({title, children}: Props) {
                         </IconButton>
                     </div>
                     <Divider/>
-                    <List>{mainListItems}</List>
+                    <List className={classes.topDrawerList}>{mainListItems}</List>
+                    <Logout>
+                        <List className={classes.bottomDrawerList}>
+                            <ListItem button>
+                                <ListItemIcon>
+                                    <LogoutIcon />
+                                </ListItemIcon>
+                                <ListItemText primary="Logout" />
+                            </ListItem>
+                        </List>
+                    </Logout>
                 </Drawer>
             </ThemeProvider>
             <main className={classes.content}>

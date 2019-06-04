@@ -1,28 +1,24 @@
 import * as React from 'react';
 import { Typography } from '@material-ui/core';
 import { graphql, DataProps } from 'react-apollo';
-import { User } from 'server/embeddedGraphql/bindings';
-
-import gql from "graphql-tag";
+import {jsonToUserData} from "./User/UserData";
+import {GET_CURRENT_USER_QUERY, GetCurrentUserResult} from "./User/UserQueries";
 
 interface ComponentProps {
 
 }
-interface Props extends DataProps<MeResult> {
+interface Props extends DataProps<GetCurrentUserResult> {
 }
 
-const UserInfo: React.FC<Props> = ({ data: { loading, me } }: Props) => <>
-    {loading && <Typography>Loading</Typography>}
-    {!loading && me && <Typography>Hello, {me.email} (user {me.id})</Typography>}
-</>
-
-export interface MeResult {
-    me: User
-}
-export default graphql<ComponentProps, MeResult>(gql`
-query GetUser {
-    me {
-        id
-        email
+const UserInfo: React.FC<Props> = ({ data: { loading, user: rawUser } }: Props) => {
+    if (loading) {
+        return <Typography>Loading</Typography>
     }
-}`)(UserInfo)
+    if (!rawUser) {
+        return <></>
+    }
+    const user = {...rawUser, data: jsonToUserData(rawUser.data)};
+    return <Typography>Hello, {user.data.name} ({user.email})</Typography>
+};
+
+export default graphql<ComponentProps, GetCurrentUserResult>(GET_CURRENT_USER_QUERY)(UserInfo)
