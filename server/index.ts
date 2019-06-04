@@ -51,5 +51,6 @@ import { CustomRequest, CustomResponse } from './CustomRequestResponse';
     }
     catch (err) {
         console.error(err);
+        throw err;
     }
 })();

@@ -15,7 +15,7 @@ import gql from 'graphql-tag';
 import { Post } from 'server/embeddedGraphql/bindings';
 import { Omit } from '../utils/TypeUtils';
 import { PostData, PostWithData, jsonToPostData } from './Post/PostData';
-import { POST_LIST_QUERY, GetPostListVariables } from './Post/PostQueries';
+import {POST_LIST_QUERY, GetPostListVariables, GetPostListResult} from './Post/PostQueries';
 
 interface ComponentProps {
     type: string
@@ -53,7 +53,7 @@ const PostList = ({ type }: Props) => {
             </ListItem>
         </List>
         <Divider />
-        <Query<PostsResult, GetPostListVariables> query={POST_LIST_QUERY} variables={{ type }}>{({ loading, data: { posts = [] } }) => <List>
+        <Query<GetPostListResult, GetPostListVariables> query={POST_LIST_QUERY} variables={{ type }}>{({ loading, data: { posts = [] } }) => <List>
             {posts.length === 0 && <Typography className={classes.noPostsMessage}>There seems to be nothing here</Typography>}
             {posts.map(p => ({ ...p, data: jsonToPostData(p.data) } as PostWithData)).map((post, i) => <React.Fragment key={post.id}>
                 <Link href={`/posts?postId=${post.id}&type=${type}`} as={`/${type.toLowerCase()}s/${post.id}`}>
@@ -68,8 +68,5 @@ const PostList = ({ type }: Props) => {
             </React.Fragment>)}
         </List>}</Query>
     </Paper>
-}
-export interface PostsResult {
-    posts: Post[]
 }
 export default PostList;

@@ -69,10 +69,10 @@ export const DialogProvider = ({ children }: Props) => {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => dialogs[0].close()} color="primary">
-                        Disagree
+                        No
                     </Button>
                     <Button onClick={() => { dialogs[0].confirm(); dialogs[0].close() }} color="primary" autoFocus>
-                        Agree
+                        Yes
                     </Button>
                 </DialogActions>
             </>}

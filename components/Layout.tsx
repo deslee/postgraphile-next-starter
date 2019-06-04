@@ -147,9 +147,8 @@ const darkTheme = createMuiTheme({
     },
 });
 
-function Layout(props: Props) {
+function Layout({title, children}: Props) {
     const classes = useStyles();
-    const { children } = props;
     const [open, setOpen] = React.useState(true);
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -172,9 +171,7 @@ function Layout(props: Props) {
                     >
                         <MenuIcon />
                     </IconButton>
-                    <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-                        Dashboard
-                </Typography>
+                    <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>{title}</Typography>
                     <IconButton color="inherit">
                         <Badge badgeContent={4} color="secondary">
                             <NotificationsIcon />

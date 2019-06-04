@@ -5,6 +5,7 @@ import { setContext } from 'apollo-link-context';
 import { ApolloLink } from 'apollo-link';
 import fetch from 'isomorphic-unfetch'
 import { createUploadLink } from 'apollo-upload-client';
+import {customFetch} from "./uploadFetch";
 
 // Polyfill fetch() on the server (used by apollo-client)
 if (!process.browser) {
@@ -42,7 +43,8 @@ function browserLink({ getToken, link, getXsrfId }: InitApolloOptions) {
         }),
         createUploadLink({
             uri: '/graphql',
-            credentials: 'same-origin'
+            credentials: 'same-origin',
+            fetch: customFetch as any
         })
     ])
 }

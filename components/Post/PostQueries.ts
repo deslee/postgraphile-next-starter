@@ -4,6 +4,7 @@ import gql from "graphql-tag";
 
 const PostFragment = gql`
 fragment postFragment on Post {
+  nodeId
   id
   name
   type
@@ -85,6 +86,10 @@ query Posts($type: String) {
 }
 ${PostFragment}
 `
+
+export interface GetPostListResult {
+    posts: Post[]
+}
 
 export const DELETE_POST_MUTATION = gql`
 mutation DeletePost($postId: Int!) {

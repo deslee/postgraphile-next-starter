@@ -6,6 +6,8 @@ import { Input, Button, Typography, makeStyles } from '@material-ui/core';
 import { TextField } from 'formik-material-ui';
 import { useState, useContext } from 'react';
 import { Formik, Form, Field } from 'formik';
+import {AssetData, assetDataToJson} from "./Asset/AssetData";
+import {ASSET_LIST_QUERY} from "./Asset/AssetQueries";
 
 interface ComponentProps {
 
@@ -40,7 +42,9 @@ const UploadAssetComponent: React.FC<Props> = (props: Props) => {
                 const input: CreateAssetInput = {
                     asset: {
                         state: 'CREATED',
-                        data: JSON.stringify({ name: values.name }),
+                        data: assetDataToJson({
+                            name: values.name
+                        } as AssetData),
                         uri: file as any
                     }
                 }
@@ -49,8 +53,11 @@ const UploadAssetComponent: React.FC<Props> = (props: Props) => {
                     const response = await mutate({
                         variables: {
                             input
-                        }
-                    })
+                        },
+                        refetchQueries: [{
+                            query: ASSET_LIST_QUERY
+                        }]
+                    });
                     if (response) {
                         setUri(response.data.createAsset.asset.uri)
                     }
