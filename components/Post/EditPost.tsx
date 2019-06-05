@@ -72,7 +72,7 @@ const EditPost = ({ postId, mutate, type, deletePost, client }: Props) => {
                 props.setSubmitting(true);
                 const result = await deletePost({
                     refetchQueries: [{query: POST_LIST_QUERY, variables: {type}}]
-                })
+                });
                 if (result && result.errors && result.errors.length) {
                     props.setError(result.errors.map(e => e.message).join(', '))
                 } else {

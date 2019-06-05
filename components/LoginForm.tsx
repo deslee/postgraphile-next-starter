@@ -16,9 +16,12 @@ interface Props extends WithApolloClient<ComponentProps>, MutateProps<LoginResul
 }
 
 const useStyles = makeStyles(theme => ({
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
+    submit: {
+        margin: theme.spacing(3, 0, 2),
+    },
+    error: {
+        color: theme.palette.error.main
+    }
 }));
 
 const LoginForm: React.FC<Props> = ({ mutate: login, client, onLogin = () => {} }) => {
@@ -41,15 +44,18 @@ const LoginForm: React.FC<Props> = ({ mutate: login, client, onLogin = () => {} 
                         // Force a reload of all the current queries now that the user is
                         // logged in
                         client.resetStore();
+                        onLogin();
+                    } else {
+                        actions.setError("Login failed");
                     }
-                    onLogin();
                 }
                 finally {
                     actions.setSubmitting(false);
                 }
             }}
-        >{({ errors, touched }) => <Form>
-            <Field 
+        >{({ errors, touched, error }) => <Form>
+            <Typography className={classes.error}>{error}</Typography>
+            <Field
                 name="email" 
                 component={TextField} 
                 type="text" 
@@ -81,8 +87,6 @@ const LoginForm: React.FC<Props> = ({ mutate: login, client, onLogin = () => {} 
             >
               Sign In
             </Button>
-            <Typography variant="h4">Register</Typography>
-            <Register />
         </Form>}</Formik>
     </>
 }

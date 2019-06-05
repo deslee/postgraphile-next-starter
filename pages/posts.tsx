@@ -36,7 +36,7 @@ class Posts extends React.Component<Props> {
     render() {
         const { classes, postId, type } = this.props;
 
-        return <Layout title="Posts">
+        return <Layout title={type === 'POST' ? 'Posts' : 'Pages'}>
             <Grid container direction="row" className={classes.container}>
                 <Grid item className={classes.list} sm={12} md={6} lg={4} xl={3}>
                     <PostList type={type} selected={parseInt(postId) !== NaN && parseInt(postId)} />

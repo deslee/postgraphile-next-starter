@@ -100,9 +100,9 @@ const ImagesSliceComponent = ({ formik: { setFieldValue, values }, slice, name }
     };
 
     return <Query<GetAssetListResult, GetAssetListVariables> query={ASSET_LIST_QUERY}>{({ loading, data }) => <>
-        {data && <>
+        {data && data.assets && <>
             <FieldArray name={`${name}.assetIds`} render={({ move, swap, push, insert, unshift, pop, remove }) => <Grid container spacing={2}>
-                <PoseGroup>{imageAssetIds.map(id => assetToAssetWithData(data.assets.find(a => a.id === id))).map((asset, idx) => <Item item key={asset.id}>
+                <PoseGroup>{imageAssetIds.map(id => data.assets.find(a => a.id === id)).filter(a => a).map(asset => assetToAssetWithData(asset)).map((asset, idx) => <Item item key={asset.id}>
                         <AssetListCard asset={asset} actions={<CardActions className={classes.cardActions}>
                             <Button size="small" onClick={() => idx > 0 && move(idx, idx - 1)}>Back</Button>
                             <Button size="small" onClick={() => remove(idx)}>Delete</Button>
