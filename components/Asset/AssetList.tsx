@@ -19,13 +19,7 @@ import {Grid} from "@material-ui/core";
 import Container from "@material-ui/core/Container";
 import posed, { PoseGroup } from 'react-pose';
 const Item = posed(Grid)();
-import TextField from '@material-ui/core/TextField';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Button from "@material-ui/core/Button";
+import {EditAssetDialog} from "./EditAssetForm";
 
 interface ComponentProps {
 
@@ -55,6 +49,7 @@ const useStyles = makeStyles(theme => ({
 
 const AssetList = ({ createAsset }: Props) => {
     const classes = useStyles();
+    const [assetEditing, setAssetEditing] = React.useState<AssetWithData|undefined>(undefined);
     const [uploadAssetState, setUploadAssetState] = React.useState<['NONE'|'UPLOADING'|'UPLOADED'|'ERROR', string?]>(['NONE']);
 
     const handleFilePicked = async (files: FileList | null) => {
@@ -66,7 +61,7 @@ const AssetList = ({ createAsset }: Props) => {
             input: {
                 asset: {
                     state: 'CREATED',
-                    data: assetDataToJson({name: file.name, fileName: file.name}),
+                    data: assetDataToJson({name: file.name, fileName: file.name, privateNotes: ''}),
                     uri: file as any
                 }
             }
@@ -104,11 +99,11 @@ const AssetList = ({ createAsset }: Props) => {
         return <Grid container spacing={2}>
             <PoseGroup>
                 {assets.map(asset => <Item key={asset.id} item>
-                    <Grid item><AssetListCard onEditClicked={() => {}} asset={asset} /></Grid>
+                    <AssetListCard actions={true} onEditClicked={() => setAssetEditing(asset)} asset={asset} />
                 </Item>)}
             </PoseGroup>
         </Grid>
-    }
+    };
 
     return <Container className={classes.container}>
         <Paper className={classes.paper}>
@@ -119,6 +114,7 @@ const AssetList = ({ createAsset }: Props) => {
             loading ? <p>Loading</p> : assets.length ? renderAssetList(assets.map(asset => ({...asset, data: jsonToAssetData(asset.data)}))) : <p className={classes.empty}>There seems to be nothing here.</p>
             }</Query>
         </Paper>
+        <EditAssetDialog assetEditing={assetEditing} onClose={() => setAssetEditing(undefined)} />
     </Container>
 };
 

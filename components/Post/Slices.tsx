@@ -6,8 +6,6 @@ import AddIcon from '@material-ui/icons/Add';
 import TextSliceIcon from '@material-ui/icons/TextFields';
 import ImagesSliceIcon from '@material-ui/icons/InsertPhoto';
 import VideoSliceIcon from '@material-ui/icons/VideoLibrary';
-import debounce from '../../utils/debounce';
-import arrayMove from '../../utils/arrayMove';
 import { Slice as SliceModel, SliceType } from './PostData'
 import posed, { PoseGroup } from 'react-pose';
 import { FieldArray } from 'formik';
@@ -34,8 +32,6 @@ const Slices = ({ slices }: Props) => {
     const classes = useStyles();
     const [newSlice, setNewSlice] = React.useState({ id: uuid(), state: 'NEW' } as SliceModel)
     const [anchorEl, setAnchorEl] = React.useState(null);
-    //  {slices.map((slice, idx) => <Slice slice={slice} onRemoveSlice={() => remove(idx)} onMoveUp={idx > 0 && handleMove(idx, idx + 1)} onMoveDown={idx < slices.length-1 && handleMove(idx, idx - 1)} />)}
-
 
     const closeMenu = () => {
         setAnchorEl(null);
@@ -44,25 +40,25 @@ const Slices = ({ slices }: Props) => {
     return <>
         <FieldArray
             name="data.slices"
-            render={({ move, swap, push, insert, unshift, pop, remove, handleMove }) => {
+            render={({ move, swap, push, insert, unshift, pop, remove }) => {
                 const addSlice = (type: SliceType) => {
                     push({
                         ...newSlice,
                         type,
                         state: 'ACTIVE'
-                    })
+                    });
                     setNewSlice({ id: uuid(), state: 'NEW' })
                     closeMenu();
-                }
+                };
 
                 return <>
                     <PoseGroup>
                         {[...slices, newSlice].map((slice, idx) => <Item key={slice.id}>
-                            <Slice name={`data.slices[${idx}]`} slice={slice} onRemoveSlice={() => remove(slices.indexOf(slice))} onMoveUp={idx > 0 && handleMove(idx, idx - 1)} onMoveDown={idx < slices.length - 1 && handleMove(idx, idx + 1)} />
+                            <Slice name={`data.slices[${idx}]`} slice={slice} onRemoveSlice={() => remove(slices.indexOf(slice))} onMoveUp={() => idx > 0 && move(idx, idx - 1)} onMoveDown={() => idx < slices.length - 1 && move(idx, idx + 1)} />
                         </Item>)}
                     </PoseGroup>
                     <div className={classes.addSliceAction}>
-                        <Fab 
+                        <Fab
                             aria-owns={anchorEl ? 'add-new-slice-menu' : undefined}
                             aria-haspopup="true"
                             onClick={(event) => {

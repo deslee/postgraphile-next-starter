@@ -9,8 +9,6 @@ import {AssetWithData} from "./AssetData";
 import * as mime from 'mime-types';
 import * as dayjs from 'dayjs';
 import CardHeader from "@material-ui/core/CardHeader";
-import IconButton from "@material-ui/core/IconButton";
-import VideoIcon from "@material-ui/icons/VideoLibrary";
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import Avatar from "@material-ui/core/Avatar";
@@ -23,7 +21,9 @@ import Mutation from "react-apollo/Mutation";
 
 interface ComponentProps {
     asset: AssetWithData
-    onEditClicked: () => void
+    actions?: boolean | React.ReactNode;
+    onEditClicked?: () => void
+    onAssetSelected?: () => void
 }
 
 interface Props extends ComponentProps {
@@ -63,7 +63,7 @@ const useStyles = makeStyles(theme => {
     }
 });
 
-type AssetType = 'IMAGE' | 'VIDEO' | 'PDF' | 'UNKNOWN'
+type AssetType = 'IMAGE' | 'VIDEO' | 'PDF' | 'AUDIO' | 'UNKNOWN'
 const getAssetType: (fileName: string) => AssetType = fileName => {
     const mimeType = mime.lookup(fileName);
     if (mimeType !== false) {
@@ -74,13 +74,15 @@ const getAssetType: (fileName: string) => AssetType = fileName => {
             return 'VIDEO'
         } else if (mimeType.toLowerCase() === 'application/pdf') {
             return 'PDF'
+        } else if (firstPart.toUpperCase() === 'AUDIO') {
+            return 'AUDIO';
         } else {
             return 'UNKNOWN'
         }
     }
 };
 
-const AssetListCard = ({asset, onEditClicked}: Props) => {
+const AssetListCard = ({asset, onEditClicked = () => {}, actions, onAssetSelected = () => {}}: Props) => {
     const classes = useStyles();
     const { confirmDialog } = useDialog();
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
@@ -88,7 +90,7 @@ const AssetListCard = ({asset, onEditClicked}: Props) => {
     const assetType = getAssetType(asset.uri);
     let cardMedia = <CardHeader
         className={classes.cardMedia}
-        avatar={<IconButton aria-label="Unknown"><VideoIcon /></IconButton>}
+        avatar={<Avatar aria-label="Unknown">?</Avatar>}
         title={"unknown"}
     />;
     if (assetType === 'IMAGE') {
@@ -98,7 +100,7 @@ const AssetListCard = ({asset, onEditClicked}: Props) => {
             alt={asset.data.description}
             height="140"
             image={`${process.env.s3bucketUrl}/${asset.uri}`}
-            title={asset.data.title}
+            title={asset.data.name}
         />
     }
     else if (assetType === 'VIDEO') {
@@ -106,6 +108,13 @@ const AssetListCard = ({asset, onEditClicked}: Props) => {
             className={classes.cardMedia}
             avatar={<Avatar aria-label="Video">V</Avatar>}
             title={"Video"}
+        />
+    }
+    else if (assetType === 'AUDIO') {
+        cardMedia = <CardHeader
+            className={classes.cardMedia}
+            avatar={<Avatar aria-label="Audio">A</Avatar>}
+            title={"Audio"}
         />
     }
     else if (assetType === 'PDF') {
@@ -117,7 +126,7 @@ const AssetListCard = ({asset, onEditClicked}: Props) => {
     }
 
     return <Card className={classes.card}>
-        <CardActionArea>
+        <CardActionArea onClick={() => onAssetSelected()}>
             {cardMedia}
             <CardContent>
                 <Typography className={classes.fileName} variant="caption">{asset.data.name}</Typography>
@@ -125,7 +134,7 @@ const AssetListCard = ({asset, onEditClicked}: Props) => {
                 <Typography className={classes.date} variant="caption">{dayjs(asset.updatedAt).format('MM/DD/YYYY hh:mm:ss Z')}</Typography>
             </CardContent>
         </CardActionArea>
-        <CardActions className={classes.actions}>
+        {actions === true ? <CardActions className={classes.actions}>
             <Button size="small" onClick={onEditClicked}>Edit <EditIcon className={classes.rightIcon}/></Button>
             <Mutation mutation={DELETE_ASSET_MUTATION} variables={{assetId: asset.id}} refetchQueries={[{query: ASSET_LIST_QUERY}]}>{(deleteAsset) =>
                 <Button size="small" color="secondary" onClick={async () => {
@@ -139,7 +148,7 @@ const AssetListCard = ({asset, onEditClicked}: Props) => {
                     }
                 }}>Delete <DeleteIcon className={classes.rightIcon}/></Button>
             }</Mutation>
-        </CardActions>
+        </CardActions> : actions && actions}
     </Card>
 };
 

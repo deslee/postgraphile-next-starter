@@ -1,20 +1,16 @@
 import * as React from 'react';
-import { Paper, FormControl, InputLabel, FormHelperText, Grid, InputAdornment, FormControlLabel, Switch, FormGroup, Button, IconButton, Divider, Fab, Collapse, Input, Typography } from '@material-ui/core';
+import { Paper, Grid, InputAdornment, Button, IconButton, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import AddIcon from '@material-ui/icons/Add';
 import { DatePicker } from '@material-ui/pickers';
 import DeleteIcon from '@material-ui/icons/Delete';
-import * as dayjs from 'dayjs';
 import Slices from './Slices';
-import * as uuid from 'uuid/v4';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
-import { Formik, Form, Field, FieldProps, FormikProps, FieldArray } from 'formik';
-import { PostInput } from 'server/embeddedGraphql/bindings';
+import { Form, Field, FieldProps, FormikProps, FieldArray } from 'formik';
 import { TextField } from 'formik-material-ui';
-import { PostData, PostInputWithData } from './PostData';
-import Slice from './Slice';
+import { PostInputWithData } from './PostData';
 import { useDialog } from '../../utils/DialogContext';
+import FormChangesGuard from "../FormChangesGuard";
 
 interface ComponentProps {
     onDelete?: () => Promise<void>;
@@ -58,7 +54,7 @@ const useStyles = makeStyles(theme => ({
     },
 }))
 
-const PostForm = ({ isSubmitting, values, error, onDelete, type }: Props) => {
+const PostForm = ({ isSubmitting, values, error, onDelete, type, dirty }: Props) => {
     const classes = useStyles();
     const { confirmDialog } = useDialog();
     const [showPassword, setShowPassword] = React.useState(false);
@@ -132,6 +128,7 @@ const PostForm = ({ isSubmitting, values, error, onDelete, type }: Props) => {
             </Grid>
         </Paper>
         <Slices slices={values.data.slices || []} />
+        <FormChangesGuard message="You have unsaved changes. Are you sure you want to leave?" />
     </Form>
 }
 

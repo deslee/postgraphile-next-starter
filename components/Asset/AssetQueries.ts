@@ -1,6 +1,12 @@
 import { graphql, MutateProps, WithApolloClient, MutationFn } from 'react-apollo';
 import gql from "graphql-tag";
-import {Asset, AssetInput, CreateAssetInput, CreateAssetPayload} from "../../server/embeddedGraphql/bindings";
+import {
+    Asset,
+    AssetInput, AssetPatch,
+    CreateAssetInput,
+    CreateAssetPayload,
+    UpdateAssetInput, UpdateAssetPayload
+} from "../../server/embeddedGraphql/bindings";
 import {Omit} from "../../utils/TypeUtils";
 
 export const AssetFragment = gql`
@@ -51,6 +57,40 @@ export const withCreateAsset = <T>() => graphql<T, CreateAssetResult, CreateAsse
     }
 );
 
+export interface UpdateAssetVariables {
+    input: Omit<UpdateAssetInput, "patch"> & {
+        patch: Omit<AssetPatch, "uri"> & {
+            uri?: File
+        }
+    }
+}
+
+export interface UpdateAssetResult {
+    createAsset: UpdateAssetPayload;
+}
+
+export interface UpdateAssetInjectedProps {
+    updateAsset: MutationFn<UpdateAssetResult, UpdateAssetVariables>
+}
+
+export const UPDATE_ASSET_MUTATION = gql`
+    mutation updateAsset($input: UpdateAssetInput!) {
+        updateAsset(input: $input) {
+            asset {
+                ...assetFragment
+            }
+        }
+    }
+    ${AssetFragment}
+`;
+
+export const withUpdateAsset = <T>() => graphql<T, UpdateAssetResult, UpdateAssetVariables, UpdateAssetInjectedProps>(
+    UPDATE_ASSET_MUTATION,
+    {
+        props: props => ({ updateAsset: props.mutate })
+    }
+);
+
 export interface GetAssetListVariables {
 
 }
@@ -91,3 +131,21 @@ export const withDeleteAsset = <T>() => graphql<T, DeleteAssetResult, DeleteAsse
         deleteAsset: props.mutate
     })
 });
+
+
+export interface GetAssetByIdVariables {
+    assetId: number
+}
+
+export interface GetAssetByIdResult {
+    asset: Asset
+}
+
+export const ASSET_BY_ID_QUERY = gql`
+query AssetById($assetId: Int!) {
+    asset(id: $assetId) {
+        ...assetFragment
+    }
+}
+${AssetFragment}
+`;

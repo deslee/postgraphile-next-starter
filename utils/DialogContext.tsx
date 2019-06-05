@@ -59,8 +59,8 @@ export const DialogProvider = ({ children }: Props) => {
         <Dialog
             open={dialogs.length > 0}
             onClose={() => dialogs[0].close()}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
+            aria-labelledby="Confirmation"
+            aria-describedby={dialogs.length > 0 && dialogs[0].text}
         >
             {dialogs.length > 0 && <>
                 <DialogTitle id="alert-dialog-title">{"Confirmation"}</DialogTitle>

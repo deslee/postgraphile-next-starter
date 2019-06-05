@@ -4,8 +4,8 @@ import {Asset} from "../../server/embeddedGraphql/bindings";
 export interface AssetData {
     name: string,
     description?: string
-    title?: string,
     fileName: string
+    privateNotes: string
 }
 
 export function jsonToAssetData(json: string): AssetData {
@@ -21,7 +21,7 @@ export function assetDataToJson(data: AssetData): string {
     return JSON.stringify({
         name: data.name,
         description: data.description,
-        title: data.title,
-        fileName: data.fileName
+        fileName: data.fileName,
+        privateNotes: data.privateNotes
     })
 }

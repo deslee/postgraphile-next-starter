@@ -13,9 +13,10 @@ export interface Slice {
 }
 
 export interface TextSlice extends Slice {
-    text: string
+    text: string | undefined;
 }
 export interface ImagesSlice extends Slice {
+    assetIds: number[] | undefined;
 }
 export interface VideoSlice extends Slice {
 }
@@ -65,6 +66,7 @@ export function postDataToJson(data: PostData): string {
                 text: slice.text
             }),
             ...(isImagesSlice(slice) && {
+                assetIds: slice.assetIds
             }),
             ...(isVideoSlice(slice) && {
             })
