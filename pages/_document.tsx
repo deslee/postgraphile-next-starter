@@ -45,10 +45,13 @@ export default class CustomDocument extends Document {
             <Html>
                 <Head>
                     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap" />
+                    <style>{`.ReactModal__Overlay {
+                        z-index: 2200 !important;
+                    }`}</style>
                 </Head>
                 <body>
-                    <Main />
-                    <NextScript />
+                <Main />
+                <NextScript />
                 </body>
             </Html>
         )

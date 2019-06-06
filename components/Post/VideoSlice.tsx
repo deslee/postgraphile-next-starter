@@ -1,22 +1,11 @@
-import * as React from 'react'
-import { TextField } from '@material-ui/core';
-import { makeStyles } from '@material-ui/styles';
-import { VideoSlice } from './PostData';
+import {ImagesSlice, VideoSlice} from "./PostData";
+import GenericAssetSlice from "./GenericAssetSlice";
 
-const useStyles = makeStyles(theme => ({
-    textArea: {
-        minHeight: 350
-    }
-}))
-
-interface Props {
+interface ComponentProps {
     slice: VideoSlice;
     name: string;
 }
 
-const VideoSliceComponent = (props: Props) => {
-    const classes = useStyles()
-    return <></>
+export default (props: ComponentProps) => {
+    return <GenericAssetSlice {...props} type="VIDEO" />
 }
-
-export default VideoSliceComponent;

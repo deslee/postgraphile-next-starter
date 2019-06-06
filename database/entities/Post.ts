@@ -9,7 +9,7 @@ export class Post implements Auditable {
     @PrimaryGeneratedColumn()
     id: string;
 
-    @Column()
+    @Column({unique: true})
     name: string;
 
     @Column({nullable: true})

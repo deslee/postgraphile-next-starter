@@ -13,12 +13,13 @@ export interface Slice {
 }
 
 export interface TextSlice extends Slice {
-    text: string | undefined;
+    text?: string;
 }
 export interface ImagesSlice extends Slice {
-    assetIds: number[] | undefined;
+    assetIds?: number[];
 }
 export interface VideoSlice extends Slice {
+    assetIds?: number[];
 }
 
 export function isTextSlice(slice: Slice): slice is TextSlice {
@@ -69,6 +70,7 @@ export function postDataToJson(data: PostData): string {
                 assetIds: slice.assetIds
             }),
             ...(isVideoSlice(slice) && {
+                assetIds: slice.assetIds
             })
         }))
     })

@@ -13,13 +13,16 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import Paper from "@material-ui/core/Paper";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import Divider from "@material-ui/core/Divider";
-import {assetDataToJson, AssetWithData, jsonToAssetData} from "./AssetData";
+import {assetDataToJson, assetFilter, AssetType, AssetWithData, getAssetType, jsonToAssetData} from "./AssetData";
 import AssetListCard from "./AssetListCard";
 import {Grid} from "@material-ui/core";
 import Container from "@material-ui/core/Container";
 import posed, { PoseGroup } from 'react-pose';
 const Item = posed(Grid)();
 import {EditAssetDialog} from "./EditAssetForm";
+import Lightbox from '../Lightbox';
+import Modal from "@material-ui/core/Modal";
+import SimpleModal from "../SimpleModal";
 
 interface ComponentProps {
 
@@ -51,6 +54,7 @@ const AssetList = ({ createAsset }: Props) => {
     const classes = useStyles();
     const [assetEditing, setAssetEditing] = React.useState<AssetWithData|undefined>(undefined);
     const [uploadAssetState, setUploadAssetState] = React.useState<['NONE'|'UPLOADING'|'UPLOADED'|'ERROR', string?]>(['NONE']);
+    const [assetViewing, setAssetViewing] = React.useState<AssetWithData | undefined>(undefined);
 
     const handleFilePicked = async (files: FileList | null) => {
         const file = files.length > 0 ? files[0] : undefined;
@@ -66,7 +70,6 @@ const AssetList = ({ createAsset }: Props) => {
                 }
             }
         };
-
         setUploadAssetState(['UPLOADING', '0']);
         try {
             const response = await createAsset({
@@ -96,12 +99,24 @@ const AssetList = ({ createAsset }: Props) => {
     };
 
     const renderAssetList = (assets: AssetWithData[]) => {
+        const images = assets.filter(assetFilter('IMAGE'));
+        const audio = assets.filter(assetFilter('AUDIO'));
+
         return <Grid container spacing={2}>
             <PoseGroup>
                 {assets.map(asset => <Item key={asset.id} item>
-                    <AssetListCard actions={true} onEditClicked={() => setAssetEditing(asset)} asset={asset} />
+                    <AssetListCard actions={true} onEditClicked={() => setAssetEditing(asset)} onAssetSelected={() => {
+                        setAssetViewing(asset)
+                    }} asset={asset} />
                 </Item>)}
             </PoseGroup>
+            {assetViewing !== undefined && getAssetType(assetViewing.uri) === 'IMAGE' && <Lightbox
+                open={true}
+                initialIndex={images.map(a => a.id).indexOf(assetViewing.id)}
+                images={images.map(asset => ({url: `${process.env.s3bucketUrl}/${asset.uri}`, alt: asset.data.description}))}
+                onClose={() => setAssetViewing(undefined)}
+            />}
+            {assetViewing !== undefined && ['AUDIO', 'VIDEO'].indexOf(getAssetType(assetViewing.uri)) !== -1 && <SimpleModal asset={assetViewing} onClose={() => setAssetViewing(undefined)} />}
         </Grid>
     };
 

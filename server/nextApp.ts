@@ -7,6 +7,7 @@ import { Binding } from './embeddedGraphql/bindings';
 import { GraphQLSchema } from 'graphql';
 import contextFactory from './contextFactory';
 import { CustomRequest, CustomResponse } from './CustomRequestResponse';
+// @ts-ignore
 import * as pathMatch from 'path-match';
 
 const route = pathMatch()

@@ -5,7 +5,7 @@ import Card from "@material-ui/core/Card";
 import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
 import {Typography} from "@material-ui/core";
-import {AssetWithData} from "./AssetData";
+import {AssetType, AssetWithData, getAssetType} from "./AssetData";
 import * as mime from 'mime-types';
 import * as dayjs from 'dayjs';
 import CardHeader from "@material-ui/core/CardHeader";
@@ -18,6 +18,7 @@ import {useDialog} from "../../utils/DialogContext";
 import {useSnackbar} from "notistack";
 import {ASSET_LIST_QUERY, DELETE_ASSET_MUTATION, DeleteAssetInjectedProps, withDeleteAsset} from "./AssetQueries";
 import Mutation from "react-apollo/Mutation";
+import SimpleModal from "../SimpleModal";
 
 interface ComponentProps {
     asset: AssetWithData
@@ -63,29 +64,17 @@ const useStyles = makeStyles(theme => {
     }
 });
 
-type AssetType = 'IMAGE' | 'VIDEO' | 'PDF' | 'AUDIO' | 'UNKNOWN'
-const getAssetType: (fileName: string) => AssetType = fileName => {
-    const mimeType = mime.lookup(fileName);
-    if (mimeType !== false) {
-        const firstPart = mimeType.split('/')[0];
-        if (firstPart.toUpperCase() === 'IMAGE') {
-            return 'IMAGE'
-        } else if (firstPart.toUpperCase() === 'VIDEO') {
-            return 'VIDEO'
-        } else if (mimeType.toLowerCase() === 'application/pdf') {
-            return 'PDF'
-        } else if (firstPart.toUpperCase() === 'AUDIO') {
-            return 'AUDIO';
-        } else {
-            return 'UNKNOWN'
-        }
-    }
-};
-
-const AssetListCard = ({asset, onEditClicked = () => {}, actions, onAssetSelected = () => {}}: Props) => {
+const AssetListCard = ({asset, onEditClicked = () => {}, actions, onAssetSelected}: Props) => {
     const classes = useStyles();
     const { confirmDialog } = useDialog();
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+    const [ modalOpen, setModalOpen ] = React.useState<>(false);
+
+    if (!onAssetSelected) {
+        onAssetSelected = () => {
+            setModalOpen(true)
+        }
+    }
 
     const assetType = getAssetType(asset.uri);
     let cardMedia = <CardHeader
@@ -149,6 +138,7 @@ const AssetListCard = ({asset, onEditClicked = () => {}, actions, onAssetSelecte
                 }}>Delete <DeleteIcon className={classes.rightIcon}/></Button>
             }</Mutation>
         </CardActions> : actions && actions}
+        {modalOpen && <SimpleModal asset={asset} onClose={() => setModalOpen(false)}/>}
     </Card>
 };
 

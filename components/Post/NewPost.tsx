@@ -49,11 +49,12 @@ const NewPost = ({ type, mutate }: Props) => {
                             type
                         }
                     }]
-                })
+                });
                 if (result && result.errors && result.errors.length) {
                     actions.setError(result.errors.map(e => e.message).join(', '))
                 }
                 if (result && result.data && result.data.createPost && result.data.createPost.post && result.data.createPost.post.id) {
+                    actions.resetForm();
                     Router.push(`/${type.toLowerCase()}s?postId=${result.data.createPost.post.id}`, `/${type.toLowerCase()}s/${result.data.createPost.post.id}`)
                 }
                 enqueueSnackbar('Success!', {

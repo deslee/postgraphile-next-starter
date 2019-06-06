@@ -20,7 +20,7 @@ export const getSchema = async () => {
 }
 
 const fetcher = async (operation: FetcherOperation) => {
-    if (!operation.context.graphqlContext) {
+    if (!operation.context || !operation.context.graphqlContext) {
         throw new ApolloError("Operation context not set!");
     }
     const graphqlContext: CustomContext = operation.context.graphqlContext;

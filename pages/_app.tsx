@@ -10,6 +10,7 @@ import DayJsUtils from '@date-io/dayjs';
 import theme from '../theme';
 import { SnackbarProvider } from 'notistack';
 import { DialogProvider } from '../utils/DialogContext';
+import 'react-image-lightbox/style.css';
 
 interface Props {
     apolloClient: ApolloClient<NormalizedCacheObject>

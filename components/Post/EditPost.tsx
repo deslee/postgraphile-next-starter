@@ -55,7 +55,7 @@ const EditPost = ({ postId, mutate, type, deletePost, client }: Props) => {
                             type
                         }
                     }]
-                })
+                });
                 enqueueSnackbar('Success!', {
                     variant: 'success'
                 })
@@ -76,7 +76,8 @@ const EditPost = ({ postId, mutate, type, deletePost, client }: Props) => {
                 if (result && result.errors && result.errors.length) {
                     props.setError(result.errors.map(e => e.message).join(', '))
                 } else {
-                    Router.push(`/posts`)
+                    props.resetForm();
+                    Router.push(`/posts`);
                 }
             } catch(error) {
                 enqueueSnackbar(error.message, {

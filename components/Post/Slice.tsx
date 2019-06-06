@@ -50,7 +50,7 @@ const Slice = ({ slice, onRemoveSlice, onMoveUp, onMoveDown, name }: Props) => {
         } else if (isVideoSlice(slice)) {
             return <VideoSlice slice={slice} name={name} />
         }
-    }
+    };
 
     return <>
         <Collapse in={slice.state === 'ACTIVE' && !deleted} mountOnEnter={true} unmountOnExit={true} onExited={() => onRemoveSlice()}>

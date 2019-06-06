@@ -44,6 +44,7 @@ const LoginForm: React.FC<Props> = ({ mutate: login, client, onLogin = () => {} 
                         // Force a reload of all the current queries now that the user is
                         // logged in
                         client.resetStore();
+                        actions.resetForm();
                         onLogin();
                     } else {
                         actions.setError("Login failed");
