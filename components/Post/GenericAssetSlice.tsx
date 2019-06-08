@@ -20,7 +20,7 @@ import IconButton from "@material-ui/core/IconButton";
 import Toolbar from "@material-ui/core/Toolbar";
 import AppBar from "@material-ui/core/AppBar";
 import {connect, FieldArray, FormikContext} from 'formik';
-import {Asset} from "../../server/embeddedGraphql/bindings";
+import {Asset} from "../../schema";
 import CardActions from "@material-ui/core/CardActions";
 import posed, { PoseGroup } from 'react-pose';
 

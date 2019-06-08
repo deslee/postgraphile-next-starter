@@ -1,6 +1,6 @@
 import * as express from 'express';
 import { AuthenticatedSession } from './Authentication';
-import { Binding } from './embeddedGraphql/bindings';
+import { Binding } from '../schema';
 import globalConfig from 'globalConfig';
 
 export interface CustomRequest extends express.Request {

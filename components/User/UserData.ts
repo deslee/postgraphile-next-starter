@@ -1,5 +1,5 @@
 import {Omit} from "../../utils/TypeUtils";
-import {User} from "../../server/embeddedGraphql/bindings";
+import {User} from "../../schema";
 
 export interface UserData {
     name: string

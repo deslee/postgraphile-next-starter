@@ -6,7 +6,7 @@ import {
     CreateAssetInput,
     CreateAssetPayload,
     UpdateAssetInput, UpdateAssetPayload
-} from "../../server/embeddedGraphql/bindings";
+} from "../../schema";
 import {Omit} from "../../utils/TypeUtils";
 
 export const AssetFragment = gql`

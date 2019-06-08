@@ -13,7 +13,7 @@ export interface Query {
     users: <T = Array<User> | null>(args: { first?: Int | null, offset?: Int | null, orderBy?: Array<UsersOrderBy> | null, condition?: UserCondition | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     asset: <T = Asset | null>(args: { id: Int }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     post: <T = Post | null>(args: { id: Int }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    postByType: <T = Post | null>(args: { type: String }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    postByName: <T = Post | null>(args: { name: String }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     user: <T = User | null>(args: { id: Int }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     userByEmail: <T = User | null>(args: { email: String }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     me: <T = User | null>(args?: {}, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -30,7 +30,7 @@ export interface Mutation {
     updateAsset: <T = UpdateAssetPayload | null>(args: { input: UpdateAssetInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updatePostByNodeId: <T = UpdatePostPayload | null>(args: { input: UpdatePostByNodeIdInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updatePost: <T = UpdatePostPayload | null>(args: { input: UpdatePostInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    updatePostByType: <T = UpdatePostPayload | null>(args: { input: UpdatePostByTypeInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updatePostByName: <T = UpdatePostPayload | null>(args: { input: UpdatePostByNameInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateUserByNodeId: <T = UpdateUserPayload | null>(args: { input: UpdateUserByNodeIdInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateUser: <T = UpdateUserPayload | null>(args: { input: UpdateUserInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateUserByEmail: <T = UpdateUserPayload | null>(args: { input: UpdateUserByEmailInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -38,7 +38,7 @@ export interface Mutation {
     deleteAsset: <T = DeleteAssetPayload | null>(args: { input: DeleteAssetInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deletePostByNodeId: <T = DeletePostPayload | null>(args: { input: DeletePostByNodeIdInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deletePost: <T = DeletePostPayload | null>(args: { input: DeletePostInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    deletePostByType: <T = DeletePostPayload | null>(args: { input: DeletePostByTypeInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deletePostByName: <T = DeletePostPayload | null>(args: { input: DeletePostByNameInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteUserByNodeId: <T = DeleteUserPayload | null>(args: { input: DeleteUserByNodeIdInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteUser: <T = DeleteUserPayload | null>(args: { input: DeleteUserInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteUserByEmail: <T = DeleteUserPayload | null>(args: { input: DeleteUserByEmailInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -234,21 +234,21 @@ export interface DeleteAssetInput {
 }
 
 /*
+ * All input for the `deletePostByName` mutation.
+
+ */
+export interface DeletePostByNameInput {
+  clientMutationId?: String | null
+  name: String
+}
+
+/*
  * All input for the `deletePostByNodeId` mutation.
 
  */
 export interface DeletePostByNodeIdInput {
   clientMutationId?: String | null
   nodeId: ID_Output
-}
-
-/*
- * All input for the `deletePostByType` mutation.
-
- */
-export interface DeletePostByTypeInput {
-  clientMutationId?: String | null
-  type: String
 }
 
 /*
@@ -377,6 +377,16 @@ export interface UpdatePasswordInput {
 }
 
 /*
+ * All input for the `updatePostByName` mutation.
+
+ */
+export interface UpdatePostByNameInput {
+  clientMutationId?: String | null
+  patch: PostPatch
+  name: String
+}
+
+/*
  * All input for the `updatePostByNodeId` mutation.
 
  */
@@ -384,16 +394,6 @@ export interface UpdatePostByNodeIdInput {
   clientMutationId?: String | null
   nodeId: ID_Output
   patch: PostPatch
-}
-
-/*
- * All input for the `updatePostByType` mutation.
-
- */
-export interface UpdatePostByTypeInput {
-  clientMutationId?: String | null
-  patch: PostPatch
-  type: String
 }
 
 /*

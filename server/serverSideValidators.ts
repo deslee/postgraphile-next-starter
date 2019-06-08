@@ -1,7 +1,7 @@
-import { Binding, RegisterInput, UpdatePasswordInput, LoginInput } from "../embeddedGraphql/bindings";
-import globalConfig from "../../globalConfig";
+import { Binding, RegisterInput, UpdatePasswordInput, LoginInput } from "../schema";
+import globalConfig from "../globalConfig";
 import { UserInputError } from "apollo-server-core";
-import { RegisterInputShape, UpdatePasswordInputShape, LoginInputShape } from "./validators";
+import { RegisterInputShape, UpdatePasswordInputShape, LoginInputShape } from "../schema/validators";
 
 // server side validation
 export default (binding: Binding) => ({

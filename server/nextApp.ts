@@ -3,7 +3,7 @@ import SchemaLink from 'apollo-link-schema';
 import globalConfig from '../globalConfig'
 import { parse } from 'url';
 import * as express from 'express'
-import { Binding } from './embeddedGraphql/bindings';
+import { Binding } from '../schema';
 import { GraphQLSchema } from 'graphql';
 import contextFactory from './contextFactory';
 import { CustomRequest, CustomResponse } from './CustomRequestResponse';

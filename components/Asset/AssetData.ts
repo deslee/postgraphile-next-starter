@@ -1,5 +1,5 @@
 import {Omit} from "../../utils/TypeUtils";
-import {Asset} from "../../server/embeddedGraphql/bindings";
+import {Asset} from "../../schema";
 import * as mime from 'mime-types';
 
 export interface AssetData {

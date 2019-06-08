@@ -7,6 +7,6 @@ postgraphile(
     "app_public",
     {
         ...postGraphileOptions,
-        exportGqlSchemaPath: './server/embeddedGraphql/generated/typedef.graphql'
+        exportGqlSchemaPath: process.argv.slice(2)[0]
     }
 )

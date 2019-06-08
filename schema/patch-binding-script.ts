@@ -9,10 +9,10 @@ type FindAndReplace = {
     replace: string
 }
 
-const fileToPatch = 'server/embeddedGraphql/bindings/generated.ts';
+const fileToPatch = process.argv.slice(2)[0];
 const findAndReplace: FindAndReplace[] = [
     {
-        find: `import * as schema from  '..\\generated\\typedef.graphql'`,
+        find: `import * as schema from  './schema.graphql'`,
         replace: ''
     },
     {
@@ -28,8 +28,6 @@ fs.readFile(fileToPatch, 'utf8', function (err, data) {
         process.exit(1);
     }
 
-    let result = data.toString();
-
     findAndReplace.forEach(pairs => {
         var result = data.replace(pairs.find, pairs.replace);
         if (result === data) {
@@ -41,10 +39,10 @@ fs.readFile(fileToPatch, 'utf8', function (err, data) {
     if (data.startsWith(disableTslint)) {
         console.log(`[bindingFix.js] tslint is already disabled, skipping...`);
     } else {
-        result = `${disableTslint}\n${data}`;
+        data = `${disableTslint}\n${data}`;
     }
 
-    fs.writeFile(fileToPatch, result, 'utf8', function (err) {
+    fs.writeFile(fileToPatch, data, 'utf8', function (err) {
         if (err) {
             console.log(err);
             process.exit(1);

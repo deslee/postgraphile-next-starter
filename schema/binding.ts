@@ -1,5 +1,5 @@
 import { makeBindingClass } from "graphql-binding";
-import { BindingConstructor, Binding } from "./generated";
+import { BindingConstructor, Binding } from "./types";
 import { GraphQLSchema } from "graphql";
 
 export const getBinding = (schema: GraphQLSchema): Binding => {

@@ -218,6 +218,16 @@ type DeleteAssetPayload {
   query: Query
 }
 
+"""All input for the `deletePostByName` mutation."""
+input DeletePostByNameInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  name: String!
+}
+
 """All input for the `deletePostByNodeId` mutation."""
 input DeletePostByNodeIdInput {
   """
@@ -230,16 +240,6 @@ input DeletePostByNodeIdInput {
   The globally unique `ID` which will identify a single `Post` to be deleted.
   """
   nodeId: ID!
-}
-
-"""All input for the `deletePostByType` mutation."""
-input DeletePostByTypeInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  type: String!
 }
 
 """All input for the `deletePost` mutation."""
@@ -399,11 +399,11 @@ type Mutation {
   ): UpdatePostPayload
 
   """Updates a single `Post` using a unique key and a patch."""
-  updatePostByType(
+  updatePostByName(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: UpdatePostByTypeInput!
+    input: UpdatePostByNameInput!
   ): UpdatePostPayload
 
   """Updates a single `User` using its globally unique id and a patch."""
@@ -463,11 +463,11 @@ type Mutation {
   ): DeletePostPayload
 
   """Deletes a single `Post` using a unique key."""
-  deletePostByType(
+  deletePostByName(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: DeletePostByTypeInput!
+    input: DeletePostByNameInput!
   ): DeletePostPayload
 
   """Deletes a single `User` using its globally unique id."""
@@ -716,7 +716,7 @@ type Query implements Node {
   ): [User!]
   asset(id: Int!): Asset
   post(id: Int!): Post
-  postByType(type: String!): Post
+  postByName(name: String!): Post
   user(id: Int!): User
   userByEmail(email: String!): User
   me: User
@@ -844,6 +844,21 @@ type UpdatePasswordPayload {
   query: Query
 }
 
+"""All input for the `updatePostByName` mutation."""
+input UpdatePostByNameInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  An object where the defined keys will be set on the `Post` being updated.
+  """
+  patch: PostPatch!
+  name: String!
+}
+
 """All input for the `updatePostByNodeId` mutation."""
 input UpdatePostByNodeIdInput {
   """
@@ -861,21 +876,6 @@ input UpdatePostByNodeIdInput {
   An object where the defined keys will be set on the `Post` being updated.
   """
   patch: PostPatch!
-}
-
-"""All input for the `updatePostByType` mutation."""
-input UpdatePostByTypeInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  An object where the defined keys will be set on the `Post` being updated.
-  """
-  patch: PostPatch!
-  type: String!
 }
 
 """All input for the `updatePost` mutation."""

@@ -1,4 +1,4 @@
-import validatorFactory from './validators/serverSideValidators';
+import validatorFactory from './serverSideValidators';
 import { UserInputError } from 'apollo-server-core';
 import { ValidationError } from 'yup';
 import { CustomRequest, CustomResponse } from './CustomRequestResponse';

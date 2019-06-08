@@ -1,5 +1,5 @@
 import { graphql, MutateProps, WithApolloClient, MutationFn } from 'react-apollo';
-import { UpdatePostInput, UpdatePostPayload, CreatePostInput, CreatePostPayload, Post } from 'server/embeddedGraphql/bindings';
+import { UpdatePostInput, UpdatePostPayload, CreatePostInput, CreatePostPayload, Post } from 'schema';
 import gql from "graphql-tag";
 
 const PostFragment = gql`

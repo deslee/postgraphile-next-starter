@@ -12,7 +12,7 @@ import { Grid, List, ListItem, Divider, Typography } from '@material-ui/core';
 import Link from 'next/link';
 import { graphql, DataProps, Query } from 'react-apollo';
 import gql from 'graphql-tag';
-import { Post } from 'server/embeddedGraphql/bindings';
+import { Post } from 'schema';
 import { Omit } from '../../utils/TypeUtils';
 import { PostData, PostWithData, jsonToPostData } from './PostData';
 import {POST_LIST_QUERY, GetPostListVariables, GetPostListResult} from './PostQueries';

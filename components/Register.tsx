@@ -2,9 +2,9 @@ import * as React from 'react';
 import * as yup from 'yup';
 import { Button, Typography } from '@material-ui/core';
 import { graphql, MutateProps, withApollo, WithApolloClient } from 'react-apollo';
-import { RegisterInputShape } from '../server/validators/validators';
+import { RegisterInputShape } from '../schema/validators';
 import gql from "graphql-tag";
-import { RegisterPayload, RegisterInput } from 'server/embeddedGraphql/bindings';
+import { RegisterPayload, RegisterInput } from 'schema';
 import { Formik, Form, Field } from 'formik';
 import { TextField } from 'formik-material-ui';
 

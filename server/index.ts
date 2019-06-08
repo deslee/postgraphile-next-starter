@@ -8,7 +8,7 @@ import * as nextApp from './nextApp';
 import { ApolloServer } from 'apollo-server-express';
 import { schemaFactory } from './embeddedGraphql';
 import { jwt, cookie } from './Authentication';
-import { getBinding } from './embeddedGraphql/bindings';
+import { getBinding } from '../schema';
 import contextFactory from './contextFactory';
 import { CustomRequest, CustomResponse } from './CustomRequestResponse';
 

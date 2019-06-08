@@ -4,9 +4,9 @@ import { Formik, Form, Field } from 'formik';
 import { graphql, MutateProps, withApollo, WithApolloClient } from 'react-apollo';
 import { TextField } from 'formik-material-ui';
 import gql from "graphql-tag";
-import { LoginPayload, LoginInput } from 'server/embeddedGraphql/bindings';
+import { LoginPayload, LoginInput } from 'schema';
 import Logout from './Logout';
-import { LoginInputShape } from '../server/validators/validators';
+import { LoginInputShape } from '../schema/validators';
 import Register from "./Register";
 
 interface ComponentProps {
