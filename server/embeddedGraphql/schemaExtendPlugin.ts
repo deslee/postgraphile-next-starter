@@ -80,6 +80,7 @@ export const extendSchemaWithLogin = makeExtendSchemaPlugin(build => {
                             await pgClient.query(`SELECT app_hidden.logout()`);
                         }
 
+                        await pgClient.query("RELEASE SAVEPOINT graphql_mutation");
                         return true;
                     } catch (e) {
                         await pgClient.query("ROLLBACK TO SAVEPOINT graphql_mutation");
